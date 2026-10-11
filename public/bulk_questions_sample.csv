@@ -1,0 +1,6 @@
+topic_code,subtopic_code,difficulty,question_text,option_a,option_b,option_c,option_d,correct_option,explanation,source_tag
+QUANT,QUANT_SDT,medium,"[Amazon PYQ] A courier boy travels 60 km at a speed of 30 km/h and returns at 20 km/h. What is his average speed for the whole journey?",22 km/h,24 km/h,25 km/h,26 km/h,B,"Average speed = (2 * s1 * s2) / (s1 + s2) = (2 * 30 * 20) / (30 + 20) = 1200 / 50 = 24 km/h.",Amazon Assessment
+QUANT,QUANT_PERC,easy,"[Wipro PYQ] If 20% of a number is equal to 50, what is 60% of that number?",100,125,150,200,C,"If 20% = 50, then 1% = 2.5. 60% = 2.5 * 60 = 150.",Wipro NLTH PYQ
+LR,LR_SERIES,medium,"[Infosys PYQ] Find the next number in the pattern: 2, 6, 12, 20, 30, ?",36,40,42,48,C,"Pattern: n^2 + n or adding consecutive evens: +4, +6, +8, +10, +12. 30 + 12 = 42.",Infosys PYQ
+VERBAL,VERBAL_SC,medium,"[TCS NQT Verbal] Choose the correct form: 'The team _____ preparing for the campus hackathon since morning.'",is,are,has been,have been,C,"Present perfect continuous tense 'has been preparing' is correct for an action continuing from a specified time.",TCS NQT PYQ
+DI,DI_BAR_TABLE,medium,"[Capgemini DI] In a table showing monthly sales, Branch A sold 120 units in Jan and 180 units in Feb. What is the percentage increase?",30%,40%,50%,60%,C,"Increase = ((180 - 120) / 120) * 100 = (60 / 120) * 100 = 50%.",Capgemini PYQ

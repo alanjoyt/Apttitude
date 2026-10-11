@@ -1,0 +1,11 @@
+# Robots.txt for Apttitudee
+User-agent: *
+Allow: /
+
+# Disallow Administrative & Backend API Routes Only
+Disallow: /index.php?action=admin
+Disallow: /index.php?action=api_*
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: /sitemap.xml

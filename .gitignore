@@ -1,0 +1,14 @@
+# Temporary & archive files
+*.zip
+scratch_shots/
+
+# Environment and sensitive local configs
+config/config.local.php
+.env
+
+# IDE and OS files
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store
