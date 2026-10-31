@@ -275,7 +275,12 @@ function launchDuelModal() {
 
 function renderDuelQuestion() {
     if (currentDuelIndex >= currentDuelQuestions.length) {
-        // Duel complete - submit results
+        // Duel complete - clean up persistence and submit results
+        sessionStorage.removeItem('active_duel_id');
+        sessionStorage.removeItem('active_duel_index');
+        sessionStorage.removeItem('active_duel_score');
+        sessionStorage.removeItem('active_duel_answers');
+
         document.getElementById('duelQuizContainer').innerHTML = `
             <div class="py-4 text-center">
                 <div class="spinner-border mb-3" role="status" style="color: var(--accent);"></div>
@@ -437,6 +442,10 @@ function handleDuelSelect(selectedOpt, btnEl) {
 
         setTimeout(() => {
             currentDuelIndex++;
+            sessionStorage.setItem('active_duel_id', activeDuelId);
+            sessionStorage.setItem('active_duel_index', currentDuelIndex);
+            sessionStorage.setItem('active_duel_score', duelScore);
+            sessionStorage.setItem('active_duel_answers', JSON.stringify(duelAnswers));
             renderDuelQuestion();
         }, 750);
     })
@@ -445,6 +454,10 @@ function handleDuelSelect(selectedOpt, btnEl) {
         // Fallback: advance to next question
         setTimeout(() => {
             currentDuelIndex++;
+            sessionStorage.setItem('active_duel_id', activeDuelId);
+            sessionStorage.setItem('active_duel_index', currentDuelIndex);
+            sessionStorage.setItem('active_duel_score', duelScore);
+            sessionStorage.setItem('active_duel_answers', JSON.stringify(duelAnswers));
             renderDuelQuestion();
         }, 500);
     });
@@ -461,6 +474,11 @@ function forfeitActiveDuel() {
     if (!activeDuelId) return;
     const dId = activeDuelId;
     activeDuelId = 0; // prevent repeated triggers
+    sessionStorage.removeItem('active_duel_id');
+    sessionStorage.removeItem('active_duel_index');
+    sessionStorage.removeItem('active_duel_score');
+    sessionStorage.removeItem('active_duel_answers');
+
     fetch('index.php?action=api_forfeit_duel', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -476,12 +494,20 @@ function forfeitActiveDuel() {
     });
 }
 
-window.addEventListener('beforeunload', () => {
-    if (activeDuelId && currentDuelQuestions.length > 0 && currentDuelIndex < currentDuelQuestions.length) {
-        const payload = JSON.stringify({ duel_id: activeDuelId, csrf_token: window.CSRF_TOKEN || '' });
-        if (navigator.sendBeacon) {
-            const blob = new Blob([payload], { type: 'application/json' });
-            navigator.sendBeacon('index.php?action=api_forfeit_duel', blob);
+// Reconnect Grace Window: Refresh or brief offline disconnections (up to 45s) do NOT forfeit.
+// Active duel state persists in sessionStorage and resumes smoothly upon reconnect.
+document.addEventListener('DOMContentLoaded', () => {
+    const savedDuelId = sessionStorage.getItem('active_duel_id');
+    if (savedDuelId) {
+        const dId = parseInt(savedDuelId);
+        if (dId > 0) {
+            activeDuelId = dId;
+            currentDuelIndex = parseInt(sessionStorage.getItem('active_duel_index') || '0');
+            duelScore = parseInt(sessionStorage.getItem('active_duel_score') || '0');
+            try {
+                duelAnswers = JSON.parse(sessionStorage.getItem('active_duel_answers') || '{}');
+            } catch(e) { duelAnswers = {}; }
+            launchDuelModal();
         }
     }
 });

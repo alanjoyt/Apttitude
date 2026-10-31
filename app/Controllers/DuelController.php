@@ -111,7 +111,32 @@ class DuelController {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['status' => 'error', 'message' => 'User not authenticated']);
+            exit;
+        }
+
         $duelId = (int)($_GET['duel_id'] ?? 0);
+        $db = Database::getConnection();
+        $dStmt = $db->prepare("SELECT challenger_id, opponent_id FROM duels WHERE id = ?");
+        $dStmt->execute([$duelId]);
+        $duel = $dStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$duel) {
+            http_response_code(404);
+            echo json_encode(['status' => 'error', 'message' => 'Duel not found']);
+            exit;
+        }
+
+        // IDOR Guard: Only participants can access duel questions
+        if ($duel['challenger_id'] != $userId && $duel['opponent_id'] != $userId) {
+            http_response_code(403);
+            echo json_encode(['status' => 'error', 'message' => 'Forbidden: You are not a participant in this duel']);
+            exit;
+        }
+
         $questions = DuelService::getDuelQuestions($duelId);
 
         $_SESSION['duel_mappings'] = $_SESSION['duel_mappings'] ?? [];
