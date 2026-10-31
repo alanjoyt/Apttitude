@@ -437,13 +437,38 @@ function handleTabSwitchViolation() {
     }
 }
 
+let blurGraceTimeout = null;
+
 document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
+    if (document.visibilityState === 'hidden' || document.hidden) {
         handleTabSwitchViolation();
     }
 });
+
 window.addEventListener('blur', () => {
-    handleTabSwitchViolation();
+    const isTouchOrMobile = ('ontouchstart' in window) || 
+                            (navigator.maxTouchPoints > 0) || 
+                            (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    if (isTouchOrMobile) {
+        // Touch/Mobile: Ignore lone window blur events (e.g. notification tray, incoming call banner, address bar interaction)
+        // Tab/App switching is authoritatively detected by document.visibilityState === 'hidden'
+        return;
+    }
+
+    // Desktop: Provide 1.5s grace period to prevent accidental skips from system dialogs
+    if (blurGraceTimeout) clearTimeout(blurGraceTimeout);
+    blurGraceTimeout = setTimeout(() => {
+        if (!document.hasFocus()) {
+            handleTabSwitchViolation();
+        }
+    }, 1500);
+});
+
+window.addEventListener('focus', () => {
+    if (blurGraceTimeout) {
+        clearTimeout(blurGraceTimeout);
+        blurGraceTimeout = null;
+    }
 });
 
 function recordActiveQuestionTime() {
