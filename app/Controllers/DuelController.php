@@ -16,9 +16,60 @@ class DuelController {
         }
 
         $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
-        $wager = max(5, (int)($input['wager_coins'] ?? 10));
+        
+        $cfg = GamificationEngine::getConfig();
+        $allowedWagers = $cfg['duels']['pvp_wagers'] ?? [10, 25, 50];
+
+        $rawWager = $input['wager_coins'] ?? null;
+        if ($rawWager === null || !is_numeric($rawWager) || is_array($rawWager)) {
+            http_response_code(400);
+            echo json_encode([
+                'status' => 'error', 
+                'message' => 'Invalid wager format. Please specify an integer wager amount.'
+            ]);
+            exit;
+        }
+
+        $wager = (int)$rawWager;
+        if ((float)$rawWager != $wager) {
+            http_response_code(400);
+            echo json_encode([
+                'status' => 'error', 
+                'message' => 'Wager must be an integer amount (no decimals allowed).'
+            ]);
+            exit;
+        }
+
+        if (!in_array($wager, $allowedWagers, true)) {
+            http_response_code(400);
+            echo json_encode([
+                'status' => 'error', 
+                'message' => 'Invalid wager amount. Allowed stakes are: ' . implode(', ', $allowedWagers) . ' Speed Coins.'
+            ]);
+            exit;
+        }
 
         $res = DuelService::createDuel($userId, $wager);
+        if (($res['status'] ?? '') === 'error') {
+            http_response_code(400);
+        }
+        echo json_encode($res);
+        exit;
+    }
+
+    public static function createBotDuelJSON(): void {
+        header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            echo json_encode(['status' => 'error', 'message' => 'Please log in to challenge the practice bot!']);
+            exit;
+        }
+
+        $res = DuelService::createBotDuel($userId);
         echo json_encode($res);
         exit;
     }
@@ -45,9 +96,99 @@ class DuelController {
 
     public static function getDuelQuestionsJSON(): void {
         header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         $duelId = (int)($_GET['duel_id'] ?? 0);
         $questions = DuelService::getDuelQuestions($duelId);
-        echo json_encode(['status' => 'success', 'questions' => $questions]);
+
+        $_SESSION['duel_mappings'] = $_SESSION['duel_mappings'] ?? [];
+        $_SESSION['duel_mappings'][$duelId] = [];
+
+        $sanitizedQuestions = [];
+        $keys = ['A', 'B', 'C', 'D'];
+
+        foreach ($questions as $q) {
+            $rawOpts = [
+                'A' => $q['option_a'],
+                'B' => $q['option_b'],
+                'C' => $q['option_c'],
+                'D' => $q['option_d']
+            ];
+            $dbCorrectLetter = strtoupper(trim($q['correct_option'] ?: 'A'));
+
+            $shuffledKeys = $keys;
+            shuffle($shuffledKeys);
+
+            $shuffledOptions = [];
+            $shuffledCorrect = 'A';
+            foreach ($keys as $idx => $origKey) {
+                $newKey = $shuffledKeys[$idx];
+                $shuffledOptions[$newKey] = $rawOpts[$origKey];
+                if ($origKey === $dbCorrectLetter) {
+                    $shuffledCorrect = $newKey;
+                }
+            }
+            ksort($shuffledOptions);
+
+            $_SESSION['duel_mappings'][$duelId][$q['id']] = [
+                'correct_option' => $shuffledCorrect,
+                'options' => $shuffledOptions
+            ];
+
+            // Crucial security fix: Never expose correct_option to client!
+            $sanitizedQuestions[] = [
+                'id' => (int)$q['id'],
+                'question_text' => $q['question_text'],
+                'code_snippet' => $q['code_snippet'] ?? null,
+                'language' => $q['language'] ?? null,
+                'option_a' => $shuffledOptions['A'],
+                'option_b' => $shuffledOptions['B'],
+                'option_c' => $shuffledOptions['C'],
+                'option_d' => $shuffledOptions['D'],
+                'question_order' => $q['question_order']
+            ];
+        }
+
+        echo json_encode(['status' => 'success', 'questions' => $sanitizedQuestions]);
+        exit;
+    }
+
+    /**
+     * Check single duel question answer via server mapping
+     * Provides instantaneous tamper-proof feedback without leaking answers in advance
+     */
+    public static function checkDuelAnswerJSON(): void {
+        header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            echo json_encode(['status' => 'error', 'message' => 'User not authenticated']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $duelId = (int)($input['duel_id'] ?? 0);
+        $qId = (int)($input['question_id'] ?? 0);
+        $selectedOpt = strtoupper(trim((string)($input['selected_option'] ?? '')));
+
+        $mapping = $_SESSION['duel_mappings'][$duelId][$qId] ?? null;
+        if (!$mapping) {
+            echo json_encode(['status' => 'error', 'message' => 'Duel question mapping not found']);
+            exit;
+        }
+
+        $correctOpt = $mapping['correct_option'];
+        $isCorrect = ($selectedOpt !== '' && $selectedOpt === $correctOpt);
+
+        echo json_encode([
+            'status' => 'success',
+            'is_correct' => $isCorrect,
+            'correct_option' => $correctOpt
+        ]);
         exit;
     }
 
@@ -66,6 +207,20 @@ class DuelController {
         $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
         $duelId = (int)($input['duel_id'] ?? 0);
         $score = (int)($input['score'] ?? 0);
+
+        // Server-Side Verification: If client submits an answers map, evaluate against duel session mapping
+        $answers = $input['answers'] ?? null;
+        if (is_array($answers) && isset($_SESSION['duel_mappings'][$duelId])) {
+            $verifiedScore = 0;
+            foreach ($answers as $qId => $userAns) {
+                $cleanAns = strtoupper(trim((string)$userAns));
+                $expected = $_SESSION['duel_mappings'][$duelId][$qId]['correct_option'] ?? null;
+                if ($expected && $cleanAns === $expected) {
+                    $verifiedScore++;
+                }
+            }
+            $score = $verifiedScore;
+        }
 
         $res = DuelService::submitDuelResults($userId, $duelId, $score);
         echo json_encode($res);
