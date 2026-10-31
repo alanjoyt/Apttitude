@@ -1116,7 +1116,7 @@ function loadDailyQuests() {
                             </div>
                         </div>
                         <div class="progress progress-gamified" style="height: 6px;">
-                            <div class="progress-bar-fill" role="progressbar" style="width: ${percent}%;"></div>
+                            <div class="progress-bar-fill" role="progressbar" aria-label="Daily Quest Progress: ${q.title}" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100" style="width: ${percent}%;"></div>
                         </div>
                     </div>
                 `;

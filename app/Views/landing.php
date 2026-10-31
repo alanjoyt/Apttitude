@@ -117,7 +117,7 @@
             <div class="d-flex align-items-start gap-3 p-3 card-gamified">
               <i class="bi bi-calculator fs-4 style-accent mt-1" style="color: var(--accent);"></i>
               <div>
-                <h4 class="h6 font-serif fw-bold text-ink mb-1">Quantitative Aptitude</h4>
+                <h3 class="h6 font-serif fw-bold text-ink mb-1">Quantitative Aptitude</h3>
                 <p class="text-ink-muted small mb-0">Speed, Distance & Time, Percentages, Profit & Loss, Ratios, Work & Time, Averages.</p>
               </div>
             </div>
@@ -125,7 +125,7 @@
             <div class="d-flex align-items-start gap-3 p-3 card-gamified">
               <i class="bi bi-puzzle fs-4 style-accent mt-1" style="color: var(--accent);"></i>
               <div>
-                <h4 class="h6 font-serif fw-bold text-ink mb-1">Logical Reasoning</h4>
+                <h3 class="h6 font-serif fw-bold text-ink mb-1">Logical Reasoning</h3>
                 <p class="text-ink-muted small mb-0">Seating Arrangements, Blood Relations, Number & Letter Series, Syllogisms, Coding-Decoding.</p>
               </div>
             </div>
@@ -133,7 +133,7 @@
             <div class="d-flex align-items-start gap-3 p-3 card-gamified">
               <i class="bi bi-chat-left-quote fs-4 style-accent mt-1" style="color: var(--accent);"></i>
               <div>
-                <h4 class="h6 font-serif fw-bold text-ink mb-1">Verbal Ability & Data Interpretation</h4>
+                <h3 class="h6 font-serif fw-bold text-ink mb-1">Verbal Ability & Data Interpretation</h3>
                 <p class="text-ink-muted small mb-0">Reading Comprehension, Sentence Correction, Bar Charts, Tables, Venn Diagrams.</p>
               </div>
             </div>
@@ -155,7 +155,7 @@
         <div class="col-lg-6 text-center">
           <div class="card card-gamified p-4 shadow-sm">
             <h3 class="font-serif fw-bold text-ink mb-2 d-flex align-items-center justify-content-center gap-2">
-              <svg class="exam-icon text-primary" style="width:24px;height:24px;"><use href="#icon-target"></use></svg> Ready to Test Your Skills?
+              <svg class="exam-icon text-primary icon-24"><use href="#icon-target"></use></svg> Ready to Test Your Skills?
             </h3>
             <p class="text-ink-muted small mb-4">Try 5 guest practice questions instantly without creating an account.</p>
             <a href="index.php?action=practice" class="btn btn-primary-gamified btn-lg fw-bold w-100 py-3 mb-3">

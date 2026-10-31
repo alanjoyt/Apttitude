@@ -1,5 +1,5 @@
 /* Apttitudee — "Exam Hall, Reimagined" Visual Theme */
-/* Engineered by mr.ignite ~ Nexyra Solutions */
+/* Engineered by mr.ignite ~ BOLDBYTE */
 
 :root {
   /* 1. Academic Cyber-Blueprint Palette */
@@ -66,10 +66,12 @@ html, body {
   background-color: var(--bg) !important;
   color: var(--ink) !important;
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* Academic Serif Typography for Headlines */
@@ -512,9 +514,10 @@ label, .form-label {
 
 .user-dropdown-card {
   min-width: 280px !important;
-  max-width: calc(100vw - 24px) !important;
+  max-width: min(340px, calc(100vw - 16px)) !important;
   right: 0 !important;
   left: auto !important;
+  box-sizing: border-box !important;
   border-radius: 16px !important;
 }
 
@@ -640,6 +643,32 @@ label, .form-label {
   color: var(--danger) !important;
   box-shadow: 0 0 0 4px rgba(197, 48, 48, 0.15) !important;
   font-weight: 600 !important;
+}
+
+/* 50/50 Lifeline: Eliminated Wrong Option */
+.option-btn.eliminated,
+.tech-opt-btn.eliminated {
+  opacity: 0.38 !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+  border-style: dashed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  filter: grayscale(85%) !important;
+  position: relative !important;
+}
+.option-btn.eliminated .option-text,
+.tech-opt-btn.eliminated .option-text {
+  text-decoration: line-through !important;
+  color: var(--ink-muted) !important;
+}
+.option-btn.eliminated .option-key,
+.tech-opt-btn.eliminated .option-key {
+  opacity: 0.5 !important;
+  text-decoration: line-through !important;
+  border-style: dashed !important;
 }
 
 .option-key {
@@ -1134,4 +1163,53 @@ label, .form-label {
   .mock-header-card #timerDisplay {
     font-size: 0.88rem !important;
   }
+}
+
+
+/* Profile Dropdown Viewport Bounds Fix & Empty Badge Guard */
+.dropdown-menu-end {
+  right: 0 !important;
+  left: auto !important;
+}
+.user-dropdown-card {
+  min-width: 280px !important;
+  max-width: min(340px, calc(100vw - 20px)) !important;
+  right: 0 !important;
+  left: auto !important;
+  box-sizing: border-box !important;
+  border-radius: 16px !important;
+  transform: none !important;
+}
+.quiz-source-tag-stamp:empty {
+  display: none !important;
+}
+:root {
+  --q-size: 1.05rem;
+}
+.quiz-question-setup {
+  font-size: 0.98rem !important;
+  line-height: 1.6 !important;
+  color: var(--ink-muted) !important;
+  margin-bottom: 8px !important;
+}
+
+
+/* ==========================================================================
+   WCAG 2.1 AA STRICT CONTRAST ENFORCEMENT
+   ========================================================================== */
+.btn-primary-gamified,
+.btn-exam-primary,
+.badge-stamp-sm,
+#acceptCookiesBtn {
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+}
+.btn-copy-code {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .btn-primary-gamified,
+[data-theme="dark"] .btn-exam-primary {
+  color: #14213D !important;
+  background-color: #FFE066 !important;
+  text-shadow: none !important;
 }

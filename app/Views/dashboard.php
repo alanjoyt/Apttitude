@@ -13,6 +13,78 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
 ?>
 
 <div class="row g-4 py-3">
+  <?php 
+    $todaySolved = (int)($dashboardData['today_solved'] ?? 0);
+    $lastPracticed = $dashboardData['last_practiced'] ?? null;
+  ?>
+
+  <!-- Mobile Quick Action Strip: Daily Goal Ring & 5-Min Blitz -->
+  <div class="col-12 col-md-6">
+    <div class="card card-gamified p-3 h-100">
+      <div class="d-flex align-items-center gap-3">
+        <div class="goal-ring-container flex-shrink-0 position-relative" style="width:72px;height:72px;display:flex;align-items:center;justify-content:center;">
+          <svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true">
+            <circle cx="36" cy="36" r="30" stroke="var(--border)" stroke-width="6" fill="none" />
+            <circle cx="36" cy="36" r="30" stroke="var(--marker-orange)" stroke-width="6" fill="none"
+                    stroke-dasharray="188.5" stroke-dashoffset="<?= max(0, round(188.5 - (188.5 * min(10, $todaySolved) / 10))) ?>"
+                    stroke-linecap="round" class="goal-ring-circle" />
+          </svg>
+          <span class="position-absolute font-mono fw-bold fs-7"><?= min(10, $todaySolved) ?>/10</span>
+        </div>
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h6 class="font-serif fw-bold text-ink mb-0">Daily Goal Ring</h6>
+            <?php if ($todaySolved >= 10): ?>
+              <span class="badge bg-success text-white small px-2 py-0.5 rounded-pill"><i class="bi bi-check-lg"></i> Done</span>
+            <?php endif; ?>
+          </div>
+          <p class="small text-ink-muted mb-0">
+            <?= $todaySolved >= 10 
+                ? 'Goal achieved! +3 Daily Speed Coins claimed.' 
+                : (10 - $todaySolved) . ' more questions needed today for +3 bonus coins.' ?>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-6">
+    <div class="card card-gamified p-3 h-100 border-2" style="border-color: var(--marker-orange) !important;">
+      <div class="d-flex align-items-center justify-content-between gap-2">
+        <div>
+          <span class="badge rounded-pill px-2.5 py-1 text-white bg-danger small fw-bold mb-1">
+            <i class="bi bi-stopwatch-fill me-1"></i> 5 MIN RAPID SPRINT
+          </span>
+          <h6 class="font-serif fw-bold text-ink mb-1">Quick Practice Blitz</h6>
+          <p class="small text-ink-muted mb-0">5 instant questions tailored to your weakest topic.</p>
+        </div>
+        <a href="index.php?action=practice&quick=1&mode=quiz" class="btn btn-primary-gamified fw-bold px-3 py-2 text-nowrap d-inline-flex align-items-center gap-1 shadow-sm">
+          Start <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <?php if ($lastPracticed): ?>
+  <!-- Continue Where You Left Off Card -->
+  <div class="col-12">
+    <div class="card card-gamified p-3 d-flex flex-row align-items-center justify-content-between flex-wrap gap-2" style="background-color: var(--surface); border: 2px dashed var(--accent);">
+      <div class="d-flex align-items-center gap-3">
+        <div class="p-2.5 rounded-3 bg-accent-tint text-accent">
+          <i class="bi bi-bookmark-check-fill fs-3"></i>
+        </div>
+        <div>
+          <span class="text-uppercase small fw-bold text-ink-muted">Continue Where You Left Off</span>
+          <h6 class="font-serif fw-bold text-ink mb-0"><?= htmlspecialchars($lastPracticed['topic_name']) ?> &bull; <?= htmlspecialchars($lastPracticed['subtopic_name']) ?></h6>
+        </div>
+      </div>
+      <a href="index.php?action=practice&subtopic_id=<?= (int)$lastPracticed['subtopic_id'] ?>&mode=quiz" class="btn btn-outline-gamified fw-bold px-3 py-2 d-inline-flex align-items-center gap-1">
+        <i class="bi bi-play-circle-fill text-accent"></i> Resume Practice
+      </a>
+    </div>
+  </div>
+  <?php endif; ?>
+
   <?php if (empty($user['onboarding_completed'])): ?>
     <div class="col-12">
       <div class="exam-notice-banner p-3 d-flex justify-content-between align-items-center flex-wrap gap-2" style="background-color: var(--notice-bg); color: var(--notice-text); border: 1.5px solid var(--notice-border);">
@@ -23,12 +95,35 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
             <span class="small" style="color: var(--ink-muted);">Skip level 1 practice by proving your starting topic mastery.</span>
           </div>
         </div>
-        <a href="index.php?action=diagnostic" class="btn btn-primary-gamified btn-sm fw-bold px-3">
+        <a href="index.php?action=diagnostic" class="btn btn-primary-gamified btn-sm fw-bold px-3" style="background-color: #14213D !important; color: #FFFFFF !important;">
           Start Diagnostic
         </a>
       </div>
     </div>
   <?php endif; ?>
+
+  <!-- Community Contribution: Submit a Placement Question -->
+  <div class="col-12 col-md-6">
+    <div class="card card-gamified p-3 h-100" style="border: 1.5px dashed var(--accent);">
+      <div class="d-flex align-items-center justify-content-between gap-2">
+        <div class="d-flex align-items-center gap-3 min-w-0">
+          <div class="p-2.5 rounded-3 flex-shrink-0 d-flex align-items-center justify-content-center" style="background-color: var(--surface); border: 1.5px solid var(--border); width:46px; height:46px;">
+            <svg class="exam-icon text-success icon-22"><use href="#icon-rocket"></use></svg>
+          </div>
+          <div class="min-w-0">
+            <span class="badge bg-success-subtle text-success border border-success-subtle fs-8 mb-1">+50 XP &bull; +10 Speed Coins</span>
+            <h6 class="font-serif fw-bold text-ink mb-0">Submit a Placement Question</h6>
+            <p class="small text-ink-muted mb-0">Contribute questions from campus drives. Earn XP once verified!</p>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary-gamified btn-sm fw-bold px-3 text-nowrap flex-shrink-0"
+          data-bs-toggle="modal" data-bs-target="#submitQuestionModal">
+          <svg class="exam-icon me-1 icon-14"><use href="#icon-rocket"></use></svg> Submit Q
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Top User Profile & Level Progress Banner -->
   <div class="col-12">
     <div class="card card-gamified hero-gamified-banner p-4">
@@ -37,7 +132,7 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
           <div class="d-flex align-items-center gap-3 mb-2">
             <h3 class="font-serif fw-bold text-ink mb-0">Welcome back, <?= htmlspecialchars($user['name']) ?>!</h3>
             <span class="stamp-badge py-1 px-3 fw-bold d-inline-flex align-items-center gap-1">
-              <svg class="exam-icon" style="width:14px;height:14px;"><use href="#icon-crown"></use></svg> <?= $user['tier'] ?> League
+              <svg class="exam-icon icon-14"><use href="#icon-crown"></use></svg> <?= $user['tier'] ?> League
             </span>
           </div>
           <p class="text-ink-muted small mb-3">Your placement readiness is active. Complete today's practice session to protect your streak!</p>
@@ -47,7 +142,7 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
             <div class="d-flex justify-content-between align-items-center mb-2">
               <span class="small fw-bold text-ink"><i class="bi bi-fire text-danger animate-pulse me-1"></i> 7-Day Practice Streak Tracking</span>
               <span class="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1" style="background-color: var(--bg); color: var(--ink-muted); border: 1px solid var(--border);">
-                <svg class="exam-icon" style="width:13px;height:13px;"><use href="#icon-shield"></use></svg> <?= $user['streak_freezes'] ?? 1 ?> Streak Freezes Active
+                <svg class="exam-icon icon-13"><use href="#icon-shield"></use></svg> <?= $user['streak_freezes'] ?? 1 ?> Streak Freezes Active
               </span>
             </div>
             <div class="streak-calendar-grid">
@@ -61,7 +156,7 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
               ?>
                 <div class="streak-day-bubble <?= $isActive ? 'active' : '' ?> <?= $isToday ? 'today' : '' ?>">
                   <span><?= $dayName ?></span>
-                  <span class="mt-1 d-inline-flex align-items-center justify-content-center"><?= $isActive ? '<svg class="exam-icon text-danger" style="width:14px;height:14px;"><use href="#icon-flame"></use></svg>' : ($isToday ? '<svg class="exam-icon text-primary" style="width:14px;height:14px;"><use href="#icon-target"></use></svg>' : '&bull;') ?></span>
+                  <span class="mt-1 d-inline-flex align-items-center justify-content-center"><?= $isActive ? '<svg class="exam-icon text-danger icon-14"><use href="#icon-flame"></use></svg>' : ($isToday ? '<svg class="exam-icon text-primary icon-14"><use href="#icon-target"></use></svg>' : '&bull;') ?></span>
                 </div>
               <?php endforeach; ?>
             </div>
@@ -71,9 +166,9 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
         <div class="col-lg-5 text-lg-end">
           <div class="d-flex flex-column align-items-lg-end gap-2">
             <div class="d-flex gap-2">
-              <div class="stat-pill-gamified py-2 px-3 fs-6 d-inline-flex align-items-center gap-1"><svg class="exam-icon text-danger" style="width:14px;height:14px;"><use href="#icon-flame"></use></svg> <strong><?= $user['current_streak'] ?></strong>d Streak</div>
-              <div class="stat-pill-gamified py-2 px-3 fs-6 d-inline-flex align-items-center gap-1"><svg class="exam-icon text-warning" style="width:14px;height:14px;"><use href="#icon-star"></use></svg> <strong><?= number_format($user['total_xp']) ?></strong> XP</div>
-              <div class="stat-pill-gamified py-2 px-3 fs-6 d-inline-flex align-items-center gap-1"><svg class="exam-icon" style="width:14px;height:14px;"><use href="#icon-coin"></use></svg> <strong><?= number_format($user['coins']) ?></strong></div>
+              <div class="stat-pill-gamified py-2 px-3 fs-6 d-inline-flex align-items-center gap-1"><svg class="exam-icon text-danger icon-14"><use href="#icon-flame"></use></svg> <strong><?= $user['current_streak'] ?></strong>d Streak</div>
+              <div class="stat-pill-gamified py-2 px-3 fs-6 d-inline-flex align-items-center gap-1"><svg class="exam-icon text-warning icon-14"><use href="#icon-star"></use></svg> <strong><?= number_format($user['total_xp']) ?></strong> XP</div>
+              <div class="stat-pill-gamified py-2 px-3 fs-6 d-inline-flex align-items-center gap-1"><svg class="exam-icon icon-14"><use href="#icon-coin"></use></svg> <strong><?= number_format($user['coins']) ?></strong></div>
             </div>
             
             <a href="index.php?action=practice" class="btn btn-primary-gamified btn-lg fw-bold px-4 py-2.5 mt-2 shadow-sm">
@@ -90,7 +185,7 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
           <span>Next Rank: <?= $tierProgress['next_tier'] ?> (<?= number_format($tierProgress['xp_needed']) ?> XP needed)</span>
         </div>
         <div class="progress progress-gamified" style="height: 10px;">
-          <div class="progress-bar-fill" style="width: <?= $tierProgress['progress_percent'] ?>%;"></div>
+          <div class="progress-bar-fill" role="progressbar" aria-label="Tier Progress" aria-valuenow="<?= (int)$tierProgress['progress_percent'] ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $tierProgress['progress_percent'] ?>%;"></div>
         </div>
       </div>
     </div>
@@ -132,7 +227,7 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
       <div class="small text-ink-muted">
         <?php foreach (array_slice($weakDeck, 0, 3) as $weak): ?>
           <div class="border-bottom py-1 text-truncate" style="border-color: var(--border) !important;">
-            <svg class="exam-icon text-warning me-1" style="width:14px;height:14px;"><use href="#icon-alert-triangle"></use></svg> <?= htmlspecialchars($weak['question_text']) ?>
+            <svg class="exam-icon text-warning me-1 icon-14"><use href="#icon-alert-triangle"></use></svg> <?= htmlspecialchars($weak['question_text']) ?>
           </div>
         <?php endforeach; ?>
       </div>
@@ -167,25 +262,25 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
         ?>
         <div class="col-6 col-md-3">
           <div class="p-3 rounded-4 border" style="background-color: var(--bg); border-color: var(--border) !important;">
-            <div class="fs-3 font-serif fw-bold d-flex align-items-center justify-content-center gap-1" style="color: var(--danger);"><svg class="exam-icon" style="width:24px;height:24px;"><use href="#icon-brain"></use></svg> <?= $conceptGap ?></div>
+            <div class="fs-3 font-serif fw-bold d-flex align-items-center justify-content-center gap-1" style="color: var(--danger);"><svg class="exam-icon icon-24"><use href="#icon-brain"></use></svg> <?= $conceptGap ?></div>
             <div class="text-ink-muted small">Concept Gaps</div>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="p-3 rounded-4 border" style="background-color: var(--bg); border-color: var(--border) !important;">
-            <div class="fs-3 font-serif fw-bold d-flex align-items-center justify-content-center gap-1" style="color: var(--highlight);"><svg class="exam-icon" style="width:24px;height:24px;"><use href="#icon-calculator"></use></svg> <?= $calcErr ?></div>
+            <div class="fs-3 font-serif fw-bold d-flex align-items-center justify-content-center gap-1" style="color: var(--highlight);"><svg class="exam-icon icon-24"><use href="#icon-calculator"></use></svg> <?= $calcErr ?></div>
             <div class="text-ink-muted small">Calculation Errors</div>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="p-3 rounded-4 border" style="background-color: var(--bg); border-color: var(--border) !important;">
-            <div class="fs-3 font-serif fw-bold d-flex align-items-center justify-content-center gap-1" style="color: var(--accent);"><svg class="exam-icon" style="width:24px;height:24px;"><use href="#icon-eye"></use></svg> <?= $misread ?></div>
+            <div class="fs-3 font-serif fw-bold d-flex align-items-center justify-content-center gap-1" style="color: var(--accent);"><svg class="exam-icon icon-24"><use href="#icon-eye"></use></svg> <?= $misread ?></div>
             <div class="text-ink-muted small">Misread Questions</div>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="p-3 rounded-4 border" style="background-color: var(--bg); border-color: var(--border) !important;">
-            <div class="fs-3 font-serif fw-bold text-ink-muted d-flex align-items-center justify-content-center gap-1"><svg class="exam-icon" style="width:24px;height:24px;"><use href="#icon-clock"></use></svg> <?= $timeOut ?></div>
+            <div class="fs-3 font-serif fw-bold text-ink-muted d-flex align-items-center justify-content-center gap-1"><svg class="exam-icon icon-24"><use href="#icon-clock"></use></svg> <?= $timeOut ?></div>
             <div class="text-ink-muted small">Timeouts</div>
           </div>
         </div>
@@ -240,3 +335,181 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
     });
 });
 </script>
+
+<!-- 3-Step First-Run Onboarding Tour Modal -->
+<div class="modal fade" id="onboardingTourModal" tabindex="-1" aria-labelledby="onboardingTourTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content exam-sheet-card border-2" style="border-color: var(--border-strong) !important;">
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title font-serif fw-bold text-ink" id="onboardingTourTitle">
+          <i class="bi bi-compass-fill text-warning me-1"></i> Quick Tour: Welcome to Apttitudee
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 text-center">
+        <!-- Step 1 -->
+        <div id="tourStep1" class="tour-step">
+          <div class="display-5 mb-2 text-warning"><i class="bi bi-bullseye"></i></div>
+          <h5 class="font-serif fw-bold text-ink">1. Placement Question Banks</h5>
+          <p class="text-ink-muted small">
+            Practice actual company test patterns (TCS, Infosys, Wipro, Accenture, Innovature). All questions feature full step-by-step explanations and verified solution keys.
+          </p>
+          <button type="button" class="btn btn-primary-gamified fw-bold px-4 mt-2" onclick="showTourStep(2)">
+            Next: Rewards & Economy <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+        <!-- Step 2 -->
+        <div id="tourStep2" class="tour-step d-none">
+          <div class="display-5 mb-2 text-danger"><i class="bi bi-lightning-charge-fill"></i></div>
+          <h5 class="font-serif fw-bold text-ink">2. Speed Floors & Speed Coins</h5>
+          <p class="text-ink-muted small">
+            Solve accurately within estimated target times to earn Speed Coins and advance leagues. Overconfidence without accuracy loses XP, so calibrate your confidence!
+          </p>
+          <div class="d-flex justify-content-center gap-2 mt-2">
+            <button type="button" class="btn btn-outline-gamified fw-bold" onclick="showTourStep(1)">Back</button>
+            <button type="button" class="btn btn-primary-gamified fw-bold px-4" onclick="showTourStep(3)">
+              Next: 1v1 Duels <i class="bi bi-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+        <!-- Step 3 -->
+        <div id="tourStep3" class="tour-step d-none">
+          <div class="display-5 mb-2 text-success"><i class="bi bi-trophy-fill"></i></div>
+          <h5 class="font-serif fw-bold text-ink">3. Duels, Store & Community</h5>
+          <p class="text-ink-muted small">
+            Challenge fellow students in 1v1 Duels, redeem streak shields in the Speed Coins store, and submit campus questions to earn bonus coins!
+          </p>
+          <button type="button" class="btn btn-success fw-bold px-4 py-2 mt-2" onclick="finishTour()">
+            <i class="bi bi-check-circle-fill me-1"></i> Get Started
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTourStep(step) {
+  document.querySelectorAll('.tour-step').forEach(el => el.classList.add('d-none'));
+  const target = document.getElementById('tourStep' + step);
+  if (target) target.classList.remove('d-none');
+}
+
+function finishTour() {
+  localStorage.setItem('apttitudee_tour_completed', 'true');
+  const modalEl = document.getElementById('onboardingTourModal');
+  if (modalEl && typeof bootstrap !== 'undefined') {
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    if (modal) modal.hide();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (!localStorage.getItem('apttitudee_tour_completed')) {
+    setTimeout(() => {
+      const modalEl = document.getElementById('onboardingTourModal');
+      if (modalEl && typeof bootstrap !== 'undefined') {
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+      }
+    }, 1000);
+  }
+});
+</script>
+
+<!-- Submit Placement Question Modal (moved from quiz session) -->
+<div class="modal fade" id="submitQuestionModal" tabindex="-1" aria-labelledby="submitQuestionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content text-ink border rounded-4" style="background-color: var(--surface); border: 2px solid var(--border-strong) !important;">
+      <div class="modal-header border-bottom align-items-start" style="border-color: var(--border) !important;">
+        <div class="min-w-0 pe-2">
+          <h5 class="modal-title font-serif fw-bold d-flex align-items-center gap-1.5 fs-6 mb-1 text-wrap" id="submitQuestionModalLabel">
+            <svg class="exam-icon text-success flex-shrink-0 icon-18"><use href="#icon-rocket"></use></svg>
+            <span>Submit Placement Question</span>
+          </h5>
+          <span class="badge bg-success-subtle text-success border border-success-subtle fs-8">+50 XP &bull; +10 Speed Coins</span>
+        </div>
+        <button type="button" class="btn-close flex-shrink-0" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p class="text-ink-muted small mb-3">
+          Encountered a memorable question in a recent campus placement drive (e.g. TCS NQT, Infosys, Innovature Labs)? Contribute it to our peer community! Once verified by content moderators, you earn <strong>50 XP</strong> and <strong>10 Speed Coins</strong>.
+        </p>
+        <form id="studentQuestionForm" onsubmit="event.preventDefault(); submitStudentQuestion(event);">
+          <div class="row g-2 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Company Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="subCompany" required placeholder="e.g. Innovature Labs, TCS, Infosys" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-bold text-ink">Drive Date</label>
+              <input type="date" class="form-control form-control-sm" id="subDriveDate" value="<?= date('Y-m-d') ?>" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-bold text-ink">Difficulty</label>
+              <select class="form-select form-select-sm" id="subDifficulty" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Topic / Category</label>
+              <input type="text" class="form-control form-control-sm" id="subTopicName" placeholder="e.g. Speed Distance Time, Pointers in C, Syllogisms" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-ink">Question Stem / Problem Statement <span class="text-danger">*</span></label>
+            <textarea class="form-control" id="subQuestionText" rows="3" required placeholder="Type the question as asked in the placement test..." style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-ink">Optional Code Snippet (For Technical Questions)</label>
+            <textarea class="form-control font-mono fs-8" id="subCodeSnippet" rows="2" placeholder="#include <stdio.h>&#10;int main() { ... }" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);"></textarea>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Option A <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="subOptA" required placeholder="Option A" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Option B <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="subOptB" required placeholder="Option B" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Option C</label>
+              <input type="text" class="form-control form-control-sm" id="subOptC" placeholder="Option C" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Option D</label>
+              <input type="text" class="form-control form-control-sm" id="subOptD" placeholder="Option D" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-md-4">
+              <label class="form-label small fw-bold text-ink">Correct Option <span class="text-danger">*</span></label>
+              <select class="form-select form-select-sm" id="subCorrectOpt" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+                <option value="A">Option A</option>
+                <option value="B">Option B</option>
+                <option value="C">Option C</option>
+                <option value="D">Option D</option>
+              </select>
+            </div>
+            <div class="col-md-8">
+              <label class="form-label small fw-bold text-ink">Explanation / Solution Steps</label>
+              <input type="text" class="form-control form-control-sm" id="subExplanation" placeholder="Brief step-by-step logic or derivation..." style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+          </div>
+          <div id="subAlertBox" class="alert d-none py-2 small mb-3" role="alert"></div>
+          <div class="modal-footer border-top p-0 pt-3 d-flex justify-content-between" style="border-color: var(--border) !important;">
+            <button type="button" class="btn btn-outline-gamified btn-sm" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary-gamified btn-sm fw-bold px-4" id="subSubmitBtn">
+              <svg class="exam-icon me-1 icon-14"><use href="#icon-rocket"></use></svg> Submit to Moderation (+50 XP)
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

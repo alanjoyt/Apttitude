@@ -1,5 +1,5 @@
 <?php
-$isQuizSession = isset($_GET['session']) || isset($_GET['subtopic_id']) || (isset($_GET['mode']) && $_GET['mode'] === 'quiz');
+$isQuizSession = isset($_GET['session']) || isset($_GET['subtopic_id']) || isset($_GET['language']) || (isset($_GET['mode']) && $_GET['mode'] === 'quiz');
 
 if (!$isQuizSession):
     // --------------------------------------------------------------------------
@@ -49,12 +49,56 @@ if (!$isQuizSession):
         $practicedDates = $cStmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    // Determine target subtopic for "Continue where you left off" card
+    // Fetch total published questions count per subtopic
+    $totalQuestionsMap = [];
+    try {
+        $tqRows = $db->query("SELECT subtopic_id, COUNT(*) as cnt FROM questions WHERE is_published = 1 GROUP BY subtopic_id")->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($tqRows as $r) {
+            $totalQuestionsMap[$r['subtopic_id']] = (int)$r['cnt'];
+        }
+    } catch (\Throwable $e) {}
+
+    // Fetch user attempted questions count per subtopic (respecting topic restart resets)
+    $userAttemptedMap = [];
+    if ($userId) {
+        try {
+            $attStmt = $db->prepare("
+                SELECT q.subtopic_id, COUNT(DISTINCT q.id) as cnt
+                FROM attempts a
+                JOIN questions q ON a.question_id = q.id
+                LEFT JOIN user_topic_resets r ON r.user_id = a.user_id AND r.subtopic_id = q.subtopic_id
+                WHERE a.user_id = ? 
+                  AND (r.reset_at IS NULL OR a.attempted_at > r.reset_at)
+                  AND q.is_published = 1
+                GROUP BY q.subtopic_id
+            ");
+            $attStmt->execute([$userId]);
+            foreach ($attStmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                $userAttemptedMap[$r['subtopic_id']] = (int)$r['cnt'];
+            }
+        } catch (\Throwable $e) {}
+    }
+
+    // Determine target subtopic for "Continue where you left off" card (prefer uncompleted topics)
     $continueSubtopic = null;
     if (!empty($userProgressMap)) {
         foreach ($subtopics as $sub) {
+            $tQ = $totalQuestionsMap[$sub['id']] ?? 0;
+            $aQ = $userAttemptedMap[$sub['id']] ?? 0;
+            $isDone = ($tQ > 0 && $aQ >= $tQ);
             $p = $userProgressMap[$sub['id']] ?? null;
-            if ($p && (int)$p['current_mastery_level'] < 5) {
+            if (!$isDone && $p && (int)$p['current_mastery_level'] < 5) {
+                $continueSubtopic = $sub;
+                break;
+            }
+        }
+    }
+    if (!$continueSubtopic && !empty($subtopics)) {
+        foreach ($subtopics as $sub) {
+            $tQ = $totalQuestionsMap[$sub['id']] ?? 0;
+            $aQ = $userAttemptedMap[$sub['id']] ?? 0;
+            $isDone = ($tQ > 0 && $aQ >= $tQ);
+            if (!$isDone) {
                 $continueSubtopic = $sub;
                 break;
             }
@@ -99,7 +143,7 @@ if (!$isQuizSession):
         <p class="text-ink-muted small mb-0">Master topic-wise aptitude modules with adaptive exam hall practice.</p>
       </div>
       <div class="d-none d-md-flex align-items-center gap-2">
-        <span class="badge-stamp-sm"><svg class="exam-icon me-1" style="width:12px;height:12px;"><use href="#icon-award"></use></svg> EXAM HALL PREP</span>
+        <span class="badge-stamp-sm"><svg class="exam-icon me-1 icon-12"><use href="#icon-award"></use></svg> EXAM HALL PREP</span>
       </div>
     </div>
   </div>
@@ -120,7 +164,7 @@ if (!$isQuizSession):
     <div class="continue-target-side d-flex flex-column justify-content-between gap-3">
       <div>
         <span class="stamp-badge py-0.5 px-2.5 mb-1.5 d-inline-block fs-8">
-          <svg class="exam-icon me-1" style="width:12px;height:12px;"><use href="#icon-bookmark"></use></svg> ACTIVE SYLLABUS TARGET
+          <svg class="exam-icon me-1 icon-12"><use href="#icon-bookmark"></use></svg> ACTIVE SYLLABUS TARGET
         </span>
         <h2 class="font-serif fw-bold text-ink mb-1 fs-4 text-truncate">
           <?= htmlspecialchars($continueSubtopic['name'] ?? 'Speed, Distance & Time') ?>
@@ -139,7 +183,7 @@ if (!$isQuizSession):
       <!-- Single Primary Button on the Screen -->
       <div>
         <a href="index.php?action=practice&subtopic_id=<?= $continueSubtopic['id'] ?? 1 ?>&session=1" class="btn btn-primary-gamified px-4 py-2.5 fw-bold d-inline-flex align-items-center" id="continuePracticeBtn">
-          Continue Practice <svg class="exam-icon ms-1" style="width:14px;height:14px;"><use href="#icon-arrow-right"></use></svg>
+          Continue Practice <svg class="exam-icon ms-1 icon-14"><use href="#icon-arrow-right"></use></svg>
         </a>
       </div>
     </div>
@@ -147,10 +191,10 @@ if (!$isQuizSession):
     <!-- 7-Day Paper Calendar Strip (Stationery calendar, real user attempts or guest prompt) -->
     <div class="syllabus-calendar-strip">
       <div class="d-flex align-items-center justify-content-between gap-2 mb-2 w-100">
-        <span class="fw-bold small text-ink"><svg class="exam-icon me-1" style="width:14px;height:14px;"><use href="#icon-clock"></use></svg> 7-Day Practice Calendar</span>
+        <span class="fw-bold small text-ink"><svg class="exam-icon me-1 icon-14"><use href="#icon-clock"></use></svg> 7-Day Practice Calendar</span>
         <?php if ($userId): ?>
           <span class="badge badge-stamp-sm" style="background-color: var(--surface-bg); color: var(--surface-text); border: 1px solid var(--border-strong);">
-            <svg class="exam-icon text-danger me-1" style="width:12px;height:12px;"><use href="#icon-flame"></use></svg><?= $userData['streak'] ?>d Streak
+            <svg class="exam-icon text-danger me-1 icon-12"><use href="#icon-flame"></use></svg><?= $userData['streak'] ?>d Streak
           </span>
         <?php else: ?>
           <span class="badge badge-stamp-sm" style="background-color: var(--surface-bg); color: var(--ink-muted); border: 1px solid var(--border-strong);">
@@ -195,7 +239,7 @@ if (!$isQuizSession):
   <div class="syllabus-filter-bar">
     <!-- Single Continuous Live Search Input Box (No double borders) -->
     <div class="syllabus-search-box flex-grow-1" style="min-width: 220px; max-width: 480px;">
-      <svg class="exam-icon text-ink-muted flex-shrink-0" style="width:16px;height:16px;"><use href="#icon-search"></use></svg>
+      <svg class="exam-icon text-ink-muted flex-shrink-0 icon-16"><use href="#icon-search"></use></svg>
       <input type="text" id="syllabusSearchInput" placeholder="Filter topics (e.g. Profit, Blood Relations, C++)..." aria-label="Filter syllabus topics">
     </div>
 
@@ -203,7 +247,7 @@ if (!$isQuizSession):
     <div class="d-flex align-items-center gap-2 flex-wrap">
       <div class="dropdown">
         <button class="btn btn-outline-gamified btn-sm dropdown-toggle py-2 px-3 fw-bold" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="syllabusDiffDropdownBtn">
-          <svg class="exam-icon me-1" style="width:14px;height:14px;"><use href="#icon-sliders"></use></svg> Mode: <span id="syllabusDiffText">Adaptive</span>
+          <svg class="exam-icon me-1 icon-14"><use href="#icon-sliders"></use></svg> Mode: <span id="syllabusDiffText">Adaptive</span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end shadow p-1 fs-7">
           <li><a class="dropdown-item py-1.5" href="#" onclick="setSyllabusDifficulty('adaptive')">Adaptive Scaling</a></li>
@@ -213,7 +257,7 @@ if (!$isQuizSession):
       </div>
 
       <a href="index.php?action=skill_tree" class="link-tertiary-exam small fw-bold d-none d-sm-inline-flex align-items-center gap-1">
-        <svg class="exam-icon" style="width:14px;height:14px;"><use href="#icon-diagram-3"></use></svg> Node Map
+        <svg class="exam-icon icon-14"><use href="#icon-diagram-3"></use></svg> Node Map
       </a>
     </div>
   </div>
@@ -230,7 +274,10 @@ if (!$isQuizSession):
 
       $masteredCount = 0;
       foreach ($groupSubtopics as $s) {
-          if (isset($userProgressMap[$s['id']]) && (int)$userProgressMap[$s['id']]['current_mastery_level'] >= 5) {
+          $tQ = $totalQuestionsMap[$s['id']] ?? 0;
+          $aQ = $userAttemptedMap[$s['id']] ?? 0;
+          $isDone = ($tQ > 0 && $aQ >= $tQ);
+          if ($isDone || (isset($userProgressMap[$s['id']]) && (int)$userProgressMap[$s['id']]['current_mastery_level'] >= 5)) {
               $masteredCount++;
           }
       }
@@ -254,7 +301,7 @@ if (!$isQuizSession):
                 <span class="badge badge-stamp-sm syllabus-desktop-badge">
                   <?= $topicBadgeLabel ?>
                 </span>
-                <svg class="exam-icon syllabus-chevron" style="width:16px;height:16px;" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
+                <svg class="exam-icon syllabus-chevron icon-16" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
               </span>
             </button>
           </h2>
@@ -274,7 +321,15 @@ if (!$isQuizSession):
                   $correct = $prog ? (int)$prog['total_correct'] : 0;
                   $acc = $attempted > 0 ? round(($correct / $attempted) * 100) : null;
                   
-                  if ($mastery >= 5) {
+                  $totalQ = $totalQuestionsMap[$sub['id']] ?? 0;
+                  $attemptedQ = $userAttemptedMap[$sub['id']] ?? 0;
+                  $isCompleted = ($totalQ > 0 && $attemptedQ >= $totalQ);
+
+                  if ($isCompleted) {
+                      $statusClass = 'badge-status-completed';
+                      $statusIcon = '#icon-shield-check';
+                      $statusText = 'Completed';
+                  } elseif ($mastery >= 5) {
                       $statusClass = 'badge-status-mastered';
                       $statusIcon = '#icon-shield-check';
                       $statusText = 'Mastered';
@@ -288,27 +343,32 @@ if (!$isQuizSession):
                       $statusText = 'Ready';
                   }
               ?>
-                <a href="index.php?action=practice&subtopic_id=<?= $sub['id'] ?>&session=1" class="syllabus-topic-row" data-topic-name="<?= strtolower(htmlspecialchars($sub['name'])) ?>" aria-label="Practice <?= htmlspecialchars($sub['name']) ?>, <?= $statusText ?>" style="--row-idx: <?= $subIdx ?>;">
+                <a href="index.php?action=practice&subtopic_id=<?= $sub['id'] ?>&session=1" class="syllabus-topic-row <?= $isCompleted ? 'is-completed' : '' ?>" data-topic-name="<?= strtolower(htmlspecialchars($sub['name'])) ?>" aria-label="Practice <?= htmlspecialchars($sub['name']) ?>, <?= $statusText ?>" style="--row-idx: <?= $subIdx ?>;">
                   <div class="topic-row-info">
                     <span class="topic-row-name text-ink fw-bold d-block">
                       <?= htmlspecialchars($sub['name']) ?>
                     </span>
                     <div class="topic-row-meta">
                       <span class="badge-status-tag <?= $statusClass ?>">
-                        <svg class="exam-icon" style="width:11px;height:11px;"><use href="<?= $statusIcon ?>"></use></svg> <?= $statusText ?>
+                        <svg class="exam-icon icon-11"><use href="<?= $statusIcon ?>"></use></svg> <?= $statusText ?>
                       </span>
+                      <?php if ($isCompleted): ?>
+                        <button type="button" class="btn btn-restart-topic" onclick="event.preventDefault(); event.stopPropagation(); handleRestartTopic(<?= $sub['id'] ?>, '<?= addslashes(htmlspecialchars($sub['name'])) ?>')" title="Restart <?= htmlspecialchars($sub['name']) ?> from question 1">
+                          <svg class="exam-icon icon-11 me-0.5"><use href="#icon-arrow-repeat"></use></svg> Restart
+                        </button>
+                      <?php endif; ?>
                     </div>
                   </div>
 
                   <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                    <div class="topic-omr-progress" title="Mastery Level <?= $mastery ?>/5" aria-hidden="true">
+                    <div class="topic-omr-progress" title="<?= $isCompleted ? 'All Questions Completed!' : 'Mastery Level ' . $mastery . '/5' ?>" aria-hidden="true">
                       <?php for ($i = 1; $i <= 5; $i++): ?>
-                        <span class="omr-level-bubble <?= $i <= $mastery ? 'filled' : '' ?>"></span>
+                        <span class="omr-level-bubble <?= ($isCompleted || $i <= $mastery) ? 'filled' : '' ?>"></span>
                       <?php endfor; ?>
                     </div>
 
                     <span class="topic-accuracy-mono">
-                      <?= $acc !== null ? $acc . '%' : '--%' ?>
+                      <?= $isCompleted && $acc === null ? '100%' : ($acc !== null ? $acc . '%' : '--%') ?>
                     </span>
 
                     <i class="bi bi-chevron-right text-ink-muted small" aria-hidden="true"></i>
@@ -331,7 +391,10 @@ if (!$isQuizSession):
       $techBadgeLabel = "$techCount Programming Languages";
       $techMasteredCount = 0;
       foreach ($techSubtopics as $s) {
-          if (isset($userProgressMap[$s['id']]) && (int)$userProgressMap[$s['id']]['current_mastery_level'] >= 5) {
+          $tQ = $totalQuestionsMap[$s['id']] ?? 0;
+          $aQ = $userAttemptedMap[$s['id']] ?? 0;
+          $isDone = ($tQ > 0 && $aQ >= $tQ);
+          if ($isDone || (isset($userProgressMap[$s['id']]) && (int)$userProgressMap[$s['id']]['current_mastery_level'] >= 5)) {
               $techMasteredCount++;
           }
       }
@@ -343,7 +406,7 @@ if (!$isQuizSession):
           <button type="button" class="syllabus-group-header-btn" id="syllabusHeaderBtn_<?= $techTopic['id'] ?>" aria-expanded="<?= $isTechOpen ? 'true' : 'false' ?>" aria-controls="syllabusPanel_<?= $techTopic['id'] ?>" onclick="toggleSyllabusGroup(<?= $techTopic['id'] ?>)">
             <span class="syllabus-header-main">
               <span class="syllabus-group-title text-ink">
-                <svg class="exam-icon me-1 text-marker" style="width:16px;height:16px;"><use href="#icon-terminal"></use></svg>
+                <svg class="exam-icon me-1 text-marker icon-16"><use href="#icon-terminal"></use></svg>
                 <span><?= htmlspecialchars($techTopic['name']) ?></span>
               </span>
               <span class="syllabus-mobile-summary text-ink-muted">
@@ -354,7 +417,7 @@ if (!$isQuizSession):
               <span class="badge badge-stamp-sm syllabus-desktop-badge">
                 <?= $techBadgeLabel ?>
               </span>
-              <svg class="exam-icon syllabus-chevron" style="width:16px;height:16px;" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
+              <svg class="exam-icon syllabus-chevron icon-16" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
             </span>
           </button>
         </h2>
@@ -373,7 +436,15 @@ if (!$isQuizSession):
                 $correct = $prog ? (int)$prog['total_correct'] : 0;
                 $acc = $attempted > 0 ? round(($correct / $attempted) * 100) : null;
                 
-                if ($mastery >= 5) {
+                $totalQ = $totalQuestionsMap[$sub['id']] ?? 0;
+                $attemptedQ = $userAttemptedMap[$sub['id']] ?? 0;
+                $isCompleted = ($totalQ > 0 && $attemptedQ >= $totalQ);
+
+                if ($isCompleted) {
+                    $statusClass = 'badge-status-completed';
+                    $statusIcon = '#icon-shield-check';
+                    $statusText = 'Completed';
+                } elseif ($mastery >= 5) {
                     $statusClass = 'badge-status-mastered';
                     $statusIcon = '#icon-shield-check';
                     $statusText = 'Mastered';
@@ -387,27 +458,32 @@ if (!$isQuizSession):
                     $statusText = 'Ready';
                 }
             ?>
-              <a href="index.php?action=practice&subtopic_id=<?= $sub['id'] ?>&session=1" class="syllabus-topic-row" data-topic-name="<?= strtolower(htmlspecialchars($sub['name'])) ?>" aria-label="Practice <?= htmlspecialchars($sub['name']) ?>, <?= $statusText ?>" style="--row-idx: <?= $techIdx ?>;">
+              <a href="index.php?action=practice&subtopic_id=<?= $sub['id'] ?>&session=1" class="syllabus-topic-row <?= $isCompleted ? 'is-completed' : '' ?>" data-topic-name="<?= strtolower(htmlspecialchars($sub['name'])) ?>" aria-label="Practice <?= htmlspecialchars($sub['name']) ?>, <?= $statusText ?>" style="--row-idx: <?= $techIdx ?>;">
                 <div class="topic-row-info">
                   <span class="topic-row-name text-ink fw-bold d-block">
                     <?= htmlspecialchars($sub['name']) ?>
                   </span>
                   <div class="topic-row-meta">
                     <span class="badge-status-tag <?= $statusClass ?>">
-                      <svg class="exam-icon" style="width:11px;height:11px;"><use href="<?= $statusIcon ?>"></use></svg> <?= $statusText ?>
+                      <svg class="exam-icon icon-11"><use href="<?= $statusIcon ?>"></use></svg> <?= $statusText ?>
                     </span>
+                    <?php if ($isCompleted): ?>
+                      <button type="button" class="btn btn-restart-topic" onclick="event.preventDefault(); event.stopPropagation(); handleRestartTopic(<?= $sub['id'] ?>, '<?= addslashes(htmlspecialchars($sub['name'])) ?>')" title="Restart <?= htmlspecialchars($sub['name']) ?> from question 1">
+                        <svg class="exam-icon icon-11 me-0.5"><use href="#icon-arrow-repeat"></use></svg> Restart
+                      </button>
+                    <?php endif; ?>
                   </div>
                 </div>
 
                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                  <div class="topic-omr-progress" title="Mastery Level <?= $mastery ?>/5" aria-hidden="true">
+                  <div class="topic-omr-progress" title="<?= $isCompleted ? 'All Questions Completed!' : 'Mastery Level ' . $mastery . '/5' ?>" aria-hidden="true">
                     <?php for ($i = 1; $i <= 5; $i++): ?>
-                      <span class="omr-level-bubble <?= $i <= $mastery ? 'filled' : '' ?>"></span>
+                      <span class="omr-level-bubble <?= ($isCompleted || $i <= $mastery) ? 'filled' : '' ?>"></span>
                     <?php endfor; ?>
                   </div>
 
                   <span class="topic-accuracy-mono">
-                    <?= $acc !== null ? $acc . '%' : '--%' ?>
+                    <?= $isCompleted && $acc === null ? '100%' : ($acc !== null ? $acc . '%' : '--%') ?>
                   </span>
 
                   <i class="bi bi-chevron-right text-ink-muted small" aria-hidden="true"></i>
@@ -648,9 +724,83 @@ function setSyllabusDifficulty(mode) {
         PracticeEngine.difficultyMode = mode;
     }
 }
+
+function handleRestartTopic(subtopicId, subtopicName) {
+    if (!confirm(`Restart "${subtopicName}"?\n\nAll questions in this topic will be available to practice fresh from question 1 without repeating questions.`)) {
+        return;
+    }
+
+    const csrfToken = window.CSRF_TOKEN || (document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '');
+
+    fetch('index.php?action=api_restart_topic', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken
+        },
+        body: JSON.stringify({
+            subtopic_id: subtopicId,
+            csrf_token: csrfToken
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.status === 'success') {
+            window.location.href = `index.php?action=practice&subtopic_id=${subtopicId}&session=1`;
+        } else {
+            alert(data.message || 'Could not restart topic');
+        }
+    })
+    .catch(err => {
+        console.error('Restart failed', err);
+        window.location.href = `index.php?action=practice&subtopic_id=${subtopicId}&session=1&reset=1`;
+    });
+}
 </script>
 
+<style>
+.badge-status-completed {
+  background-color: var(--success-bg, #EDF7F0);
+  color: var(--success-text, #1A6338);
+  border-color: var(--success-border, #2E8B57);
+}
+.btn-restart-topic {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-sm, 4px);
+  border: 1.5px solid var(--marker-orange, #C2410C);
+  background-color: var(--surface, #FCFAF6);
+  color: var(--marker-orange, #C2410C);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.2;
+  text-decoration: none;
+  position: relative;
+  z-index: 2;
+}
+.btn-restart-topic:hover {
+  background-color: var(--marker-orange, #C2410C);
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
+}
+.btn-restart-topic:active {
+  transform: translateY(0);
+}
+.syllabus-topic-row.is-completed {
+  background-color: rgba(46, 139, 87, 0.04);
+}
+</style>
+
 <?php else: ?>
+  <main id="practiceMain" class="practice-main-content" role="main">
+  <h1 class="visually-hidden">Adaptive Practice Session</h1>
   <!-- --------------------------------------------------------------------------
        PAGE 3: QUESTION / QUIZ TEST-TAKING SCREEN
        -------------------------------------------------------------------------- -->
@@ -682,6 +832,18 @@ function setSyllabusDifficulty(mode) {
           <span class="small text-ink-muted d-inline-flex align-items-center gap-1" style="font-size: 0.75rem;">
             <i class="bi bi-shield-check text-success"></i> Auto-saved
           </span>
+        </div>
+      </div>
+
+      <!-- Interrupted Quiz Resume Banner -->
+      <div id="interruptedResumeBanner" class="alert alert-warning d-none align-items-center justify-content-between p-2.5 mb-3 rounded-3 shadow-sm border border-warning" role="alert">
+        <div class="d-flex align-items-center gap-2 small">
+          <i class="bi bi-arrow-repeat text-warning fs-5 flex-shrink-0"></i>
+          <span>Unfinished session: <strong id="resumeSubtopicLabel">Previous topic</strong></span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <button type="button" class="btn btn-sm btn-primary-gamified py-0.5 px-2.5 fs-8" onclick="PracticeEngine.resumeInterruptedSession()">Resume</button>
+          <button type="button" class="btn btn-sm btn-link text-muted p-0" onclick="PracticeEngine.dismissInterruptedSession()" aria-label="Dismiss"><i class="bi bi-x-lg"></i></button>
         </div>
       </div>
 

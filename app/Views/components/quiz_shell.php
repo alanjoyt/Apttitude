@@ -186,7 +186,7 @@ $isTech = ($quizContext ?? '') === 'technical';
       <div class="confidence-container mb-3" id="techConfidenceBox">
         <label class="small fw-bold d-block text-center mb-1.5 text-uppercase tracking-wider text-ink-muted" style="font-size: 0.72rem;">Confidence Level (Optional)</label>
         <div class="confidence-group-3col">
-          <button type="button" class="confidence-pill-col active" data-confidence="sure" aria-label="Sure: +5 XP if correct, -3 XP if incorrect">
+          <button type="button" class="confidence-pill-col active" data-confidence="sure" aria-label="Sure +5 / -5 XP">
             <div class="conf-btn-content">
               <span class="conf-label-row d-inline-flex align-items-center justify-content-center gap-1">
                 <svg class="exam-icon icon-13"><use href="#icon-target"></use></svg>
@@ -195,7 +195,7 @@ $isTech = ($quizContext ?? '') === 'technical';
               <span class="conf-xp-sub">+5 / -5 XP</span>
             </div>
           </button>
-          <button type="button" class="confidence-pill-col" data-confidence="not_sure" aria-label="Unsure: standard XP">
+          <button type="button" class="confidence-pill-col" data-confidence="not_sure" aria-label="Unsure 0 XP risk">
             <div class="conf-btn-content">
               <span class="conf-label-row d-inline-flex align-items-center justify-content-center gap-1">
                 <svg class="exam-icon icon-13"><use href="#icon-help"></use></svg>
@@ -204,7 +204,7 @@ $isTech = ($quizContext ?? '') === 'technical';
               <span class="conf-xp-sub">0 XP risk</span>
             </div>
           </button>
-          <button type="button" class="confidence-pill-col" data-confidence="guessing" aria-label="Guess: standard XP">
+          <button type="button" class="confidence-pill-col" data-confidence="guessing" aria-label="Guess 0 XP risk">
             <div class="conf-btn-content">
               <span class="conf-label-row d-inline-flex align-items-center justify-content-center gap-1">
                 <svg class="exam-icon icon-13"><use href="#icon-dice"></use></svg>
@@ -285,7 +285,7 @@ $isTech = ($quizContext ?? '') === 'technical';
       <!-- Secondary Utilities (Hint, Report, Save, Exit) -->
       <div class="quiz-utility-tools d-flex align-items-center gap-1 gap-sm-1.5">
         <!-- 1. Hint Button: Lifeline (Eliminate 1 Wrong Option) -->
-        <button type="button" class="btn-quiz-util" id="formulaHintBtn" onclick="openQuizHint()" title="Eliminate 1 Wrong Option (5 Speed Coins)" aria-label="Eliminate 1 Wrong Option">
+        <button type="button" class="btn-quiz-util" id="formulaHintBtn" onclick="openQuizHint()" title="Eliminate 1 Wrong Option (5 Speed Coins)" aria-label="Hint (5¢) - Eliminate 1 Wrong Option">
           <svg class="exam-icon text-warning icon-16"><use href="#icon-lightbulb"></use></svg>
           <span class="btn-quiz-util-label">Hint (5¢)</span>
         </button>
