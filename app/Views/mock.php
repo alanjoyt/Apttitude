@@ -412,6 +412,11 @@ function handleTabSwitchViolation() {
         if (!tabSwitchSkipped.includes(currentQ.id)) {
             tabSwitchSkipped.push(currentQ.id);
         }
+        if (currentMockSessionId) {
+            try {
+                sessionStorage.setItem('tab_switches_' + currentMockSessionId, JSON.stringify(tabSwitchSkipped));
+            } catch(e) {}
+        }
         delete userAnswers[currentQ.id];
     }
 
@@ -558,7 +563,13 @@ async function fetchMockTest() {
             currentIndex = 0;
             userAnswers = (data.saved_answers && typeof data.saved_answers === 'object') ? Object.assign({}, data.saved_answers) : {};
             questionTimes = {};
-            tabSwitchSkipped = [];
+            let storedSwitches = [];
+            if (currentMockSessionId) {
+                try {
+                    storedSwitches = JSON.parse(sessionStorage.getItem('tab_switches_' + currentMockSessionId) || '[]');
+                } catch(e) {}
+            }
+            tabSwitchSkipped = Array.isArray(storedSwitches) ? storedSwitches : [];
             testStartTime = Date.now();
             activeQuestionStartTime = Date.now();
 
@@ -663,6 +674,12 @@ function renderQuestion() {
         }
 
         btn.onclick = () => {
+            if (tabSwitchSkipped.includes(q.id)) {
+                if (window.showToast) {
+                    showToast('This question was forfeited due to tab switch violation.', 'warning');
+                }
+                return;
+            }
             userAnswers[q.id] = opt;
             document.querySelectorAll('.mock-option').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');

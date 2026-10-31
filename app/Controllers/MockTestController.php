@@ -472,7 +472,15 @@ class MockTestController {
 
             $expectedCorrect = $sessionMockMap[$qId]['correct_option'] ?? strtoupper(trim($q['correct_option'] ?: 'A'));
 
-            if ($userAns !== null) {
+            $isTabSwitched = in_array($qId, $tabSwitchSkipped, true) || (($input['skip_reasons'][$qId] ?? '') === 'tab_switch');
+
+            if ($isTabSwitched) {
+                $status = 'skipped';
+                $skipReason = 'tab_switch';
+                $isCorrect = false;
+                $userAns = null;
+                $skippedCount++;
+            } elseif ($userAns !== null) {
                 if ($userAns === $expectedCorrect) {
                     $isCorrect = true;
                     $status = 'correct';
