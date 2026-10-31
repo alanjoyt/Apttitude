@@ -14,10 +14,10 @@ class QuestionParser {
         $sourceTag = null;
         $text = trim($rawText);
 
-        // 1. Extract leading bracket prefix e.g. [Innovature Labs Logic PYQ]
+        // 1. Extract leading bracket prefix e.g. [Innovature Labs Reasoning Style Practice]
         if (preg_match('/^\[([^\]]+)\]\s*/u', $text, $matches)) {
             $rawTag = trim($matches[1]);
-            // Format "Innovature Labs Logic PYQ" -> "Innovature Labs · Logic PYQ"
+            // Format "Innovature Labs Reasoning Style Practice" -> "Innovature Labs · Reasoning Style Practice"
             if (preg_match('/^(Innovature\s+Labs)\s+(.*)$/i', $rawTag, $tagParts)) {
                 $sourceTag = $tagParts[1] . ' · ' . $tagParts[2];
             } else {
@@ -26,62 +26,18 @@ class QuestionParser {
             $text = trim(substr($text, strlen($matches[0])));
         }
 
-        // 2. Check length and sentence count
-        $len = mb_strlen($text);
-
-        // Temporarily protect abbreviations and decimals
-        $protected = $text;
-        $protected = preg_replace('/(\d+)\.(\d+)/', '$1__DOT__$2', $protected);
-        $protected = preg_replace('/\b(e\.g|i\.e|vs|mr|ms|dr|fig|approx|no|p|q|r|s|t)\./i', '$1__ABBR__', $protected);
-
-        // Split on punctuation followed by space and capital letter or quote or backtick
-        $rawSentences = preg_split('/(?<=[.?!])\s+(?=[A-Z0-9"\'`])/u', $protected);
-        $sentences = [];
-        if (is_array($rawSentences)) {
-            foreach ($rawSentences as $s) {
-                $s = str_replace('__DOT__', '.', $s);
-                $s = str_replace('__ABBR__', '.', $s);
-                $s = trim($s);
-                if ($s !== '') {
-                    $sentences[] = $s;
-                }
-            }
-        }
-
-        $sentenceCount = count($sentences);
-
-        // If longer than ~200 characters or >=3 sentences, split into setup and prompt
-        if (($len > 200 || $sentenceCount >= 3) && $sentenceCount >= 2) {
-            $lastSentence = $sentences[$sentenceCount - 1];
-            $isPrompt = false;
-
-            if (preg_match('/\?$/u', $lastSentence)) {
-                $isPrompt = true;
-            } elseif (preg_match('/^(Which|What|How|Find|Determine|Calculate|Identify|Select|Choose)\b/i', $lastSentence)) {
-                $isPrompt = true;
-            }
-
-            if ($isPrompt) {
-                $setupSentences = array_slice($sentences, 0, $sentenceCount - 1);
-                return [
-                    'source_tag' => $sourceTag,
-                    'setup' => implode(" ", $setupSentences),
-                    'setup_sentences' => $setupSentences,
-                    'prompt' => $lastSentence,
-                    'full_text' => $text,
-                    'is_split' => true
-                ];
-            }
-        }
-
-        // Fallback: show text unchanged as one paragraph
+        // Full clean question text is ALWAYS preserved completely without losing premise or puzzle rules
         return [
             'source_tag' => $sourceTag,
+            'sourceTag' => $sourceTag,
             'setup' => null,
             'setup_sentences' => [],
+            'setupSentences' => [],
             'prompt' => $text,
             'full_text' => $text,
-            'is_split' => false
+            'fullText' => $text,
+            'is_split' => false,
+            'isSplit' => false
         ];
     }
 
@@ -119,11 +75,22 @@ class QuestionParser {
     }
 
     /**
-     * Safe inline code formatter: escapes HTML first, then converts `backticks` to <code>.
+     * Safe markdown & inline code formatter:
+     * Escapes HTML first to prevent XSS, then converts **bold**, *italic*, and `code`.
      */
     public static function formatInlineCode(?string $text): string {
+        return self::renderMarkdown($text);
+    }
+
+    public static function renderMarkdown(?string $text): string {
         if ($text === null || $text === '') return '';
         $escaped = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
-        return preg_replace('/`([^`]+)`/', '<code class="inline-code">$1</code>', $escaped);
+        // Convert `inline code`
+        $rendered = preg_replace('/`([^`]+)`/', '<code class="inline-code">$1</code>', $escaped);
+        // Convert **bold**
+        $rendered = preg_replace('/\*\*([^*]+)\*\*/', '<strong class="md-bold">$1</strong>', $rendered);
+        // Convert *italic*
+        $rendered = preg_replace('/(?<!\*)\*([^*]+)\*(?!\*)/', '<em class="md-italic">$1</em>', $rendered);
+        return $rendered;
     }
 }
