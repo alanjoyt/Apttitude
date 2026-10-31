@@ -238,4 +238,24 @@ class DuelController {
         echo json_encode($res);
         exit;
     }
+
+    public static function forfeitDuelJSON(): void {
+        header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            echo json_encode(['status' => 'error', 'message' => 'User not authenticated']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $duelId = (int)($input['duel_id'] ?? 0);
+
+        $res = DuelService::forfeitDuel($userId, $duelId);
+        echo json_encode($res);
+        exit;
+    }
 }

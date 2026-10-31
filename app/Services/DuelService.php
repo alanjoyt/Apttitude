@@ -388,4 +388,73 @@ class DuelService {
 
         return ['status' => 'success', 'message' => 'Duel score submitted successfully!'];
     }
+
+    /**
+     * Forfeit duel by leaving, closing tab, or resigning
+     * Awards victory to the opponent and settles wager pot
+     */
+    public static function forfeitDuel(int $userId, int $duelId): array {
+        $db = Database::getConnection();
+        $cfg = GamificationEngine::getConfig();
+
+        $stmt = $db->prepare("SELECT * FROM duels WHERE id = ?");
+        $stmt->execute([$duelId]);
+        $duel = $stmt->fetch();
+
+        if (!$duel) {
+            return ['status' => 'error', 'message' => 'Duel not found!'];
+        }
+
+        if ($duel['status'] === 'completed' || $duel['status'] === 'cancelled') {
+            return ['status' => 'error', 'message' => 'Duel is already completed or cancelled!'];
+        }
+
+        $isChallenger = ($duel['challenger_id'] == $userId);
+        $isOpponent = ($duel['opponent_id'] == $userId);
+
+        if (!$isChallenger && !$isOpponent) {
+            return ['status' => 'error', 'message' => 'You are not a participant in this duel!'];
+        }
+
+        // If duel was waiting in lobby and challenger leaves: cancel and refund
+        if ($duel['status'] === 'waiting') {
+            $db->prepare("UPDATE duels SET status = 'cancelled' WHERE id = ?")->execute([$duelId]);
+            $wager = (int)$duel['wager_coins'];
+            if ($wager > 0) {
+                WalletService::addCoins($userId, $wager, 'admin_grant', 'Duel Challenge Cancelled Refund');
+            }
+            return ['status' => 'success', 'message' => 'Duel challenge cancelled and wager refunded.'];
+        }
+
+        // Active Duel forfeit: Opponent is awarded victory!
+        $winnerId = $isChallenger ? $duel['opponent_id'] : $duel['challenger_id'];
+        $wager = (int)$duel['wager_coins'];
+        $totalPot = $wager * 2;
+
+        $upStmt = $db->prepare("
+            UPDATE duels 
+            SET status = 'completed', 
+                winner_id = ?, 
+                challenger_score = CASE WHEN challenger_id = ? THEN 0 ELSE COALESCE(challenger_score, 10) END,
+                opponent_score = CASE WHEN opponent_id = ? THEN 0 ELSE COALESCE(opponent_score, 10) END
+            WHERE id = ? AND status = 'active'
+        ");
+        $upStmt->execute([$winnerId, $userId, $userId, $duelId]);
+
+        if ($upStmt->rowCount() === 1 && $winnerId && !(int)$duel['is_bot']) {
+            $rakePercent = (float)($cfg['duels']['pvp_rake_percent'] ?? 5);
+            $rakeAmount = (int)round($totalPot * ($rakePercent / 100));
+            $netWinnings = max(1, $totalPot - $rakeAmount);
+
+            WalletService::addCoins(
+                $winnerId,
+                $netWinnings,
+                'mock_perfect',
+                "1v1 Quiz Duel Forfeit Victory Pot ({$netWinnings} coins after {$rakePercent}% rake: {$rakeAmount} coins)"
+            );
+            User::addXP($winnerId, 50);
+        }
+
+        return ['status' => 'success', 'message' => 'Duel forfeited. Victory awarded to opponent.'];
+    }
 }

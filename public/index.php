@@ -164,6 +164,11 @@ switch ($action) {
         CsrfService::verify();
         DuelController::submitDuelJSON();
         break;
+
+    case 'api_forfeit_duel':
+        CsrfService::verify();
+        DuelController::forfeitDuelJSON();
+        break;
     case 'api_add_friend':
         CsrfService::verify();
         SocialController::addFriendJSON();
