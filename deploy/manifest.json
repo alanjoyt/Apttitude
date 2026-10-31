@@ -1,11 +1,11 @@
 {
     "project": "Apttitudee",
     "version": "2.5.0-predeploy",
-    "generated_at": "2026-10-31T17:40:56+00:00",
-    "environment_target": "InfinityFree / Production LAMP (sql210.infinityfree.com / if0_43270211_apttitudee)",
+    "generated_at": "2026-10-31T18:07:40+00:00",
+    "environment_target": "Production LAMP / MariaDB (apttitudee.xo.je / staging: apttitudee.rf.gd)",
     "domain_target": "apttitudee.xo.je",
-    "total_files": 90,
-    "total_bytes": 2097672,
+    "total_files": 93,
+    "total_bytes": 2124948,
     "categories": {
         "root": {
             "count": 1,
@@ -13,23 +13,27 @@
         },
         "app": {
             "count": 59,
-            "bytes": 966709
+            "bytes": 970361
         },
         "config": {
             "count": 3,
             "bytes": 38464
         },
-        "deploy/migrations": {
+        "deploy": {
             "count": 2,
-            "bytes": 575517
+            "bytes": 2686
+        },
+        "deploy/migrations": {
+            "count": 3,
+            "bytes": 591870
         },
         "deploy/scripts": {
             "count": 3,
-            "bytes": 4984
+            "bytes": 4853
         },
         "public": {
             "count": 22,
-            "bytes": 508878
+            "bytes": 513594
         }
     },
     "files": [
@@ -65,26 +69,26 @@
         },
         {
             "path": "app/Controllers/DuelController.php",
-            "size_bytes": 9999,
-            "sha256": "c7992581a2c6d599938903573705eced8b5b17e963f5dec728b9716e96040c31",
+            "size_bytes": 10621,
+            "sha256": "b49b493ae1d872a1d4cb6061d46db3065ffd40031845ae07dae06a610bee2c45",
             "category": "app"
         },
         {
             "path": "app/Controllers/MockTestController.php",
-            "size_bytes": 43438,
-            "sha256": "2bb396b55a279fcea85eb37ad0c6ddfa2ff81365dffecf023ec812e4a2e98ab7",
+            "size_bytes": 43644,
+            "sha256": "f00e66fd74865f11eec5a617a70bef7e926c4ef10af303f4fc68ae145a63bde2",
             "category": "app"
         },
         {
             "path": "app/Controllers/PracticeController.php",
-            "size_bytes": 44086,
-            "sha256": "68c09471f07e93c8401520fb12e971969f909b0be46b7698956db30d3e1a4428",
+            "size_bytes": 44122,
+            "sha256": "5580c2b646b6f95127b2fa7affaa3a4fca8be064ee8e3abf9308c92e48874660",
             "category": "app"
         },
         {
             "path": "app/Controllers/ProfileController.php",
-            "size_bytes": 4975,
-            "sha256": "2767908cf86558094000e1b8fef608387f6afeceb7deb08baa06e0fa9bf9c307",
+            "size_bytes": 4701,
+            "sha256": "f89241342ab7474420c495fd319a882084037e8b5d3ec5289cd724a6b6d5054b",
             "category": "app"
         },
         {
@@ -101,8 +105,8 @@
         },
         {
             "path": "app/Controllers/StoreController.php",
-            "size_bytes": 5577,
-            "sha256": "26d3dfee808f6f4db8e725fda1fcb63264a2cfa6db88a2268b20f4f9da02a459",
+            "size_bytes": 5541,
+            "sha256": "36a52623e48cd2305e9a835fd5a3f924c261bc293bdbe9c6635890d5261f3bb0",
             "category": "app"
         },
         {
@@ -155,8 +159,8 @@
         },
         {
             "path": "app/Services/DuelService.php",
-            "size_bytes": 19155,
-            "sha256": "6c360d59c1cb1874e6f4ff2c317040179d022dda3f18dc62485ca220ab196781",
+            "size_bytes": 21957,
+            "sha256": "2d3c079fa20a1dd5ed3214fe550242edd09ade8af6fac607062881ac107b0e4b",
             "category": "app"
         },
         {
@@ -245,8 +249,8 @@
         },
         {
             "path": "app/Views/components/cookie_banner.php",
-            "size_bytes": 3470,
-            "sha256": "7106089edbf032e4cc0b7d9a1ee9fedc195c5ec6a59919009624b0cd2569095b",
+            "size_bytes": 3437,
+            "sha256": "caa18b7f8b52ae0703423f81e763213275d978b630990388b41d03c4c6d8e993",
             "category": "app"
         },
         {
@@ -269,14 +273,14 @@
         },
         {
             "path": "app/Views/components/quiz_shell.php",
-            "size_bytes": 33972,
-            "sha256": "781c3f1d288c70eafdc83c10e6313e20fe85fa36671e879f2da0f422ed0ac58c",
+            "size_bytes": 33952,
+            "sha256": "d0a694afd4d6542cf49eec1948b60affaaa6e4820009af2a9b5986073cf022c0",
             "category": "app"
         },
         {
             "path": "app/Views/dashboard.php",
-            "size_bytes": 29540,
-            "sha256": "0bd7c8b4e0759e6900aeb3b1d093121ad46b4f27f91b48d72c8e631d9344a67b",
+            "size_bytes": 29759,
+            "sha256": "6413adccf78b95aafcd4cfee0165f2e3c18c723fb4fc0e14526aec90021706bb",
             "category": "app"
         },
         {
@@ -306,7 +310,7 @@
         {
             "path": "app/Views/landing.php",
             "size_bytes": 9330,
-            "sha256": "63a483cc79653dd30af9d4bb003a5d09138d7b26954331472772ccd8522eeea0",
+            "sha256": "42620d0157d72df979264634140aed37d763ab61c1787c5912629d7502588b82",
             "category": "app"
         },
         {
@@ -329,8 +333,8 @@
         },
         {
             "path": "app/Views/practice.php",
-            "size_bytes": 43018,
-            "sha256": "7a544d1155b2e72720a991d094b349aa4ee06bcd8c87db75cb81e83405b9c47e",
+            "size_bytes": 43148,
+            "sha256": "3913b924942d51270c709a52d618a648a89f3dd7644605b8400ddb66567a1b8f",
             "category": "app"
         },
         {
@@ -412,21 +416,39 @@
             "category": "config"
         },
         {
-            "path": "deploy/migrations/20261031_company_practice_patterns_and_unlockables.sql",
-            "size_bytes": 5168,
-            "sha256": "0adecc1c7d8a31cc4580138e9cf0b5a7cc6e72dcc6a0258f8bbae7e9ec721d45",
+            "path": "deploy/.htaccess",
+            "size_bytes": 219,
+            "sha256": "8041761cca0285aa4d2034e9704fc790b809fac5a493a457514375ab1dc37c68",
+            "category": "deploy"
+        },
+        {
+            "path": "deploy/PRESERVE.md",
+            "size_bytes": 2467,
+            "sha256": "3f25b608bf9b39093e04c08faf824c43113365a004e266ae602fef44dd41c3ee",
+            "category": "deploy"
+        },
+        {
+            "path": "deploy/migrations/01_schema_extensions_and_tables.sql",
+            "size_bytes": 6581,
+            "sha256": "5cf75104bd14a1e6e5b74bb0445a1ac293bb2582689f63eeb88db4d656c06503",
             "category": "deploy/migrations"
         },
         {
-            "path": "deploy/migrations/20261031_full_company_questions_import.sql",
-            "size_bytes": 570349,
-            "sha256": "aa0e8e8a412d228e26c573d5c791db47ce29734a519efd64db22d6f7ee8b2bac",
+            "path": "deploy/migrations/02_company_practice_patterns_and_unlockables.sql",
+            "size_bytes": 10675,
+            "sha256": "8c423f801e99e4e4c389f3a291530096bc534c51ac40add66bfaae4216856dde",
+            "category": "deploy/migrations"
+        },
+        {
+            "path": "deploy/migrations/03_full_company_questions_import.sql",
+            "size_bytes": 574614,
+            "sha256": "0231b2cd77dfe33a521ba4467b18082244b0e7d1a707545cf4503fe367323cbc",
             "category": "deploy/migrations"
         },
         {
             "path": "deploy/scripts/check_innodb_engines.sql",
-            "size_bytes": 1992,
-            "sha256": "e9823286a56292605b27c23c08cd5d60f97fac9c5e6a4c208d3d81f926b6c65d",
+            "size_bytes": 1861,
+            "sha256": "1e559b44d83a4521fb12ee7686a62a03b905f2f4066f3a53726e71cc56a0a156",
             "category": "deploy/scripts"
         },
         {
@@ -491,44 +513,44 @@
         },
         {
             "path": "public/css/style.css",
-            "size_bytes": 31282,
-            "sha256": "eb8fffa7e363640ea3da5429e16365c40e3719525cda97d9a653f7822848ccc8",
+            "size_bytes": 31886,
+            "sha256": "d80cdb3615f8841a43c402f11f1807e5092468104e1f56da180a41e926eb9251",
             "category": "public"
         },
         {
             "path": "public/css/style.min.css",
-            "size_bytes": 22803,
-            "sha256": "ff80f838ce608dc9606465a65a4bc20dbd530ebe6427bfa845330abdcb9d1576",
+            "size_bytes": 24015,
+            "sha256": "8ecd6a95e3f6f4265aa1543c8b2007ab2495d2a5405d66155cec1515558ea896",
             "category": "public"
         },
         {
             "path": "public/css/theme.css",
-            "size_bytes": 137459,
-            "sha256": "51d372a05dd29e74d8bee5284ce3d640d146c59f4a680e4968f77194a033a3f5",
+            "size_bytes": 138056,
+            "sha256": "be2656becfcce444d7e1b03f3bd9801d44065627c502b78dab4c5cc9f196b37b",
             "category": "public"
         },
         {
             "path": "public/css/theme.min.css",
-            "size_bytes": 98936,
-            "sha256": "28c6b767ea7c612a28f61174808b64ca1723b6c963d9639431cfbfc60df94823",
+            "size_bytes": 100519,
+            "sha256": "41921a5ddf3d01f47febe3c42a776ce0825a540d779cfd3af112a64738e53971",
             "category": "public"
         },
         {
             "path": "public/index.php",
-            "size_bytes": 28682,
-            "sha256": "f579f3c19962d9368c122fd5a693fa2142ae4b12e70bd1ced7107cee36d20f12",
+            "size_bytes": 29180,
+            "sha256": "61fd42d74a9425e38b14243f05b700033428150ab8ad2e09fb8b6967aee4f829",
             "category": "public"
         },
         {
             "path": "public/js/app.js",
-            "size_bytes": 56523,
-            "sha256": "5c85744f7e53594abab86854323459ce78dfc1c34fcd110f4bcd27905aab012c",
+            "size_bytes": 56634,
+            "sha256": "15d49c766fba2d72bf1393af1ed4b3a78bda5ec02e77078c35300a97598d2ada",
             "category": "public"
         },
         {
             "path": "public/js/app.min.js",
-            "size_bytes": 56523,
-            "sha256": "5c85744f7e53594abab86854323459ce78dfc1c34fcd110f4bcd27905aab012c",
+            "size_bytes": 56634,
+            "sha256": "15d49c766fba2d72bf1393af1ed4b3a78bda5ec02e77078c35300a97598d2ada",
             "category": "public"
         },
         {

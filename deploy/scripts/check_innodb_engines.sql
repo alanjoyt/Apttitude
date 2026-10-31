@@ -18,27 +18,23 @@ SELECT
         ELSE 'CRITICAL: Non-transactional engine detected! Must migrate to InnoDB.'
     END AS engine_status
 FROM information_schema.TABLES
-WHERE TABLE_SCHEMA = DATABASE()
+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_TYPE = 'BASE TABLE'
 ORDER BY ENGINE ASC, TABLE_NAME ASC;
 
 -- 2. Idempotent Migration: Convert all application tables to InnoDB if not already set
 -- (Running ALTER TABLE ... ENGINE=InnoDB on an already InnoDB table is safe and fast)
 ALTER TABLE `users` ENGINE = InnoDB;
-ALTER TABLE `categories` ENGINE = InnoDB;
+ALTER TABLE `topics` ENGINE = InnoDB;
 ALTER TABLE `subtopics` ENGINE = InnoDB;
 ALTER TABLE `questions` ENGINE = InnoDB;
 ALTER TABLE `user_progress` ENGINE = InnoDB;
 ALTER TABLE `attempts` ENGINE = InnoDB;
 ALTER TABLE `coin_transactions` ENGINE = InnoDB;
 ALTER TABLE `unlockables` ENGINE = InnoDB;
-ALTER TABLE `user_unlockables` ENGINE = InnoDB;
-ALTER TABLE `mock_sessions` ENGINE = InnoDB;
-ALTER TABLE `student_submissions` ENGINE = InnoDB;
+ALTER TABLE `user_unlocks` ENGINE = InnoDB;
 ALTER TABLE `duels` ENGINE = InnoDB;
-ALTER TABLE `duel_answers` ENGINE = InnoDB;
-ALTER TABLE `rate_limits` ENGINE = InnoDB;
 
 -- 3. Verify that 0 non-InnoDB tables remain
 SELECT COUNT(*) AS non_innodb_table_count
 FROM information_schema.TABLES
-WHERE TABLE_SCHEMA = DATABASE() AND ENGINE != 'InnoDB';
+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_TYPE = 'BASE TABLE' AND ENGINE != 'InnoDB';
