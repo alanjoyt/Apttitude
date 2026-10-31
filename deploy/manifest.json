@@ -1,0 +1,577 @@
+{
+    "project": "Apttitudee",
+    "version": "2.5.0-predeploy",
+    "generated_at": "2026-10-31T17:40:56+00:00",
+    "environment_target": "InfinityFree / Production LAMP (sql210.infinityfree.com / if0_43270211_apttitudee)",
+    "domain_target": "apttitudee.xo.je",
+    "total_files": 90,
+    "total_bytes": 2097672,
+    "categories": {
+        "root": {
+            "count": 1,
+            "bytes": 3120
+        },
+        "app": {
+            "count": 59,
+            "bytes": 966709
+        },
+        "config": {
+            "count": 3,
+            "bytes": 38464
+        },
+        "deploy/migrations": {
+            "count": 2,
+            "bytes": 575517
+        },
+        "deploy/scripts": {
+            "count": 3,
+            "bytes": 4984
+        },
+        "public": {
+            "count": 22,
+            "bytes": 508878
+        }
+    },
+    "files": [
+        {
+            "path": ".htaccess",
+            "size_bytes": 3120,
+            "sha256": "8f079fdba9d2558dd8a148d946392c6b688056e150778bee48d8281495061237",
+            "category": "root"
+        },
+        {
+            "path": "app/Controllers/AdminController.php",
+            "size_bytes": 62121,
+            "sha256": "41eab22d799069873abf7f7b2369f279acc9f1e9858f546dbc0577647500f479",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/CompanyController.php",
+            "size_bytes": 1344,
+            "sha256": "be57296d571406531975c09ad07f47b0c37f538c6d85aef72250599ce3a8cd35",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/DashboardController.php",
+            "size_bytes": 2956,
+            "sha256": "6d5126d4ef4ce4c25c9c3c43134b155478f60ecf62a1ce21958f8254b6e7cea9",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/DiagnosticController.php",
+            "size_bytes": 6038,
+            "sha256": "1467613280c459a3bf1062501b8fdcd69e7427e5fe2855a223cb6e48659b9497",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/DuelController.php",
+            "size_bytes": 9999,
+            "sha256": "c7992581a2c6d599938903573705eced8b5b17e963f5dec728b9716e96040c31",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/MockTestController.php",
+            "size_bytes": 43438,
+            "sha256": "2bb396b55a279fcea85eb37ad0c6ddfa2ff81365dffecf023ec812e4a2e98ab7",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/PracticeController.php",
+            "size_bytes": 44086,
+            "sha256": "68c09471f07e93c8401520fb12e971969f909b0be46b7698956db30d3e1a4428",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/ProfileController.php",
+            "size_bytes": 4975,
+            "sha256": "2767908cf86558094000e1b8fef608387f6afeceb7deb08baa06e0fa9bf9c307",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/QuestController.php",
+            "size_bytes": 1424,
+            "sha256": "8995589d41af714cc19dfc16cd3732015f28db7ef8612b23ea1d2f9de4683b0a",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/SocialController.php",
+            "size_bytes": 3103,
+            "sha256": "1516f15645741b18b3d6af867e1a74893f7caa60330f97a077d1c7a6c9117d21",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/StoreController.php",
+            "size_bytes": 5577,
+            "sha256": "26d3dfee808f6f4db8e725fda1fcb63264a2cfa6db88a2268b20f4f9da02a459",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/StudentSubmissionController.php",
+            "size_bytes": 3705,
+            "sha256": "95f15b6f443c5f16290bfa0fcc87bca521aa797af7cc2723ddc720b7ba430488",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/TechnicalController.php",
+            "size_bytes": 5225,
+            "sha256": "aa7a640fb72c55d996ca20bce5ba338c417d10aaa036fab378d1f167429d6b75",
+            "category": "app"
+        },
+        {
+            "path": "app/Models/Leaderboard.php",
+            "size_bytes": 7687,
+            "sha256": "0e5d368f4eef5549ecf3880e37c483c4009567e653ec8f21eca3f553e692fcb9",
+            "category": "app"
+        },
+        {
+            "path": "app/Models/User.php",
+            "size_bytes": 8116,
+            "sha256": "d06d4e5ae508e50f3ee055c94fadcb8386dc5d2ff395e487166b812956a21cb5",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/AdaptiveEngine.php",
+            "size_bytes": 12370,
+            "sha256": "d63ecd1c8322190f8cce70bfbc30e2dd90069d73e265887e8ff2054d0f6d1dc4",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/CouponService.php",
+            "size_bytes": 19203,
+            "sha256": "51d6656973a7d95396b990207d576890759f1dd7298a9fb553fb05a65482977f",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/CsrfService.php",
+            "size_bytes": 2471,
+            "sha256": "af2a83a3d934ca7ea3d9e581608bca8b80a8653779c3a492776cba37193c7c60",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/DeviceLockService.php",
+            "size_bytes": 4138,
+            "sha256": "e6ce70a3f93903d0189494d3a50a564ef3ec8454c8d3f71e60c8ac957c095513",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/DuelService.php",
+            "size_bytes": 19155,
+            "sha256": "6c360d59c1cb1874e6f4ff2c317040179d022dda3f18dc62485ca220ab196781",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/GamificationEngine.php",
+            "size_bytes": 10955,
+            "sha256": "530e39a726bd33670ba174a8a5d73af4f9841556d99af1857e716e3296b191fe",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/ProgressService.php",
+            "size_bytes": 15458,
+            "sha256": "fcc7ac343c9a5838b13333bc37c7a6651ffd7f827e9e67a04a47dc2df547a567",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/QuestService.php",
+            "size_bytes": 5347,
+            "sha256": "6ed8499eb58ad6c73e1594b7eb73a63ece6b5320ce0bbb4a05b311c163b6cb2c",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/QuestionParser.php",
+            "size_bytes": 4935,
+            "sha256": "0779bb1d4d77164d30d8d65990fbc9480c57c1948225be1bd64d6f0ee3c0a8a5",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/RateLimiter.php",
+            "size_bytes": 6448,
+            "sha256": "e9171483b84b6d972fee4aefe6697bc573b26a261e007b4f81bbd8d97970a345",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/ReferralService.php",
+            "size_bytes": 5884,
+            "sha256": "7a86e826db450cadf2af9d8c3ad20972aeae581c6976ab109510c984317bf6b7",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/SocialService.php",
+            "size_bytes": 5641,
+            "sha256": "03045ff3d843ec9d373f5fc24a3f07eff621bc5bb658363ed349fe7d59668b41",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/SpacedRepetitionService.php",
+            "size_bytes": 2662,
+            "sha256": "4f883620b1e5c61d5125efab69d9407a38023701fca964efd318fcd69d7e8ff2",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/WalletService.php",
+            "size_bytes": 9728,
+            "sha256": "cf90b38825724c4ec03bded96a514831f28084d8eb26fccff1aad4dd62f84443",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/admin.php",
+            "size_bytes": 138614,
+            "sha256": "8829f322bc84bf1021909cca24d98c9da56043e782f136221f3f3b5b0d39f090",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/campaign.php",
+            "size_bytes": 3593,
+            "sha256": "a2661c6d534074d620bfcd9ea353c2816a634dbf190156a27568e88a3fe8e9a7",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/companies.php",
+            "size_bytes": 7426,
+            "sha256": "2e34baff890dc0220347fc8468db117d391df33f6052225fb87323edcddd422b",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/company_detail.php",
+            "size_bytes": 5872,
+            "sha256": "16dcc619fad6f120e6648561e1eb72318f09bf4cc1cefb568b0fe32db54b6fe5",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/components/contact_modal.php",
+            "size_bytes": 5173,
+            "sha256": "7972e289fd768aafdb35cccab7879ea43cd26a859a3db140241cab517e455529",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/components/cookie_banner.php",
+            "size_bytes": 3470,
+            "sha256": "7106089edbf032e4cc0b7d9a1ee9fedc195c5ec6a59919009624b0cd2569095b",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/components/feature_guide_modal.php",
+            "size_bytes": 5535,
+            "sha256": "367354041db006117acd691683d1d65c642a9a7712dd882b2678d30e9d3029b3",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/components/icons_sprite.php",
+            "size_bytes": 12835,
+            "sha256": "64d8784dc14d27f59e27974f91f0d4b1d0e249cf566ece52d9537e855c706dd0",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/components/nexyra_intro.php",
+            "size_bytes": 11566,
+            "sha256": "3b4f18d9101ee8fe6c5cab96b9977c30dc8e5ac566a3bb8d7c9697f5f21b4959",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/components/quiz_shell.php",
+            "size_bytes": 33972,
+            "sha256": "781c3f1d288c70eafdc83c10e6313e20fe85fa36671e879f2da0f422ed0ac58c",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/dashboard.php",
+            "size_bytes": 29540,
+            "sha256": "0bd7c8b4e0759e6900aeb3b1d093121ad46b4f27f91b48d72c8e631d9344a67b",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/diagnostic.php",
+            "size_bytes": 6416,
+            "sha256": "1b002bd0d85fe07c1a06b113303155338e37e1a198b3c2b51d2a4a144e093271",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/duel.php",
+            "size_bytes": 24649,
+            "sha256": "6ab48e57e56ab7d4d299eb248618fb3dcf40d87ea37fe061ab8e44f930cb1110",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/footer.php",
+            "size_bytes": 8952,
+            "sha256": "f3bec5e9445642d448e00d70966f3f0227ac276a81922f6f68f3ae77d0a20c90",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/header.php",
+            "size_bytes": 45553,
+            "sha256": "5403ea5eeb01a0bae27750cd002e2c2802bdec0ec4affacbd1c45627994eaa8e",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/landing.php",
+            "size_bytes": 9330,
+            "sha256": "63a483cc79653dd30af9d4bb003a5d09138d7b26954331472772ccd8522eeea0",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/leaderboard.php",
+            "size_bytes": 13121,
+            "sha256": "498c7d72b0cb1657e9dc8f669a1ce3a3f5c4563d9b04c6c6607d743973197786",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/login.php",
+            "size_bytes": 4941,
+            "sha256": "39a436531cc5238ad1e045ed8f1f2e02615dde37499dd693e570bde643c65e5c",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/mock.php",
+            "size_bytes": 55501,
+            "sha256": "3e9eb4ae23c251d2939824b6e9448cf78ac814f9fe7d74b11a2923ff057c199d",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/practice.php",
+            "size_bytes": 43018,
+            "sha256": "7a544d1155b2e72720a991d094b349aa4ee06bcd8c87db75cb81e83405b9c47e",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/privacy.php",
+            "size_bytes": 5323,
+            "sha256": "ac0e21957ecd4085a1c5b1de4070cba6a84e057a205bb04054f19295983c09ba",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/profile.php",
+            "size_bytes": 34333,
+            "sha256": "206cd4e504324b1867a7c0caec49843dd02718d51ec85bbaf8c6154bb0518df4",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/register.php",
+            "size_bytes": 6261,
+            "sha256": "0410eecc0aa236e2e12b8209a3f53aa5ddcc0073375cdcec7569070dabe9753f",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/skill_tree.php",
+            "size_bytes": 4798,
+            "sha256": "1354cdc8808bb1c6f363320178bc1596d7533ca55ee99b08c92d355e7a1b9299",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/social.php",
+            "size_bytes": 14082,
+            "sha256": "d44e7cd1761e5d60c051a3ebbe8e74cde8be5bb81be99f15f520e4c3c9e6c2a9",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/store.php",
+            "size_bytes": 27292,
+            "sha256": "e479b4bc563eaff9996738db11de3c378928149d9f929c4ea4b96aabbfc85a4f",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/technical.php",
+            "size_bytes": 50863,
+            "sha256": "f657377fd97637505bd8b2d93447389835ce5fcd2ee89f49ed2c03d6ad49b68d",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/terms.php",
+            "size_bytes": 4836,
+            "sha256": "0b4055ea7f14cbb596e301850a3d5b8a13fed8a644769cc7b08c15022640c284",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/time_attack.php",
+            "size_bytes": 8590,
+            "sha256": "7af756df6e9af157ada707a26c0bd035c2cb25e33d8987afadf5a60ad5120ccf",
+            "category": "app"
+        },
+        {
+            "path": "app/Views/trophy_room.php",
+            "size_bytes": 7065,
+            "sha256": "d69fb4c245c2143e4c0ca8061a40a895dab17b3e363d5fbbe127a9e0d013b7fc",
+            "category": "app"
+        },
+        {
+            "path": "config/app.php",
+            "size_bytes": 2251,
+            "sha256": "a7cca08f6dcb3d6dfb57c38c04fdd4ef1be96964572122530f73cd662d5f5135",
+            "category": "config"
+        },
+        {
+            "path": "config/db.php",
+            "size_bytes": 28457,
+            "sha256": "4ceb64a81f1fe8c5ca7cc2545f055ebe01a1dc84c95c4e6444b992eed25f3e08",
+            "category": "config"
+        },
+        {
+            "path": "config/economy.php",
+            "size_bytes": 7756,
+            "sha256": "babfc76ef82192a2e2fb9ce7acc0402b410f6665e6b4dc29bff5fb65ff1fe866",
+            "category": "config"
+        },
+        {
+            "path": "deploy/migrations/20261031_company_practice_patterns_and_unlockables.sql",
+            "size_bytes": 5168,
+            "sha256": "0adecc1c7d8a31cc4580138e9cf0b5a7cc6e72dcc6a0258f8bbae7e9ec721d45",
+            "category": "deploy/migrations"
+        },
+        {
+            "path": "deploy/migrations/20261031_full_company_questions_import.sql",
+            "size_bytes": 570349,
+            "sha256": "aa0e8e8a412d228e26c573d5c791db47ce29734a519efd64db22d6f7ee8b2bac",
+            "category": "deploy/migrations"
+        },
+        {
+            "path": "deploy/scripts/check_innodb_engines.sql",
+            "size_bytes": 1992,
+            "sha256": "e9823286a56292605b27c23c08cd5d60f97fac9c5e6a4c208d3d81f926b6c65d",
+            "category": "deploy/scripts"
+        },
+        {
+            "path": "deploy/scripts/reconcile_production_ledger.sql",
+            "size_bytes": 1780,
+            "sha256": "aa319e79e71cb8e3d6ed5615f098b8a470bb7f947b4d89c986ee4f0772ab8e0d",
+            "category": "deploy/scripts"
+        },
+        {
+            "path": "deploy/scripts/verify_production_ledger.sql",
+            "size_bytes": 1212,
+            "sha256": "a393e4b480a3f8a23370e9080676d5ba214cc45a24c0ba75d3086bbb50915e57",
+            "category": "deploy/scripts"
+        },
+        {
+            "path": "public/.htaccess",
+            "size_bytes": 2540,
+            "sha256": "f4b617564f3121b9821eaadbab26153aa4e0260757b561ce5a75934a8a38edd0",
+            "category": "public"
+        },
+        {
+            "path": "public/assets/icons/apple-touch-icon.png",
+            "size_bytes": 1428,
+            "sha256": "452a457419f403703278f89abbfee9ba7a5bf77f73b2d957bceab1333e07a111",
+            "category": "public"
+        },
+        {
+            "path": "public/assets/icons/icon-192.png",
+            "size_bytes": 1609,
+            "sha256": "c8d7507c7893e831970eb32995cb7a5b4d441d700c2f470fad54fdda9595441f",
+            "category": "public"
+        },
+        {
+            "path": "public/assets/icons/icon-512.png",
+            "size_bytes": 4937,
+            "sha256": "a792e5a96c12bc4fe5f2fc410bab109dfbfa11a3d28e863f7344db6bf06147c9",
+            "category": "public"
+        },
+        {
+            "path": "public/assets/icons/icon-maskable-512.png",
+            "size_bytes": 4784,
+            "sha256": "eb52724d85158b42224bc9f965438e5acc315e8d84882ace5977a4076f24b9b1",
+            "category": "public"
+        },
+        {
+            "path": "public/assets/logo.png",
+            "size_bytes": 4937,
+            "sha256": "a792e5a96c12bc4fe5f2fc410bab109dfbfa11a3d28e863f7344db6bf06147c9",
+            "category": "public"
+        },
+        {
+            "path": "public/assets/og-preview.png",
+            "size_bytes": 27474,
+            "sha256": "184bbddb693212d9b84711ac443524186b5b9ff72713a41a6208756cbb5c2b88",
+            "category": "public"
+        },
+        {
+            "path": "public/bulk_questions_sample.csv",
+            "size_bytes": 1366,
+            "sha256": "41d8002f542d463a960bb1947e7ca0ea70cc4a81ee22bcd383c56d1d9c628238",
+            "category": "public"
+        },
+        {
+            "path": "public/css/style.css",
+            "size_bytes": 31282,
+            "sha256": "eb8fffa7e363640ea3da5429e16365c40e3719525cda97d9a653f7822848ccc8",
+            "category": "public"
+        },
+        {
+            "path": "public/css/style.min.css",
+            "size_bytes": 22803,
+            "sha256": "ff80f838ce608dc9606465a65a4bc20dbd530ebe6427bfa845330abdcb9d1576",
+            "category": "public"
+        },
+        {
+            "path": "public/css/theme.css",
+            "size_bytes": 137459,
+            "sha256": "51d372a05dd29e74d8bee5284ce3d640d146c59f4a680e4968f77194a033a3f5",
+            "category": "public"
+        },
+        {
+            "path": "public/css/theme.min.css",
+            "size_bytes": 98936,
+            "sha256": "28c6b767ea7c612a28f61174808b64ca1723b6c963d9639431cfbfc60df94823",
+            "category": "public"
+        },
+        {
+            "path": "public/index.php",
+            "size_bytes": 28682,
+            "sha256": "f579f3c19962d9368c122fd5a693fa2142ae4b12e70bd1ced7107cee36d20f12",
+            "category": "public"
+        },
+        {
+            "path": "public/js/app.js",
+            "size_bytes": 56523,
+            "sha256": "5c85744f7e53594abab86854323459ce78dfc1c34fcd110f4bcd27905aab012c",
+            "category": "public"
+        },
+        {
+            "path": "public/js/app.min.js",
+            "size_bytes": 56523,
+            "sha256": "5c85744f7e53594abab86854323459ce78dfc1c34fcd110f4bcd27905aab012c",
+            "category": "public"
+        },
+        {
+            "path": "public/js/quiz_shell.js",
+            "size_bytes": 15925,
+            "sha256": "4d7f34fcec8d1ed9431c8ddd26492352c618ebbf6be58f4cb81a1687b2d68d85",
+            "category": "public"
+        },
+        {
+            "path": "public/manifest.json",
+            "size_bytes": 1690,
+            "sha256": "f49d152c8feadd3e9a05ff86758ef93c398cbb349c5a308ec35602bc517f6558",
+            "category": "public"
+        },
+        {
+            "path": "public/offline.html",
+            "size_bytes": 2256,
+            "sha256": "dd2168d2c6f75db57551ec30871217c7c64d7d68ddb14117a34a3754f138c01c",
+            "category": "public"
+        },
+        {
+            "path": "public/robots.txt",
+            "size_bytes": 229,
+            "sha256": "07190856b9e6282cc999da71976cc286cae34e1b25c25fcb8995d59da9a3a07b",
+            "category": "public"
+        },
+        {
+            "path": "public/sitemap.php",
+            "size_bytes": 1779,
+            "sha256": "1f98f9c3d73e997684c1fc0975f48d924bb2489c446ade0697844fb94365ba1b",
+            "category": "public"
+        },
+        {
+            "path": "public/sitemap.xml",
+            "size_bytes": 1852,
+            "sha256": "0bb7a6b918a5a4004b12ccf9f471a6c36dafc1dfad178d7d19b68883b5416f2d",
+            "category": "public"
+        },
+        {
+            "path": "public/sw.js",
+            "size_bytes": 3864,
+            "sha256": "dd80a53f37b5668dca31eae36be32a1521a992fbfe803efc0c725e6c2d0d1b26",
+            "category": "public"
+        }
+    ]
+}
