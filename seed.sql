@@ -6,7 +6,9 @@ INSERT INTO `topics` (`id`, `name`, `code`, `icon`) VALUES
 (1, 'Quantitative Aptitude', 'QUANT', 'bi-calculator-fill'),
 (2, 'Logical Reasoning', 'LR', 'bi-puzzle-fill'),
 (3, 'Verbal Ability', 'VERBAL', 'bi-chat-left-quote-fill'),
-(4, 'Data Interpretation', 'DI', 'bi-bar-chart-line-fill')
+(4, 'Data Interpretation', 'DI', 'bi-bar-chart-line-fill'),
+(5, 'Technical Assessment', 'TECHNICAL', 'bi-code-slash'),
+(6, 'Company Placement PYQs', 'COMPANY_PYQ', 'bi-building-fill-gear')
 ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
 
 -- Seed Subtopics
@@ -19,7 +21,25 @@ INSERT INTO `subtopics` (`id`, `topic_id`, `name`, `code`) VALUES
 (6, 2, 'Number & Letter Series', 'LR_SERIES'),
 (7, 3, 'Reading Comprehension', 'VERBAL_RC'),
 (8, 3, 'Sentence Correction', 'VERBAL_SC'),
-(9, 4, 'Bar Charts & Tables', 'DI_BAR_TABLE')
+(9, 4, 'Bar Charts & Tables', 'DI_BAR_TABLE'),
+(10, 3, 'Vocabulary & Idioms', 'VERBAL_VOCAB'),
+(11, 1, 'Time & Work', 'QUANT_WORK'),
+(12, 2, 'Direction Sense', 'LR_DIRECTION'),
+(13, 2, 'Coding & Decoding', 'LR_CODING'),
+(14, 5, 'C Programming', 'TECH_C'),
+(15, 5, 'C++ Object-Oriented', 'TECH_CPP'),
+(16, 5, 'Java Core & OOP', 'TECH_JAVA'),
+(17, 5, 'PHP & Web Architecture', 'TECH_PHP'),
+(18, 5, 'C# & .NET Platform', 'TECH_CSHARP'),
+(19, 5, 'Python Programming', 'TECH_PYTHON'),
+(20, 5, 'SQL & Relational Databases', 'TECH_SQL'),
+(21, 5, 'Data Structures & Algorithms', 'TECH_DSA'),
+(22, 6, 'Innovature Labs Technical & PYQ', 'TECH_INNOVATURE'),
+(23, 2, 'Advanced Logic Puzzles & Deductions', 'LR_PUZZLES'),
+(24, 1, 'Advanced Quantitative & Number Theory', 'QUANT_ADV'),
+(25, 5, 'TypeScript & Modern JS', 'TECH_TYPESCRIPT'),
+(26, 5, 'Large Language Models (LLM) & RAG', 'TECH_LLM'),
+(27, 5, 'Artificial Intelligence & Generative AI', 'TECH_AI')
 ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
 
 -- Seed Badges
@@ -53,7 +73,12 @@ ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
 -- Seed Initial Coin Transactions
 INSERT INTO `coin_transactions` (`user_id`, `amount`, `transaction_type`, `reference_description`) VALUES
 (1, 100, 'admin_grant', 'Welcome Signup Speed Coins Bonus'),
-(1, 45, 'speed_bonus', 'Speed Bonus on Hard Question #3')
+(1, 45, 'speed_bonus', 'Speed Bonus on Hard Question #3'),
+(2, 320, 'admin_grant', 'Welcome Signup & Baseline Coins'),
+(3, 500, 'admin_grant', 'Welcome Signup & Baseline Coins'),
+(4, 210, 'admin_grant', 'Welcome Signup & Baseline Coins'),
+(5, 80, 'admin_grant', 'Welcome Signup & Baseline Coins'),
+(99, 1000, 'admin_grant', 'Administrator Initial Baseline Coins')
 ON DUPLICATE KEY UPDATE `amount` = VALUES(`amount`);
 
 -- Seed Leaderboard Initial Scores

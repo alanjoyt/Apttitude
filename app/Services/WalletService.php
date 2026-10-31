@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../Models/User.php';
+require_once __DIR__ . '/CouponService.php';
 
 class WalletService {
 
@@ -58,17 +60,6 @@ class WalletService {
                 return false;
             }
 
-            // Premium users bypass coin cost
-            if ($user['plan'] === 'premium') {
-                $db->prepare("
-                    INSERT INTO coin_transactions (user_id, amount, transaction_type, reference_description)
-                    VALUES (?, 0, 'store_purchase', ?)
-                ")->execute([$userId, $description . ' (Premium Bypass)']);
-                $db->commit();
-                User::clearCache($userId);
-                return true;
-            }
-
             if ((int)$user['coins'] < $amount) {
                 $db->rollBack();
                 return false;
@@ -111,9 +102,9 @@ class WalletService {
     }
 
     /**
-     * Purchase/unlock an item for a user
+     * Purchase/unlock an item for a user (atomic with optional coupon)
      */
-    public static function unlockItem(int $userId, int $unlockableId): array {
+    public static function unlockItem(int $userId, int $unlockableId, ?string $couponCode = null, string $ip = '127.0.0.1'): array {
         $db = Database::getConnection();
         $stmt = $db->prepare("SELECT * FROM unlockables WHERE id = ?");
         $stmt->execute([$unlockableId]);
@@ -123,36 +114,144 @@ class WalletService {
             return ['status' => 'error', 'message' => 'Store item not found'];
         }
 
-        // Check if already unlocked
-        $checkStmt = $db->prepare("SELECT COUNT(*) FROM user_unlocks WHERE user_id = ? AND unlockable_id = ?");
-        $checkStmt->execute([$userId, $unlockableId]);
-        if ($checkStmt->fetchColumn() > 0) {
-            return ['status' => 'error', 'message' => 'Item is already unlocked!'];
+        // Check if already unlocked (streak_freeze can be purchased multiple times up to 2 held)
+        if ($item['item_type'] !== 'streak_freeze') {
+            $checkStmt = $db->prepare("SELECT COUNT(*) FROM user_unlocks WHERE user_id = ? AND unlockable_id = ?");
+            $checkStmt->execute([$userId, $unlockableId]);
+            if ($checkStmt->fetchColumn() > 0) {
+                return ['status' => 'error', 'message' => 'Item is already unlocked!'];
+            }
         }
 
-        // Handle specific item types (e.g. Streak Freeze)
-        if ($item['item_type'] === 'streak_freeze') {
-            if (!self::spendCoins($userId, $item['coin_cost'], "Purchased: " . $item['title'])) {
+        // Begin atomic transaction for purchase + coupon redemption
+        $db->beginTransaction();
+
+        try {
+            $userStmt = $db->prepare("SELECT coins, plan, streak_freezes FROM users WHERE id = ? FOR UPDATE");
+            $userStmt->execute([$userId]);
+            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$user) {
+                $db->rollBack();
+                return ['status' => 'error', 'message' => 'User not found.'];
+            }
+
+            // Streak freeze max shield limit check
+            if ($item['item_type'] === 'streak_freeze') {
+                $currentFreezes = (int)($user['streak_freezes'] ?? 0);
+                if ($currentFreezes >= 2) {
+                    $db->rollBack();
+                    return [
+                        'status' => 'error',
+                        'message' => 'You already hold the maximum limit of 2 Streak Freeze shields! Use one before refilling.'
+                    ];
+                }
+            }
+
+            $basePrice = (int)$item['coin_cost'];
+            $finalPrice = $basePrice;
+            $discountAmount = 0;
+
+            // Redeem coupon if supplied
+            if (!empty($couponCode)) {
+                $couponRes = CouponService::redeemInTransaction($db, $couponCode, $item['item_type'], $basePrice, $userId, $ip);
+                if ($couponRes['status'] !== 'success') {
+                    $db->rollBack();
+                    return ['status' => 'error', 'message' => $couponRes['message']];
+                }
+                $finalPrice = $couponRes['final_price'];
+                $discountAmount = $couponRes['discount_amount'];
+            }
+
+            // Premium bypass
+            if ($user['plan'] === 'premium') {
+                $finalPrice = 0;
+            }
+
+            // Verify user has sufficient coins
+            if ((int)$user['coins'] < $finalPrice) {
+                $db->rollBack();
                 return ['status' => 'error', 'message' => 'Insufficient Speed Coins! Earn more by solving questions quickly.'];
             }
-            $db->prepare("UPDATE users SET streak_freezes = streak_freezes + 1 WHERE id = ?")->execute([$userId]);
+
+            // Deduct coins
+            if ($finalPrice > 0) {
+                $db->prepare("UPDATE users SET coins = coins - ? WHERE id = ?")->execute([$finalPrice, $userId]);
+            }
+
+            // Audit transaction
+            $desc = "Purchased Store Item: " . $item['title'];
+            if (!empty($couponCode)) {
+                $desc .= " (Coupon: " . strtoupper(trim($couponCode)) . " - Saved " . $discountAmount . " coins)";
+            }
+            if ($user['plan'] === 'premium') {
+                $desc .= " (Premium Bypass)";
+            }
+
+            $db->prepare("
+                INSERT INTO coin_transactions (user_id, amount, transaction_type, reference_description)
+                VALUES (?, ?, 'store_purchase', ?)
+            ")->execute([$userId, -$finalPrice, $desc]);
+
+            // Grant item
+            if ($item['item_type'] === 'streak_freeze') {
+                $db->prepare("UPDATE users SET streak_freezes = streak_freezes + 1 WHERE id = ?")->execute([$userId]);
+                $successMessage = 'Streak Freeze Refilled! (+1 Shield, holding ' . ((int)$user['streak_freezes'] + 1) . '/2)';
+            } else {
+                $db->prepare("INSERT INTO user_unlocks (user_id, unlockable_id) VALUES (?, ?)")->execute([$userId, $unlockableId]);
+                $successMessage = 'Item unlocked successfully! ' . $item['title'];
+            }
+
+            $db->commit();
             User::clearCache($userId);
-            return ['status' => 'success', 'message' => 'Streak Freeze Refilled! (+1 Shield)', 'new_balance' => self::getUserBalance($userId)];
+
+            return [
+                'status' => 'success',
+                'message' => $successMessage,
+                'new_balance' => self::getUserBalance($userId),
+                'discount_amount' => $discountAmount,
+                'final_price' => $finalPrice
+            ];
+        } catch (\Throwable $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+            return ['status' => 'error', 'message' => 'Purchase processing failed: ' . $e->getMessage()];
         }
+    }
 
-        // Attempt coin purchase
-        if (!self::spendCoins($userId, $item['coin_cost'], "Unlocked Store Item: " . $item['title'])) {
-            return ['status' => 'error', 'message' => 'Insufficient Speed Coins! Earn more by solving questions quickly.'];
-        }
+    /**
+     * Compute total net coins for a user according to the immutable transaction ledger
+     */
+    public static function getLedgerSum(int $userId): int {
+        $db = Database::getConnection();
+        $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM coin_transactions WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        return (int)$stmt->fetchColumn();
+    }
 
-        // Record unlock
-        $db->prepare("INSERT INTO user_unlocks (user_id, unlockable_id) VALUES (?, ?)")
-           ->execute([$userId, $unlockableId]);
+    /**
+     * Verify whether a user's wallet balance equals their ledger sum
+     */
+    public static function verifyLedgerConsistency(int $userId): bool {
+        return self::getUserBalance($userId) === self::getLedgerSum($userId);
+    }
 
-        return [
-            'status' => 'success',
-            'message' => 'Item unlocked successfully! ' . $item['title'],
-            'new_balance' => self::getUserBalance($userId)
-        ];
+    /**
+     * Audit all users across the system to ensure 100% wallet balance vs ledger equality
+     */
+    public static function getAllLedgerMismatches(): array {
+        $db = Database::getConnection();
+        $sql = "
+            SELECT u.id, u.name, u.coins as wallet_balance, COALESCE(t.ledger_sum, 0) as ledger_sum
+            FROM users u
+            LEFT JOIN (
+                SELECT user_id, SUM(amount) as ledger_sum
+                FROM coin_transactions
+                GROUP BY user_id
+            ) t ON u.id = t.user_id
+            WHERE u.coins != COALESCE(t.ledger_sum, 0)
+        ";
+        return $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 }
