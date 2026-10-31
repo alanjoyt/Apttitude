@@ -268,18 +268,18 @@ class PracticeController {
         }
 
         $userId = $_SESSION['user_id'] ?? null;
-        $clientIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        $clientIp = RateLimiter::getClientIp();
+        $submitIdent = $userId ? 'user:' . $userId : 'ip:' . $clientIp;
+
+        // Individual rate limit: authenticated students get individual limits (not throttled by shared campus proxies)
         RateLimiter::enforce(
             'answer_submit', 
-            array_filter([$clientIp, $userId ? 'user:' . $userId : null]), 
+            $submitIdent, 
             60, 
             60, 
             'Submitting answers too quickly. Please pause a moment.'
         );
-        RateLimiter::hit('answer_submit', $clientIp);
-        if ($userId) {
-            RateLimiter::hit('answer_submit', 'user:' . $userId);
-        }
+        RateLimiter::hit('answer_submit', $submitIdent);
 
         $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 

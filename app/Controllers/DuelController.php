@@ -16,15 +16,14 @@ class DuelController {
             exit;
         }
 
-        $clientIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        // Authenticated student-keyed rate limit: avoids shared-proxy lockout across dorms
         RateLimiter::enforce(
             'duel_create', 
-            [$clientIp, 'user:' . $userId], 
+            'user:' . $userId, 
             10, 
             300, 
             'Too many duel challenges created recently. Please wait a few minutes.'
         );
-        RateLimiter::hit('duel_create', $clientIp);
         RateLimiter::hit('duel_create', 'user:' . $userId);
 
         $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;

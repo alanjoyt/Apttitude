@@ -441,23 +441,32 @@ switch ($action) {
             unset($_SESSION['device_lock_error']);
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $clientIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+            $clientIp = RateLimiter::getClientIp();
             $email = strtolower(trim((string)($_POST['email'] ?? '')));
+            $pairIdent = !empty($email) ? 'pair:' . $email . '|' . $clientIp : 'ip:' . $clientIp;
 
+            // 1. Account+IP pair limiter (10 attempts / 15m) prevents account DoS
             RateLimiter::enforce(
                 'login', 
-                array_filter([$clientIp, !empty($email) ? 'account:' . $email : null]), 
+                $pairIdent, 
                 10, 
                 900, 
-                'Too many failed login attempts. Please try again after 15 minutes.'
+                'Too many failed login attempts for this account from your network. Please try again after 15 minutes.'
+            );
+
+            // 2. Global IP threshold (30 attempts / 15m) blocks high-volume credential stuffing
+            RateLimiter::enforce(
+                'login_ip',
+                $clientIp,
+                30,
+                900,
+                'Too many failed login attempts from this network. Please try again after 15 minutes.'
             );
 
             $user = User::authenticate($_POST['email'] ?? '', $_POST['password'] ?? '');
             if ($user) {
-                RateLimiter::reset('login', $clientIp);
-                if (!empty($email)) {
-                    RateLimiter::reset('login', 'account:' . $email);
-                }
+                RateLimiter::reset('login', $pairIdent);
+                RateLimiter::reset('login_ip', $clientIp);
                 session_regenerate_id(true);
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['name'];
@@ -469,10 +478,8 @@ switch ($action) {
                 header('Location: index.php?action=' . $redirectTo);
                 exit;
             } else {
-                RateLimiter::hit('login', $clientIp);
-                if (!empty($email)) {
-                    RateLimiter::hit('login', 'account:' . $email);
-                }
+                RateLimiter::hit('login', $pairIdent);
+                RateLimiter::hit('login_ip', $clientIp);
                 $error = "Invalid email or password";
             }
         }

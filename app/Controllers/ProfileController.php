@@ -73,10 +73,10 @@ class ProfileController {
             exit;
         }
 
-        $clientIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        // Authenticated student-keyed rate limit: avoids shared-proxy lockout across dorms
         RateLimiter::enforce(
             'password_reset', 
-            [$clientIp, 'user:' . $userId], 
+            'user:' . $userId, 
             5, 
             900, 
             'Too many password update attempts. Please wait 15 minutes.'
@@ -88,7 +88,6 @@ class ProfileController {
         $confirmPassword = $input['confirm_password'] ?? '';
 
         if (empty($oldPassword) || empty($newPassword)) {
-            RateLimiter::hit('password_reset', $clientIp);
             RateLimiter::hit('password_reset', 'user:' . $userId);
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'Please fill in all password fields']);
@@ -96,7 +95,6 @@ class ProfileController {
         }
 
         if (strlen($newPassword) < 6) {
-            RateLimiter::hit('password_reset', $clientIp);
             RateLimiter::hit('password_reset', 'user:' . $userId);
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'New password must be at least 6 characters long']);
@@ -104,7 +102,6 @@ class ProfileController {
         }
 
         if ($newPassword !== $confirmPassword) {
-            RateLimiter::hit('password_reset', $clientIp);
             RateLimiter::hit('password_reset', 'user:' . $userId);
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'New password and confirmation do not match']);
@@ -113,7 +110,6 @@ class ProfileController {
 
         $user = User::findById($userId);
         if (!$user || !password_verify($oldPassword, $user['password_hash'])) {
-            RateLimiter::hit('password_reset', $clientIp);
             RateLimiter::hit('password_reset', 'user:' . $userId);
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'Incorrect current password']);
@@ -126,7 +122,6 @@ class ProfileController {
         $stmt = $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
         $stmt->execute([$newHash, $userId]);
 
-        RateLimiter::reset('password_reset', $clientIp);
         RateLimiter::reset('password_reset', 'user:' . $userId);
 
         echo json_encode(['status' => 'success', 'message' => 'Password changed successfully!']);
