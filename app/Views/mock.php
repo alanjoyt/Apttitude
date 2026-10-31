@@ -1,10 +1,29 @@
 <?php
 $packCode = $_GET['pack'] ?? null;
-$packTitle = 'Company Placement Pattern Mock';
-if ($packCode === 'TCS_MOCK_PACK') $packTitle = 'TCS NQT Pattern Mock Pack';
-else if ($packCode === 'INFOSYS_MOCK_PACK') $packTitle = 'Infosys Placement Test Pack';
-else if ($packCode === 'WIPRO_MOCK_PACK') $packTitle = 'Wipro NLTH Challenge Pack';
-else if ($packCode === 'INNOVATURE_MOCK_PACK') $packTitle = 'Innovature Labs Placement Mock Pack';
+$packTitles = [
+    'TCS_MOCK_PACK' => 'TCS NQT Pattern Mock Pack',
+    'INFOSYS_MOCK_PACK' => 'Infosys Placement Test Pack',
+    'WIPRO_MOCK_PACK' => 'Wipro NLTH Challenge Pack',
+    'INNOVATURE_MOCK_PACK' => 'Innovature Labs Placement Mock Pack',
+    'ACCENTURE_MOCK_PACK' => 'Accenture Placement Mock Pack',
+    'AMAZON_MOCK_PACK' => 'Amazon SDE & AWS Placement Pack',
+    'ZOHO_MOCK_PACK' => 'Zoho Advanced Coding & Aptitude Pack',
+    'DELOITTE_MOCK_PACK' => 'Deloitte National Aptitude Assessment Pack',
+    'CAPGEMINI_MOCK_PACK' => 'Capgemini Exceller Placement Pack',
+    'COGNIZANT_MOCK_PACK' => 'Cognizant GenC & GenC Next Challenge Pack',
+    'TECH_MAHINDRA_MOCK_PACK' => 'Tech Mahindra Recruitment Mock Pack',
+    'IBM_MOCK_PACK' => 'IBM Cognitive & Entry-Level Developer Pack',
+    'LTI_MINDTREE_MOCK_PACK' => 'LTI Mindtree Placement Mock Pack',
+    'UST_MOCK_PACK' => 'UST Global Software Developer Pack',
+    'HCL_MOCK_PACK' => 'HCL Tech First Careers Mock Pack',
+    'MPHASIS_MOCK_PACK' => 'Mphasis Placement Challenge Pack',
+    'HEXAWARE_MOCK_PACK' => 'Hexaware PGET Placement Pack',
+    'PERSISTENT_MOCK_PACK' => 'Persistent Systems Tech Mock Pack',
+    'VIRTUSA_MOCK_PACK' => 'Virtusa NeuralHack & Placement Pack',
+    'ORACLE_MOCK_PACK' => 'Oracle Server Technology Placement Pack',
+    'COFORGE_MOCK_PACK' => 'Coforge Tech Talent Placement Pack',
+];
+$packTitle = $packTitles[$packCode] ?? 'Company Placement Pattern Mock';
 ?>
 
 <div class="row justify-content-center py-2 py-md-3" id="mockMainContainer">
@@ -19,7 +38,9 @@ else if ($packCode === 'INNOVATURE_MOCK_PACK') $packTitle = 'Innovature Labs Pla
             <span class="small" style="color: var(--ink-muted);">Curated company-pattern timed placement examination.</span>
           </div>
         </div>
-        <a href="index.php?action=store" class="btn btn-outline-gamified btn-sm">Store</a>
+        <a href="index.php?action=store" class="btn btn-primary-gamified btn-sm fw-bold">
+          <i class="bi bi-shop me-1"></i> Store
+        </a>
       </div>
     <?php endif; ?>
 
@@ -27,14 +48,14 @@ else if ($packCode === 'INNOVATURE_MOCK_PACK') $packTitle = 'Innovature Labs Pla
     <div class="card card-gamified p-3 mb-3 mock-header-card d-flex flex-wrap justify-content-between align-items-center gap-2">
       <div class="d-flex align-items-center gap-2 gap-sm-3 min-w-0">
         <span class="badge rounded-pill px-2.5 px-sm-3 py-2 fs-6 fw-bold" style="background-color: var(--surface); color: var(--danger); border: 1px solid var(--border);">
-          <svg class="exam-icon me-1" style="width:14px;height:14px;"><use href="#icon-clock"></use></svg> <span id="timerDisplay">10:00</span>
+          <svg class="exam-icon me-1 icon-14"><use href="#icon-clock"></use></svg> <span id="timerDisplay">10:00</span>
         </span>
         <span class="fw-bold text-ink fs-6" id="mockProgressText">Question 1 of 10</span>
       </div>
 
       <div class="d-flex align-items-center gap-2">
         <a href="#questionGridCard" class="btn btn-outline-gamified btn-sm px-2.5 px-sm-3 d-md-none" title="Jump to Status Grid">
-          <svg class="exam-icon text-accent me-1" style="width:14px;height:14px;"><use href="#icon-grid"></use></svg> <span class="d-none d-sm-inline">Grid</span>
+          <svg class="exam-icon text-accent me-1 icon-14"><use href="#icon-grid"></use></svg> <span class="d-none d-sm-inline">Grid</span>
         </a>
         <button type="button" class="btn btn-primary-gamified btn-sm px-3 px-sm-4 fw-bold" id="finishTestBtn">
           Submit Test
@@ -70,7 +91,7 @@ else if ($packCode === 'INNOVATURE_MOCK_PACK') $packTitle = 'Innovature Labs Pla
             <div class="code-terminal-header d-flex justify-content-between align-items-center px-3 py-1.5">
               <span class="code-lang-label" id="mockCodeLangBadge">CODE</span>
               <button type="button" class="btn-copy-code" onclick="navigator.clipboard.writeText(document.getElementById('mockCodeSnippetText').innerText); alert('Copied code!');" aria-label="Copy code" title="Copy code">
-                <svg class="exam-icon copy-icon" style="width:16px;height:16px;"><use href="#icon-copy"></use></svg>
+                <svg class="exam-icon copy-icon icon-16"><use href="#icon-copy"></use></svg>
               </button>
             </div>
             <pre class="m-0 p-3" tabindex="0" aria-label="Code snippet"><code class="tech-code-body font-mono" id="mockCodeSnippetText"></code></pre>
@@ -110,7 +131,7 @@ else if ($packCode === 'INNOVATURE_MOCK_PACK') $packTitle = 'Innovature Labs Pla
       <div class="col-md-4" id="questionGridCard">
         <div class="card card-gamified p-3 h-100">
           <h6 class="font-serif fw-bold text-ink mb-3 d-flex align-items-center gap-2">
-            <svg class="exam-icon text-accent" style="width:16px;height:16px;"><use href="#icon-grid"></use></svg> Question Status Grid
+            <svg class="exam-icon text-accent icon-16"><use href="#icon-grid"></use></svg> Question Status Grid
           </h6>
           <div class="palette-grid mb-3" id="paletteGrid">
             <!-- Palette numbers populated dynamically -->
@@ -149,10 +170,13 @@ else if ($packCode === 'INNOVATURE_MOCK_PACK') $packTitle = 'Innovature Labs Pla
         </div>
         <div class="d-flex align-items-center gap-2 no-print">
           <button type="button" class="btn btn-outline-gamified btn-sm fw-bold" onclick="window.print()" title="Print Marksheet">
-            <svg class="exam-icon me-1" style="width:14px;height:14px;"><use href="#icon-copy"></use></svg> Print PDF
+            <svg class="exam-icon me-1 icon-14"><use href="#icon-copy"></use></svg> Print PDF
           </button>
-          <button type="button" class="btn btn-outline-gamified btn-sm fw-bold" id="shareResultBtn" title="Share your score">
-            <svg class="exam-icon me-1" style="width:14px;height:14px;"><use href="#icon-share"></use></svg> Share
+          <button type="button" class="btn btn-outline-gamified btn-sm fw-bold" id="downloadCardBtn" onclick="downloadScorecardImage()" title="Download Share Card Image">
+            <svg class="exam-icon me-1 icon-14"><use href="#icon-save"></use></svg> Card Image
+          </button>
+          <button type="button" class="btn btn-primary-gamified btn-sm fw-bold" id="shareResultBtn" title="Share your score">
+            <svg class="exam-icon me-1 icon-14"><use href="#icon-share"></use></svg> Share
           </button>
         </div>
       </header>
@@ -171,7 +195,7 @@ else if ($packCode === 'INNOVATURE_MOCK_PACK') $packTitle = 'Innovature Labs Pla
                 <span id="scoreMarksVal">0.00</span> <span class="fs-4 text-ink-muted fw-normal">/ <span id="scoreTotalMarksVal">10.00</span></span>
               </div>
               <div class="mock-score-formula-line mt-1">
-                <svg class="exam-icon me-1" style="width:12px;height:12px;"><use href="#icon-bookmark"></use></svg> <span id="scoreFormulaText">+1 per correct, -0.25 per wrong</span>
+                <svg class="exam-icon me-1 icon-12"><use href="#icon-bookmark"></use></svg> <span id="scoreFormulaText">+1 per correct, -0.25 per wrong</span>
               </div>
             </div>
 
@@ -209,7 +233,7 @@ else if ($packCode === 'INNOVATURE_MOCK_PACK') $packTitle = 'Innovature Labs Pla
       <section class="card card-gamified p-3 p-sm-4 mb-4" aria-labelledby="timeAnalysisHeading">
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
           <h2 class="font-serif fw-bold text-ink fs-5 mb-0" id="timeAnalysisHeading">
-            <svg class="exam-icon me-1 text-accent" style="width:16px;height:16px;"><use href="#icon-clock"></use></svg> Pacing & Time Breakdown
+            <svg class="exam-icon me-1 text-accent icon-16"><use href="#icon-clock"></use></svg> Pacing & Time Breakdown
           </h2>
           <span class="small font-mono text-ink-muted" id="timeSummaryText">Total: -- / 10m 00s</span>
         </div>
@@ -265,7 +289,7 @@ else if ($packCode === 'INNOVATURE_MOCK_PACK') $packTitle = 'Innovature Labs Pla
         <div class="col-md-7">
           <section class="card card-gamified p-3 p-sm-4 h-100" aria-labelledby="sectionBreakdownHeading">
             <h2 class="font-serif fw-bold text-ink fs-5 mb-3" id="sectionBreakdownHeading">
-              <svg class="exam-icon me-1 text-accent" style="width:16px;height:16px;"><use href="#icon-award"></use></svg> Sectional Score Breakdown
+              <svg class="exam-icon me-1 text-accent icon-16"><use href="#icon-award"></use></svg> Sectional Score Breakdown
             </h2>
             <div class="table-responsive">
               <table class="mock-section-table" aria-label="Section Breakdown Table">
@@ -290,7 +314,7 @@ else if ($packCode === 'INNOVATURE_MOCK_PACK') $packTitle = 'Innovature Labs Pla
         <div class="col-md-5">
           <section class="card card-gamified p-3 p-sm-4 h-100" aria-labelledby="insightsHeading">
             <h2 class="font-serif fw-bold text-ink fs-5 mb-3" id="insightsHeading">
-              <svg class="exam-icon me-1 text-highlight" style="width:16px;height:16px;"><use href="#icon-bookmark"></use></svg> Test Insights & Advice
+              <svg class="exam-icon me-1 text-highlight icon-16"><use href="#icon-bookmark"></use></svg> Test Insights & Advice
             </h2>
             <ul class="mock-insights-list" id="mockInsightsList">
               <!-- Populated dynamically -->
@@ -304,7 +328,7 @@ else if ($packCode === 'INNOVATURE_MOCK_PACK') $packTitle = 'Innovature Labs Pla
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
           <div>
             <h2 class="font-serif fw-bold text-ink fs-5 mb-0" id="reviewAnswersHeading">
-              <svg class="exam-icon me-1 text-accent" style="width:16px;height:16px;"><use href="#icon-bookmark"></use></svg> Question Solutions & Explanations
+              <svg class="exam-icon me-1 text-accent icon-16"><use href="#icon-bookmark"></use></svg> Question Solutions & Explanations
             </h2>
             <span class="small text-ink-muted">Tap any question to reveal options, explanations, and exact time taken.</span>
           </div>
@@ -359,26 +383,62 @@ let currentIndex = 0;
 let userAnswers = {};
 let questionTimes = {}; // question_id => seconds
 let activeQuestionStartTime = null;
-let tabHiddenTime = null;
 let testStartTime = null;
 let timerSeconds = 600;
+let serverDeadlineTs = null;
 let timerInterval = null;
 let currentScorecardData = null;
 let currentMockSessionId = null;
 const currentPackCode = '<?= htmlspecialchars($packCode ?? 'GENERAL_MOCK', ENT_QUOTES) ?>';
 const currentPackTitle = '<?= htmlspecialchars($packTitle, ENT_QUOTES) ?>';
 
-// Page Visibility API tracking
+// Tab-Switch Rules (BUG-008): Tab switch forfeits and skips current question only (reason: tab_switch).
+// Elapsed exam timer is NOT paused.
+let tabSwitchSkipped = [];
+let isTabSwitchProcessing = false;
+
+function handleTabSwitchViolation() {
+    if (isTabSwitchProcessing) return;
+    const scoreSheet = document.getElementById('mockScoreSheetContainer');
+    if (!mockQuestions || !mockQuestions.length || (scoreSheet && !scoreSheet.classList.contains('d-none'))) {
+        return;
+    }
+
+    isTabSwitchProcessing = true;
+    setTimeout(() => { isTabSwitchProcessing = false; }, 1000);
+
+    const currentQ = mockQuestions[currentIndex];
+    if (currentQ) {
+        if (!tabSwitchSkipped.includes(currentQ.id)) {
+            tabSwitchSkipped.push(currentQ.id);
+        }
+        delete userAnswers[currentQ.id];
+    }
+
+    recordActiveQuestionTime();
+
+    if (window.showToast) {
+        showToast('Tab switch detected! Current question skipped per exam rules.', 'warning');
+    } else {
+        alert('Tab switch detected! Current question forfeited and skipped per exam rules.');
+    }
+
+    if (currentIndex < mockQuestions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+        renderPalette();
+    } else {
+        submitMockTest();
+    }
+}
+
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
-        tabHiddenTime = Date.now();
-    } else if (tabHiddenTime) {
-        const pausedDuration = Date.now() - tabHiddenTime;
-        if (activeQuestionStartTime) {
-            activeQuestionStartTime += pausedDuration;
-        }
-        tabHiddenTime = null;
+        handleTabSwitchViolation();
     }
+});
+window.addEventListener('blur', () => {
+    handleTabSwitchViolation();
 });
 
 function recordActiveQuestionTime() {
@@ -453,32 +513,90 @@ function handleDirectOrConfirmSubmit() {
     }
 }
 
-function fetchMockTest() {
+async function fetchMockTest() {
+    const qBox = document.getElementById('mockQuestionText');
     const url = 'index.php?action=api_get_mock<?= $packCode ? '&pack=' . urlencode($packCode) : '' ?>';
-    fetch(url)
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'success' && data.questions && data.questions.length > 0) {
-                mockQuestions = data.questions;
-                currentMockSessionId = data.session_id || null;
-                timerSeconds = data.duration_seconds || 600;
-                currentIndex = 0;
-                userAnswers = {};
-                questionTimes = {};
-                testStartTime = Date.now();
-                activeQuestionStartTime = Date.now();
+    
+    if (qBox) {
+        qBox.innerHTML = '<div class="text-center py-4 text-ink-muted"><span class="spinner-border spinner-border-sm me-2" role="status"></span> Loading exam questions...</div>';
+    }
 
-                renderQuestion();
-                renderPalette();
-                startTimer();
+    try {
+        const res = await fetch(url);
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (jsonErr) {
+            throw new Error(`Invalid server response format (HTTP ${res.status}): ${text.substring(0, 100)}`);
+        }
+
+        if (!res.ok || data.status !== 'success') {
+            const errorMsg = data.message || `Server responded with status ${res.status}`;
+            throw new Error(errorMsg);
+        }
+
+        if (data.questions && data.questions.length > 0) {
+            mockQuestions = data.questions;
+            currentMockSessionId = data.session_id || null;
+            const totalSec = (data.duration_seconds || (data.questions.length * 60));
+            timerSeconds = (data.remaining_seconds !== undefined && data.remaining_seconds !== null)
+                ? parseInt(data.remaining_seconds, 10)
+                : totalSec;
+
+            if (data.deadline) {
+                const deadlineMs = new Date(data.deadline.replace(' ', 'T')).getTime();
+                if (!isNaN(deadlineMs)) {
+                    serverDeadlineTs = deadlineMs;
+                } else {
+                    serverDeadlineTs = Date.now() + (timerSeconds * 1000);
+                }
             } else {
-                document.getElementById('mockQuestionText').innerText = 'No mock questions currently available. Please check back later.';
+                serverDeadlineTs = Date.now() + (timerSeconds * 1000);
             }
-        })
-        .catch(err => {
-            console.error('Failed to load mock questions:', err);
-            document.getElementById('mockQuestionText').innerText = 'Error loading questions. Please reload.';
-        });
+
+            currentIndex = 0;
+            userAnswers = (data.saved_answers && typeof data.saved_answers === 'object') ? Object.assign({}, data.saved_answers) : {};
+            questionTimes = {};
+            tabSwitchSkipped = [];
+            testStartTime = Date.now();
+            activeQuestionStartTime = Date.now();
+
+            renderQuestion();
+            renderPalette();
+            startTimer();
+        } else {
+            if (qBox) {
+                qBox.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox fs-1 text-ink-muted mb-2 d-block"></i>
+                        <h5 class="fw-bold text-ink">No Questions Found</h5>
+                        <p class="text-ink-muted mb-3">No mock questions are currently available for this pack.</p>
+                        <a href="index.php?action=store" class="btn btn-outline-gamified fw-bold">Back to Store</a>
+                    </div>
+                `;
+            }
+        }
+    } catch (err) {
+        console.error('Failed to load mock questions:', err);
+        if (qBox) {
+            qBox.innerHTML = `
+                <div class="alert alert-danger p-3 my-2" role="alert">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                        <strong class="fs-6">Unable to Load Mock Examination</strong>
+                    </div>
+                    <p class="small mb-3 text-break">${err.message}</p>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-primary-gamified btn-sm fw-bold px-3" onclick="fetchMockTest()">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Retry
+                        </button>
+                        <a href="index.php?action=store" class="btn btn-primary-gamified btn-sm fw-bold"><i class="bi bi-shop me-1"></i> Visit Store</a>
+                    </div>
+                </div>
+            `;
+        }
+    }
 }
 
 function renderQuestion() {
@@ -510,7 +628,7 @@ function renderQuestion() {
         sourceTagWrap.style.display = 'none';
     }
 
-    const cleanQuestionText = parsed.prompt || q.question_text;
+    const cleanQuestionText = parsed.fullText || parsed.full_text || parsed.prompt || q.question_text;
     document.getElementById('mockQuestionText').innerHTML = formatSafeText(cleanQuestionText);
 
     const codeCard = document.getElementById('mockCodeSnippetCard');
@@ -529,7 +647,7 @@ function renderQuestion() {
     prevBtn.disabled = (currentIndex === 0);
 
     if (currentIndex === mockQuestions.length - 1) {
-        nextBtn.innerHTML = 'Submit Test <svg class="exam-icon ms-1" style="width:14px;height:14px;"><use href="#icon-shield"></use></svg>';
+        nextBtn.innerHTML = 'Submit Test <svg class="exam-icon ms-1 icon-14"><use href="#icon-shield"></use></svg>';
     } else {
         nextBtn.innerHTML = 'Save & Next &rarr;';
     }
@@ -587,12 +705,18 @@ function startTimer() {
     const display = document.getElementById('timerDisplay');
     clearInterval(timerInterval);
 
-    timerInterval = setInterval(() => {
-        timerSeconds--;
+    const updateTimerDisplay = () => {
+        if (serverDeadlineTs) {
+            const now = Date.now();
+            timerSeconds = Math.max(0, Math.round((serverDeadlineTs - now) / 1000));
+        } else {
+            timerSeconds--;
+        }
+
         if (timerSeconds <= 0) {
             clearInterval(timerInterval);
             timerSeconds = 0;
-            display.innerText = '00:00';
+            if (display) display.innerText = '00:00';
             recordActiveQuestionTime();
             alert("Time has expired! Submitting your mock examination now.");
             submitMockTest();
@@ -601,8 +725,13 @@ function startTimer() {
 
         const m = Math.floor(timerSeconds / 60);
         const s = timerSeconds % 60;
-        display.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
-    }, 1000);
+        if (display) {
+            display.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+    };
+
+    updateTimerDisplay();
+    timerInterval = setInterval(updateTimerDisplay, 1000);
 }
 
 function submitMockTest() {
@@ -624,10 +753,12 @@ function submitMockTest() {
             session_id: currentMockSessionId,
             question_ids: questionIds,
             answers: userAnswers,
+            tab_switch_skipped: tabSwitchSkipped,
             question_times: questionTimes,
             total_time_seconds: totalDurationSeconds,
             pack_code: currentPackCode,
-            pack_title: currentPackTitle
+            pack_title: currentPackTitle,
+            csrf_token: window.CSRF_TOKEN || ''
         })
     })
     .then(res => res.json())
@@ -825,7 +956,7 @@ function displayExamHallScorecard(data) {
         const rTagHtml = rSourceTag 
             ? `<div class="mb-2"><span class="quiz-source-tag-stamp"><svg class="exam-icon me-1" style="width:11px;height:11px;opacity:0.75;"><use href="#icon-bookmark"></use></svg>${rSourceTag}</span></div>` 
             : '';
-        const rPrompt = parsedR.prompt || r.question_text;
+        const rPrompt = parsedR.fullText || parsedR.full_text || parsedR.prompt || r.question_text;
 
         details.innerHTML = `
             <summary>
@@ -929,13 +1060,141 @@ function formatSafeText(raw) {
 }
 
 /**
- * Text-only Web Share API helper (no personal data, no private URL)
+ * Dynamic Canvas Scorecard Image Generator
  */
-function shareMockResult() {
+function generateScorecardCanvas(score, packTitle) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1200;
+    canvas.height = 630;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+
+    // Background gradient
+    const grad = ctx.createLinearGradient(0, 0, 1200, 630);
+    grad.addColorStop(0, '#0f172a');
+    grad.addColorStop(0.6, '#1e293b');
+    grad.addColorStop(1, '#090d16');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1200, 630);
+
+    // Decorative glow
+    const radial = ctx.createRadialGradient(950, 140, 40, 950, 140, 400);
+    radial.addColorStop(0, 'rgba(249, 115, 22, 0.28)');
+    radial.addColorStop(1, 'rgba(249, 115, 22, 0)');
+    ctx.fillStyle = radial;
+    ctx.fillRect(0, 0, 1200, 630);
+
+    // Border
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(36, 36, 1128, 558);
+
+    // Header brand
+    ctx.fillStyle = '#f97316';
+    ctx.font = 'bold 36px system-ui, -apple-system, sans-serif';
+    ctx.fillText('Apttitudee', 80, 110);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '500 20px system-ui, -apple-system, sans-serif';
+    ctx.fillText('Placement Preparation Suite', 270, 110);
+
+    // Assessment title
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 40px Georgia, serif';
+    const displayTitle = (packTitle || 'Mock Assessment Report').length > 38 ? 
+        (packTitle || 'Mock Assessment Report').slice(0, 35) + '...' : 
+        (packTitle || 'Mock Assessment Report');
+    ctx.fillText(displayTitle, 80, 195);
+
+    // Score Hero
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = 'bold 78px system-ui, -apple-system, sans-serif';
+    const scoreStr = `${score.marks} / ${score.total_marks}`;
+    ctx.fillText(scoreStr, 80, 310);
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 38px system-ui, -apple-system, sans-serif';
+    ctx.fillText(`${score.percentage}% Overall Score`, 80, 375);
+
+    // Stat cards
+    const statCards = [
+        { label: 'CORRECT', val: `${score.correct || 0} Qs`, color: '#10b981' },
+        { label: 'ACCURACY', val: `${score.accuracy || score.percentage}%`, color: '#38bdf8' },
+        { label: 'TIME SPENT', val: `${Math.round((score.time_taken_seconds || 180)/60)}m`, color: '#f59e0b' }
+    ];
+
+    statCards.forEach((c, idx) => {
+        const x = 80 + idx * 260;
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(x, 420, 230, 95);
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, 420, 230, 95);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '600 15px system-ui, sans-serif';
+        ctx.fillText(c.label, x + 20, 452);
+
+        ctx.fillStyle = c.color;
+        ctx.font = 'bold 30px system-ui, sans-serif';
+        ctx.fillText(c.val, x + 20, 492);
+    });
+
+    // Footer note
+    ctx.fillStyle = '#64748b';
+    ctx.font = '500 17px system-ui, sans-serif';
+    ctx.fillText('Practice verified company placement papers at apttitudee.online', 80, 560);
+
+    return canvas;
+}
+
+function downloadScorecardImage() {
+    if (!currentScorecardData) return;
+    const canvas = generateScorecardCanvas(currentScorecardData.score, currentPackTitle);
+    if (!canvas) return;
+
+    canvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Apttitudee_Scorecard_${Date.now()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 'image/png');
+}
+
+/**
+ * Text & Image Web Share API helper
+ */
+async function shareMockResult() {
     if (!currentScorecardData) return;
     const score = currentScorecardData.score;
     const shareText = `I completed the ${currentPackTitle} on Apttitudee and scored ${score.marks}/${score.total_marks} marks (${score.percentage}%)! Prepare for campus placements with adaptive tests.`;
     
+    // Attempt to share image file if supported
+    const canvas = generateScorecardCanvas(score, currentPackTitle);
+    if (canvas && navigator.canShare) {
+        try {
+            const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+            if (blob) {
+                const file = new File([blob], 'apttitudee_result.png', { type: 'image/png' });
+                if (navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: 'My Apttitudee Mock Test Score',
+                        text: shareText,
+                        files: [file]
+                    });
+                    return;
+                }
+            }
+        } catch (e) {
+            // fallback to text share below
+        }
+    }
+
     if (navigator.share) {
         navigator.share({
             title: 'My Apttitudee Mock Test Score',

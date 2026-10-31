@@ -8,6 +8,7 @@ class MockTestController {
 
     private static ?bool $hasMockSessionIdCol = null;
     private static ?bool $hasPackCodeCol = null;
+    private static ?bool $hasSkipReasonCol = null;
     private static ?bool $hasMockSessionsTable = null;
 
     /**
@@ -32,6 +33,15 @@ class MockTestController {
             }
         }
 
+        if (self::$hasSkipReasonCol === null) {
+            try {
+                $cols = $db->query("SHOW COLUMNS FROM `attempts` LIKE 'skip_reason'")->fetchAll();
+                self::$hasSkipReasonCol = !empty($cols);
+            } catch (\Throwable $e) {
+                self::$hasSkipReasonCol = false;
+            }
+        }
+
         if (self::$hasMockSessionsTable === null) {
             try {
                 $tables = $db->query("SHOW TABLES LIKE 'mock_sessions'")->fetchAll();
@@ -52,24 +62,173 @@ class MockTestController {
         }
 
         $db = Database::getConnection();
-        $packCode = $_GET['pack'] ?? '';
+        self::checkSchemaCapabilities($db);
+        $packCode = trim($_GET['pack'] ?? '');
+        $userId = $_SESSION['user_id'] ?? null;
+        $userRole = $_SESSION['role'] ?? 'user';
+
+        // Pack purchase gating: map packCode to unlockable_id
+        $packUnlockableMap = [
+            'TCS_MOCK_PACK' => 1,
+            'INFOSYS_MOCK_PACK' => 2,
+            'WIPRO_MOCK_PACK' => 3,
+            'INNOVATURE_MOCK_PACK' => 9,
+            'ACCENTURE_MOCK_PACK' => 10,
+            'AMAZON_MOCK_PACK' => 11,
+            'ZOHO_MOCK_PACK' => 12,
+            'DELOITTE_MOCK_PACK' => 13,
+            'CAPGEMINI_MOCK_PACK' => 14,
+            'COGNIZANT_MOCK_PACK' => 15,
+            'TECH_MAHINDRA_MOCK_PACK' => 16,
+            'IBM_MOCK_PACK' => 17,
+            'LTI_MINDTREE_MOCK_PACK' => 18,
+            'UST_MOCK_PACK' => 19,
+            'HCL_MOCK_PACK' => 20,
+            'MPHASIS_MOCK_PACK' => 21,
+            'HEXAWARE_MOCK_PACK' => 22,
+            'PERSISTENT_MOCK_PACK' => 23,
+            'VIRTUSA_MOCK_PACK' => 24,
+            'ORACLE_MOCK_PACK' => 25,
+            'COFORGE_MOCK_PACK' => 26,
+        ];
+
+        if (!empty($packCode)) {
+            $unlockableId = $packUnlockableMap[$packCode] ?? null;
+            // Also lookup dynamically by code if not found in static map
+            if (!$unlockableId) {
+                $uStmt = $db->prepare("SELECT id FROM unlockables WHERE code = ? LIMIT 1");
+                $uStmt->execute([$packCode]);
+                $foundId = $uStmt->fetchColumn();
+                if ($foundId) $unlockableId = (int)$foundId;
+            }
+
+            if ($unlockableId) {
+                // Admin always has preview / testing access
+                if ($userRole !== 'admin') {
+                    if (!$userId) {
+                        http_response_code(401);
+                        echo json_encode([
+                            'status' => 'error',
+                            'message' => 'Please log in to access this company mock pack.'
+                        ]);
+                        exit;
+                    }
+                    $checkUnlocked = $db->prepare("SELECT COUNT(*) FROM user_unlocks WHERE user_id = ? AND unlockable_id = ?");
+                    $checkUnlocked->execute([$userId, $unlockableId]);
+                    if ((int)$checkUnlocked->fetchColumn() === 0) {
+                        http_response_code(403);
+                        echo json_encode([
+                            'status' => 'error',
+                            'message' => 'You have not unlocked this company mock pack yet. Please purchase it in the Speed Coins store.'
+                        ]);
+                        exit;
+                    }
+                }
+            }
+        }
         
-        $tagFilter = '';
-        if ($packCode === 'TCS_MOCK_PACK') $tagFilter = 'TCS';
-        else if ($packCode === 'INFOSYS_MOCK_PACK') $tagFilter = 'Infosys';
-        else if ($packCode === 'WIPRO_MOCK_PACK') $tagFilter = 'Wipro';
-        else if ($packCode === 'ACCENTURE_MOCK_PACK') $tagFilter = 'Accenture';
-        else if ($packCode === 'INNOVATURE_MOCK_PACK') $tagFilter = 'Innovature';
+        $tagMap = [
+            'TCS_MOCK_PACK' => 'TCS',
+            'INFOSYS_MOCK_PACK' => 'Infosys',
+            'WIPRO_MOCK_PACK' => 'Wipro',
+            'ACCENTURE_MOCK_PACK' => 'Accenture',
+            'INNOVATURE_MOCK_PACK' => 'Innovature',
+            'AMAZON_MOCK_PACK' => 'Amazon',
+            'ZOHO_MOCK_PACK' => 'Zoho',
+            'DELOITTE_MOCK_PACK' => 'Deloitte',
+            'CAPGEMINI_MOCK_PACK' => 'Capgemini',
+            'COGNIZANT_MOCK_PACK' => 'Cognizant',
+            'TECH_MAHINDRA_MOCK_PACK' => 'Tech Mahindra',
+            'IBM_MOCK_PACK' => 'IBM',
+            'LTI_MINDTREE_MOCK_PACK' => 'LTI Mindtree',
+            'UST_MOCK_PACK' => 'UST',
+            'HCL_MOCK_PACK' => 'HCL',
+            'MPHASIS_MOCK_PACK' => 'Mphasis',
+            'HEXAWARE_MOCK_PACK' => 'Hexaware',
+            'PERSISTENT_MOCK_PACK' => 'Persistent',
+            'VIRTUSA_MOCK_PACK' => 'Virtusa',
+            'ORACLE_MOCK_PACK' => 'Oracle',
+            'COFORGE_MOCK_PACK' => 'Coforge',
+        ];
+        $tagFilter = $tagMap[$packCode] ?? '';
+
+        // Check for active session to resume after refresh or crash
+        if ($userId && self::$hasMockSessionsTable) {
+            $actStmt = $db->prepare("
+                SELECT * FROM mock_sessions 
+                WHERE user_id = ? AND pack_code = ? AND status = 'active'
+                ORDER BY started_at DESC LIMIT 1
+            ");
+            $actStmt->execute([$userId, $packCode ?: 'GENERAL_MOCK']);
+            $existingSess = $actStmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($existingSess) {
+                $remSec = strtotime($existingSess['deadline']) - time();
+                if ($remSec <= 0) {
+                    $db->prepare("UPDATE mock_sessions SET status = 'expired' WHERE id = ?")->execute([$existingSess['id']]);
+                } else {
+                    $qIds = array_filter(array_map('intval', explode(',', $existingSess['question_ids'] ?? '')));
+                    if (!empty($qIds)) {
+                        $inQ = implode(',', $qIds);
+                        $savedList = $db->query("
+                            SELECT q.id, q.question_text, q.code_snippet, q.language, q.option_a, q.option_b, q.option_c, q.option_d, q.correct_option, q.est_time_seconds,
+                                   q.source_tag, q.company_name, s.name as subtopic_name, t.name as topic_name
+                            FROM questions q
+                            JOIN subtopics s ON q.subtopic_id = s.id
+                            JOIN topics t ON s.topic_id = t.id
+                            WHERE q.id IN ($inQ)
+                        ")->fetchAll(PDO::FETCH_ASSOC);
+
+                        $orderMap = array_flip($qIds);
+                        usort($savedList, fn($a, $b) => ($orderMap[$a['id']] ?? 0) <=> ($orderMap[$b['id']] ?? 0));
+
+                        $resumedQuestions = [];
+                        foreach ($savedList as $q) {
+                            $savedMap = $_SESSION['mock_test_mappings'][$existingSess['id']][$q['id']] ?? null;
+                            $options = $savedMap ? $savedMap['options'] : [
+                                'A' => $q['option_a'], 'B' => $q['option_b'], 'C' => $q['option_c'], 'D' => $q['option_d']
+                            ];
+                            $parsed = QuestionParser::parse($q['question_text']);
+                            $resumedQuestions[] = [
+                                'id' => (int)$q['id'],
+                                'topic_name' => $q['topic_name'],
+                                'subtopic_name' => $q['subtopic_name'],
+                                'question_text' => $parsed['full_text'],
+                                'raw_question_text' => $q['question_text'],
+                                'source_tag' => $parsed['source_tag'] ?? $q['source_tag'] ?? null,
+                                'code_snippet' => $q['code_snippet'] ?? null,
+                                'language' => $q['language'] ?? null,
+                                'options' => $options
+                            ];
+                        }
+
+                        echo json_encode([
+                            'status' => 'success',
+                            'session_id' => $existingSess['id'],
+                            'duration_seconds' => (int)$existingSess['duration_seconds'],
+                            'remaining_seconds' => (int)$remSec,
+                            'started_at' => $existingSess['started_at'],
+                            'deadline' => $existingSess['deadline'],
+                            'is_resumed' => true,
+                            'saved_answers' => json_decode($existingSess['user_answers'] ?? '{}', true) ?: (object)[],
+                            'pack_code' => $existingSess['pack_code'],
+                            'questions' => $resumedQuestions
+                        ]);
+                        exit;
+                    }
+                }
+            }
+        }
 
         if ($tagFilter) {
             $stmt = $db->prepare("
-                SELECT q.id, q.question_text, q.code_snippet, q.language, q.option_a, q.option_b, q.option_c, q.option_d, q.est_time_seconds,
+                SELECT q.id, q.question_text, q.code_snippet, q.language, q.option_a, q.option_b, q.option_c, q.option_d, q.correct_option, q.est_time_seconds,
                        q.source_tag, q.company_name, s.name as subtopic_name, t.name as topic_name
                 FROM questions q
                 JOIN subtopics s ON q.subtopic_id = s.id
                 JOIN topics t ON s.topic_id = t.id
                 WHERE (q.source_tag LIKE ? OR q.company_name LIKE ?)
-                  AND q.id = (SELECT MIN(q_canon.id) FROM questions q_canon WHERE q_canon.question_text = q.question_text)
+                  AND q.is_published = 1
                 ORDER BY RAND() LIMIT 10
             ");
             $stmt->execute(['%' . $tagFilter . '%', '%' . $tagFilter . '%']);
@@ -81,43 +240,116 @@ class MockTestController {
         // Fallback if not enough tagged questions
         if (count($questions) < 5) {
             $stmt = $db->query("
-                SELECT q.id, q.question_text, q.code_snippet, q.language, q.option_a, q.option_b, q.option_c, q.option_d, q.est_time_seconds,
+                SELECT q.id, q.question_text, q.code_snippet, q.language, q.option_a, q.option_b, q.option_c, q.option_d, q.correct_option, q.est_time_seconds,
                        s.name as subtopic_name, t.name as topic_name
                 FROM questions q
                 JOIN subtopics s ON q.subtopic_id = s.id
                 JOIN topics t ON s.topic_id = t.id
-                WHERE q.id = (SELECT MIN(q_canon.id) FROM questions q_canon WHERE q_canon.question_text = q.question_text)
+                WHERE q.is_published = 1
                 ORDER BY RAND() LIMIT 10
             ");
             $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
+        // Guarantee 10 strictly distinct questions by question_text and id
+        $distinctQuestions = [];
+        $seenTexts = [];
+        foreach ($questions as $q) {
+            $norm = trim(mb_strtolower($q['question_text']));
+            if (!isset($seenTexts[$norm])) {
+                $seenTexts[$norm] = true;
+                $distinctQuestions[] = $q;
+            }
+        }
+        $questions = array_slice($distinctQuestions, 0, 10);
+
         $sessionId = 'mock_' . bin2hex(random_bytes(8));
+        $_SESSION['mock_test_mappings'][$sessionId] = [];
+
+        $shuffledQuestions = [];
+        foreach ($questions as $q) {
+            $parsed = QuestionParser::parse($q['question_text']);
+            $rawOpts = [
+                'A' => $q['option_a'],
+                'B' => $q['option_b'],
+                'C' => $q['option_c'],
+                'D' => $q['option_d']
+            ];
+            $dbCorrectLetter = strtoupper(trim($q['correct_option'] ?: 'A'));
+
+            $keys = ['A', 'B', 'C', 'D'];
+            $shuffledKeys = $keys;
+            shuffle($shuffledKeys);
+
+            $shuffledOptions = [];
+            $shuffledCorrect = 'A';
+            foreach ($keys as $idx => $origKey) {
+                $newKey = $shuffledKeys[$idx];
+                $shuffledOptions[$newKey] = $rawOpts[$origKey];
+                if ($origKey === $dbCorrectLetter) {
+                    $shuffledCorrect = $newKey;
+                }
+            }
+            ksort($shuffledOptions);
+
+            $_SESSION['mock_test_mappings'][$sessionId][$q['id']] = [
+                'correct_option' => $shuffledCorrect,
+                'options' => $shuffledOptions
+            ];
+
+            $shuffledQuestions[] = [
+                'id' => (int)$q['id'],
+                'topic_name' => $q['topic_name'],
+                'subtopic_name' => $q['subtopic_name'],
+                'question_text' => $parsed['full_text'],
+                'raw_question_text' => $q['question_text'],
+                'source_tag' => $parsed['source_tag'] ?? $q['source_tag'] ?? null,
+                'code_snippet' => $q['code_snippet'] ?? null,
+                'language' => $q['language'] ?? null,
+                'options' => $shuffledOptions
+            ];
+        }
+
+        $totalQuestions = count($shuffledQuestions);
+        // Total time rule: Total time in minutes = number of questions (N questions = N minutes)
+        $durationSeconds = max(60, $totalQuestions * 60);
+        $startedAt = date('Y-m-d H:i:s');
+        $deadline = date('Y-m-d H:i:s', time() + $durationSeconds);
+        $qIdsList = implode(',', array_column($shuffledQuestions, 'id'));
+
+        // Server-authoritative session persistence in database
+        if ($userId && self::$hasMockSessionsTable) {
+            try {
+                $db->prepare("
+                    INSERT INTO mock_sessions 
+                    (id, user_id, pack_code, pack_title, total_questions, duration_seconds, started_at, deadline, status, question_ids)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?)
+                ")->execute([
+                    $sessionId,
+                    $userId,
+                    $packCode ?: 'GENERAL_MOCK',
+                    $packTitle ?? 'Placement Practice Mock',
+                    $totalQuestions,
+                    $durationSeconds,
+                    $startedAt,
+                    $deadline,
+                    $qIdsList
+                ]);
+            } catch (\Throwable $e) {
+                error_log("Failed to insert mock session: " . $e->getMessage());
+            }
+        }
 
         echo json_encode([
             'status' => 'success',
             'session_id' => $sessionId,
-            'duration_seconds' => 600, // 10 minutes total timer
+            'duration_seconds' => $durationSeconds,
+            'remaining_seconds' => $durationSeconds,
+            'started_at' => $startedAt,
+            'deadline' => $deadline,
+            'is_resumed' => false,
             'pack_code' => $packCode ?: 'GENERAL_MOCK',
-            'questions' => array_map(function($q) {
-                $parsed = QuestionParser::parse($q['question_text']);
-                return [
-                    'id' => (int)$q['id'],
-                    'topic_name' => $q['topic_name'],
-                    'subtopic_name' => $q['subtopic_name'],
-                    'question_text' => $parsed['full_text'],
-                    'raw_question_text' => $q['question_text'],
-                    'source_tag' => $parsed['source_tag'] ?? $q['source_tag'] ?? null,
-                    'code_snippet' => $q['code_snippet'] ?? null,
-                    'language' => $q['language'] ?? null,
-                    'options' => [
-                        'A' => $q['option_a'],
-                        'B' => $q['option_b'],
-                        'C' => $q['option_c'],
-                        'D' => $q['option_d']
-                    ]
-                ];
-            }, $questions)
+            'questions' => $shuffledQuestions
         ]);
         exit;
     }
@@ -155,6 +387,38 @@ class MockTestController {
         $db = Database::getConnection();
         self::checkSchemaCapabilities($db);
 
+        // Server-authoritative deadline validation
+        $mockSession = null;
+        if ($userId && self::$hasMockSessionsTable) {
+            $sessStmt = $db->prepare("SELECT * FROM mock_sessions WHERE id = ? LIMIT 1");
+            $sessStmt->execute([$clientSessionId]);
+            $mockSession = $sessStmt->fetch(PDO::FETCH_ASSOC);
+            if ($mockSession) {
+                $now = time();
+                $deadlineTs = strtotime($mockSession['deadline']);
+                // 30 seconds network latency grace period
+                if ($deadlineTs && $now > ($deadlineTs + 30)) {
+                    if ($mockSession['status'] === 'active') {
+                        $db->prepare("UPDATE mock_sessions SET status = 'expired' WHERE id = ?")->execute([$clientSessionId]);
+                    }
+                    http_response_code(400);
+                    echo json_encode([
+                        'status' => 'error',
+                        'code' => 'DEADLINE_EXCEEDED',
+                        'message' => 'The time limit for this mock test has expired. Submissions after deadline are rejected.'
+                    ]);
+                    exit;
+                }
+            }
+        }
+
+        $tabSwitchSkipped = $input['tab_switch_skipped'] ?? [];
+        if (!is_array($tabSwitchSkipped)) {
+            $tabSwitchSkipped = [];
+        }
+        $tabSwitchSkipped = array_map('intval', $tabSwitchSkipped);
+        $tabSwitchCount = count($tabSwitchSkipped);
+
         $inClause = implode(',', array_fill(0, count($questionIds), '?'));
         
         $stmt = $db->prepare("
@@ -183,12 +447,16 @@ class MockTestController {
         $sectionMap = [];
         $timingRecords = [];
 
+        $sessionMockMap = $_SESSION['mock_test_mappings'][$clientSessionId] ?? [];
+
         foreach ($questions as $index => $q) {
             $qId = (int)$q['id'];
             $qNum = $index + 1;
             $userAns = $answers[$qId] ?? null;
             if (empty($userAns) || $userAns === 'null') {
                 $userAns = null;
+            } else {
+                $userAns = strtoupper(trim((string)$userAns));
             }
 
             $rawTime = isset($questionTimes[$qId]) ? (int)$questionTimes[$qId] : 0;
@@ -200,18 +468,39 @@ class MockTestController {
 
             $isCorrect = false;
             $status = 'skipped';
+            $skipReason = null;
+
+            $expectedCorrect = $sessionMockMap[$qId]['correct_option'] ?? strtoupper(trim($q['correct_option'] ?: 'A'));
 
             if ($userAns !== null) {
-                if ($userAns === $q['correct_option']) {
+                if ($userAns === $expectedCorrect) {
                     $isCorrect = true;
                     $status = 'correct';
                     $correctCount++;
                 } else {
-                    $status = 'wrong';
-                    $wrongCount++;
+                    // Also check text match if options were recorded
+                    $shuffledOpts = $sessionMockMap[$qId]['options'] ?? null;
+                    if ($shuffledOpts && isset($shuffledOpts[$userAns]) && isset($shuffledOpts[$expectedCorrect])) {
+                        if (strtolower(trim($shuffledOpts[$userAns])) === strtolower(trim($shuffledOpts[$expectedCorrect]))) {
+                            $isCorrect = true;
+                            $status = 'correct';
+                            $correctCount++;
+                        } else {
+                            $status = 'wrong';
+                            $wrongCount++;
+                        }
+                    } else {
+                        $status = 'wrong';
+                        $wrongCount++;
+                    }
                 }
             } else {
                 $skippedCount++;
+                if (in_array($qId, $tabSwitchSkipped, true) || (($input['skip_reasons'][$qId] ?? '') === 'tab_switch')) {
+                    $skipReason = 'tab_switch';
+                } else {
+                    $skipReason = 'unanswered';
+                }
             }
 
             $sectionName = $q['topic_name'] ?? 'General Aptitude';
@@ -249,7 +538,7 @@ class MockTestController {
                 'code_snippet' => $q['code_snippet'] ?? null,
                 'language' => $q['language'] ?? null,
                 'user_answer' => $userAns ?: 'Not Attempted',
-                'correct_option' => $q['correct_option'],
+                'correct_option' => $expectedCorrect,
                 'is_correct' => $isCorrect,
                 'status' => $status,
                 'time_seconds' => $timeTaken,
@@ -260,31 +549,24 @@ class MockTestController {
             // Save individual question attempt to attempts table if logged in
             if ($userId) {
                 try {
-                    if (self::$hasMockSessionIdCol && self::$hasPackCodeCol) {
-                        $db->prepare("
-                            INSERT INTO attempts (user_id, question_id, selected_option, is_correct, confidence, time_taken_seconds, mode, mock_session_id, pack_code)
-                            VALUES (?, ?, ?, ?, 'sure', ?, 'mock', ?, ?)
-                        ")->execute([
-                            $userId, 
-                            $qId, 
-                            $userAns ?: 'A', 
-                            $isCorrect ? 1 : 0, 
-                            $timeTaken, 
-                            $clientSessionId, 
-                            $packCode
-                        ]);
-                    } else {
-                        $db->prepare("
-                            INSERT INTO attempts (user_id, question_id, selected_option, is_correct, confidence, time_taken_seconds, mode)
-                            VALUES (?, ?, ?, ?, 'sure', ?, 'mock')
-                        ")->execute([
-                            $userId, 
-                            $qId, 
-                            $userAns ?: 'A', 
-                            $isCorrect ? 1 : 0, 
-                            $timeTaken
-                        ]);
+                    $cols = ['user_id', 'question_id', 'selected_option', 'is_correct', 'confidence', 'time_taken_seconds', 'mode'];
+                    $vals = [$userId, $qId, $userAns ?: 'A', $isCorrect ? 1 : 0, 'sure', $timeTaken, 'mock'];
+
+                    if (self::$hasMockSessionIdCol) {
+                        $cols[] = 'mock_session_id';
+                        $vals[] = $clientSessionId;
                     }
+                    if (self::$hasPackCodeCol) {
+                        $cols[] = 'pack_code';
+                        $vals[] = $packCode;
+                    }
+                    if (self::$hasSkipReasonCol) {
+                        $cols[] = 'skip_reason';
+                        $vals[] = $skipReason;
+                    }
+                    $colStr = implode(', ', $cols);
+                    $placeholders = implode(', ', array_fill(0, count($vals), '?'));
+                    $db->prepare("INSERT INTO attempts ($colStr) VALUES ($placeholders)")->execute($vals);
                 } catch (\Throwable $e) {
                     error_log("Failed to insert mock attempt for question $qId: " . $e->getMessage());
                 }
@@ -309,7 +591,10 @@ class MockTestController {
         }
 
         // Time Statistics
-        $timeAllowed = 600; // 10 minutes total allowed
+        $timeAllowed = $totalQuestions * 60; // Overall timer rule: N mins = N questions
+        if ($mockSession && !empty($mockSession['duration_seconds'])) {
+            $timeAllowed = (int)$mockSession['duration_seconds'];
+        }
         if ($totalTimeTaken <= 0) {
             $totalTimeTaken = array_sum(array_column($timingRecords, 'time_seconds'));
         }
@@ -394,37 +679,73 @@ class MockTestController {
             $insights[] = "All {$totalQuestions} questions attempted under test conditions.";
         }
 
-        // Record session summary in mock_sessions if table exists
+        // Record or update session summary in mock_sessions if table exists
         if ($userId && self::$hasMockSessionsTable) {
             try {
-                $db->prepare("
-                    INSERT INTO mock_sessions 
-                    (id, user_id, pack_code, pack_title, total_questions, correct_count, wrong_count, skipped_count, score_marks, total_marks, accuracy_percent, total_time_seconds)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ")->execute([
-                    $clientSessionId,
-                    $userId,
-                    $packCode,
-                    $packTitle,
-                    $totalQuestions,
-                    $correctCount,
-                    $wrongCount,
-                    $skippedCount,
-                    $scoreMarks,
-                    $totalMarks,
-                    $accuracyPercent,
-                    $totalTimeTaken
-                ]);
+                if ($mockSession) {
+                    $db->prepare("
+                        UPDATE mock_sessions 
+                        SET status = 'completed',
+                            correct_count = ?,
+                            wrong_count = ?,
+                            skipped_count = ?,
+                            score_marks = ?,
+                            total_marks = ?,
+                            accuracy_percent = ?,
+                            total_time_seconds = ?,
+                            tab_switch_count = ?,
+                            user_answers = ?,
+                            completed_at = NOW()
+                        WHERE id = ?
+                    ")->execute([
+                        $correctCount,
+                        $wrongCount,
+                        $skippedCount,
+                        $scoreMarks,
+                        $totalMarks,
+                        $accuracyPercent,
+                        $totalTimeTaken,
+                        $tabSwitchCount,
+                        json_encode($answers),
+                        $clientSessionId
+                    ]);
+                } else {
+                    $db->prepare("
+                        INSERT INTO mock_sessions 
+                        (id, user_id, pack_code, pack_title, total_questions, duration_seconds, started_at, deadline, status, correct_count, wrong_count, skipped_count, score_marks, total_marks, accuracy_percent, total_time_seconds, tab_switch_count, user_answers, completed_at)
+                        VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), 'completed', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                    ")->execute([
+                        $clientSessionId,
+                        $userId,
+                        $packCode,
+                        $packTitle,
+                        $totalQuestions,
+                        $timeAllowed,
+                        $correctCount,
+                        $wrongCount,
+                        $skippedCount,
+                        $scoreMarks,
+                        $totalMarks,
+                        $accuracyPercent,
+                        $totalTimeTaken,
+                        $tabSwitchCount,
+                        json_encode($answers)
+                    ]);
+                }
             } catch (\Throwable $e) {
-                error_log("Failed to insert mock_sessions record: " . $e->getMessage());
+                error_log("Failed to insert/update mock_sessions record: " . $e->getMessage());
             }
         }
 
-        // XP Awards
-        $baseMockXP = 100 + (int)($accuracyPercent * 2);
+        // XP Awards from centralized economy config
+        $cfg = GamificationEngine::getConfig();
+        $mockBase = (int)($cfg['mock_test']['base_xp'] ?? 50);
+        $mockMult = (float)($cfg['mock_test']['accuracy_xp_multiplier'] ?? 1.5);
+        $mockXP = $mockBase + (int)round($accuracyPercent * $mockMult);
+
         $xpResult = [];
         if ($userId && $correctCount > 0) {
-            $xpResult = User::addXP($userId, $baseMockXP);
+            $xpResult = User::addXP($userId, $mockXP);
         }
 
         echo json_encode([
@@ -461,7 +782,7 @@ class MockTestController {
             'sections' => $sections,
             'insights' => array_slice($insights, 0, 3),
             'detailed_results' => $detailedResults,
-            'xp_earned' => ($userId && $correctCount > 0) ? $baseMockXP : 0,
+            'xp_earned' => ($userId && $correctCount > 0) ? $mockXP : 0,
             'xp_data' => $xpResult
         ]);
         exit;
