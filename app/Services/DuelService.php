@@ -457,4 +457,67 @@ class DuelService {
 
         return ['status' => 'success', 'message' => 'Duel forfeited. Victory awarded to opponent.'];
     }
+
+    /**
+     * Settle duel when an opponent disconnects/closes tab and fails to return past 45s grace period.
+     * Awards forfeit victory to the waiting active player and releases wager pot.
+     */
+    public static function claimAbandonmentVictory(int $claimingUserId, int $duelId): array {
+        $db = Database::getConnection();
+        $stmt = $db->prepare("SELECT * FROM duels WHERE id = ?");
+        $stmt->execute([$duelId]);
+        $duel = $stmt->fetch();
+
+        if (!$duel || $duel['status'] !== 'active') {
+            return ['status' => 'error', 'message' => 'Duel is not active or already settled.'];
+        }
+
+        $isChallenger = ((int)$duel['challenger_id'] === $claimingUserId);
+        $isOpponent = ((int)$duel['opponent_id'] === $claimingUserId);
+
+        if (!$isChallenger && !$isOpponent) {
+            return ['status' => 'error', 'message' => 'Unauthorized participant.'];
+        }
+
+        $abandoningUserId = $isChallenger ? (int)$duel['opponent_id'] : (int)$duel['challenger_id'];
+        return self::forfeitDuel($abandoningUserId, $duelId);
+    }
+
+    /**
+     * Settle or refund stale active duels abandoned by players (> 10 minutes inactive)
+     * Ensures NO escrow coins are stuck in limbo!
+     */
+    public static function settleAbandonedDuels(): int {
+        $db = Database::getConnection();
+        $stmt = $db->query("
+            SELECT id, challenger_id, opponent_id, wager_coins, challenger_score, opponent_score, is_bot
+            FROM duels
+            WHERE status = 'active' AND created_at < NOW() - INTERVAL 10 MINUTE
+        ");
+        $staleDuels = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $settledCount = 0;
+
+        foreach ($staleDuels as $d) {
+            $duelId = (int)$d['id'];
+            $wager = (int)$d['wager_coins'];
+
+            if ($d['challenger_score'] > 0 && $d['opponent_score'] == 0) {
+                self::forfeitDuel((int)$d['opponent_id'], $duelId);
+                $settledCount++;
+            } elseif ($d['opponent_score'] > 0 && $d['challenger_score'] == 0) {
+                self::forfeitDuel((int)$d['challenger_id'], $duelId);
+                $settledCount++;
+            } else {
+                $db->prepare("UPDATE duels SET status = 'cancelled' WHERE id = ? AND status = 'active'")->execute([$duelId]);
+                if ($wager > 0 && !(int)$d['is_bot']) {
+                    WalletService::addCoins((int)$d['challenger_id'], $wager, 'admin_grant', 'Duel Abandoned Inactivity Refund');
+                    if ($d['opponent_id']) {
+                        WalletService::addCoins((int)$d['opponent_id'], $wager, 'admin_grant', 'Duel Abandoned Inactivity Refund');
+                    }
+                }
+                $settledCount++;
+            }
+        }
+        return $settledCount;
+    }
 }
