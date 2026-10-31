@@ -14,7 +14,7 @@ class Leaderboard {
 
         $sql = "
             SELECT u.id, u.name, u.tier, u.total_xp, ls.period_xp,
-                   RANK() OVER (ORDER BY ls.period_xp DESC) as period_rank
+                   RANK() OVER (ORDER BY ls.period_xp DESC, ls.updated_at ASC, u.id ASC) as period_rank
             FROM leaderboard_scores ls
             JOIN users u ON ls.user_id = u.id
             WHERE ls.period = ? AND u.role != 'admin'
@@ -26,7 +26,7 @@ class Leaderboard {
             $params[] = $tier;
         }
 
-        $sql .= " ORDER BY ls.period_xp DESC LIMIT " . (int)$limit;
+        $sql .= " ORDER BY ls.period_xp DESC, ls.updated_at ASC, u.id ASC LIMIT " . (int)$limit;
 
         $stmt = $db->prepare($sql);
         $stmt->execute($params);
@@ -36,7 +36,7 @@ class Leaderboard {
         if (empty($results)) {
             $fallbackSql = "
                 SELECT u.id, u.name, u.tier, u.total_xp, u.total_xp as period_xp,
-                       RANK() OVER (ORDER BY u.total_xp DESC) as period_rank
+                       RANK() OVER (ORDER BY u.total_xp DESC, u.created_at ASC, u.id ASC) as period_rank
                 FROM users u
                 WHERE u.role != 'admin'
             ";
@@ -45,7 +45,7 @@ class Leaderboard {
                 $fallbackSql .= " AND u.tier = ?";
                 $fbParams[] = $tier;
             }
-            $fallbackSql .= " ORDER BY u.total_xp DESC LIMIT " . (int)$limit;
+            $fallbackSql .= " ORDER BY u.total_xp DESC, u.created_at ASC, u.id ASC LIMIT " . (int)$limit;
             $fbStmt = $db->prepare($fallbackSql);
             $fbStmt->execute($fbParams);
             $results = $fbStmt->fetchAll();
