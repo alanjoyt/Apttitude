@@ -433,8 +433,11 @@ switch ($action) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = User::authenticate($_POST['email'], $_POST['password']);
             if ($user) {
+                session_regenerate_id(true);
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['name'];
+                $_SESSION['user_role'] = $user['role'] ?? 'student';
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                 DeviceLockService::registerDeviceLock($user['id']);
                 $redirectTo = !empty($_POST['redirect']) ? htmlspecialchars($_POST['redirect'], ENT_QUOTES) : (!empty($_GET['redirect']) ? htmlspecialchars($_GET['redirect'], ENT_QUOTES) : 'dashboard');
                 header('Location: index.php?action=' . $redirectTo);
@@ -463,8 +466,11 @@ switch ($action) {
             } else {
                 try {
                     $userId = User::register($name, $email, $password, $refCode);
+                    session_regenerate_id(true);
                     $_SESSION['user_id'] = $userId;
                     $_SESSION['user_name'] = $name;
+                    $_SESSION['user_role'] = 'student';
+                    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                     DeviceLockService::registerDeviceLock($userId);
                     header('Location: index.php?action=dashboard');
                     exit;
@@ -477,6 +483,14 @@ switch ($action) {
         break;
 
     case 'logout':
+        $_SESSION = [];
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
         session_destroy();
         header('Location: index.php?action=landing');
         exit;
