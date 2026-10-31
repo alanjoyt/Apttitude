@@ -8,6 +8,61 @@ const QuizShell = {
 
   init() {
     this.applyTextSize(localStorage.getItem('quiz_text_size') || 'medium');
+    this.initTouchGestures();
+    this.initKeyboardHelper();
+  },
+
+  initTouchGestures() {
+    let startX = 0;
+    let startY = 0;
+    const zone = document.querySelector('.quiz-focus-wrapper') || document.getElementById('practiceCard');
+    if (!zone) return;
+
+    zone.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    zone.addEventListener('touchend', (e) => {
+      if (e.changedTouches.length === 1) {
+        const diffX = e.changedTouches[0].clientX - startX;
+        const diffY = e.changedTouches[0].clientY - startY;
+        // Require horizontal swipe of > 60px with less vertical deviation
+        if (Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+          if (diffX < -50) {
+            // Swipe Left -> Next or Check
+            const nextBtn = document.getElementById('nextBtn') || document.getElementById('techNextBtn');
+            if (nextBtn && nextBtn.style.display !== 'none' && !nextBtn.disabled) {
+              handleQuizNext();
+            } else {
+              const submitBtn = document.getElementById('submitBtn');
+              if (submitBtn && !submitBtn.disabled && submitBtn.style.display !== 'none') {
+                if (window.PracticeEngine && typeof PracticeEngine.submitAnswer === 'function') {
+                  PracticeEngine.submitAnswer();
+                } else if (window.TechnicalEngine && typeof TechnicalEngine.submitAnswer === 'function') {
+                  TechnicalEngine.submitAnswer();
+                }
+              }
+            }
+          } else if (diffX > 50) {
+            // Swipe Right -> Skip
+            handleQuizSkip();
+          }
+        }
+      }
+    }, { passive: true });
+  },
+
+  initKeyboardHelper() {
+    window.addEventListener('focusin', (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+        setTimeout(() => {
+          e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      }
+    });
   },
 
   getTextSize() {
@@ -29,13 +84,41 @@ const QuizShell = {
 
   formatInlineCode(text) {
     if (!text) return '';
+
+    const codeBlocks = {};
+    let counter = 0;
+    // 1. Extract fenced code blocks
+    let cleanText = text.replace(/```([a-zA-Z0-9_\-+]*)\r?\n([\s\S]*?)```/g, (match, lang, code) => {
+      const token = `%%CODEBLOCK_${counter++}%%`;
+      const cleanLang = (lang || '').trim();
+      const div = document.createElement('div');
+      div.textContent = code;
+      const escapedCode = div.innerHTML;
+      const langClass = cleanLang ? ` class="language-${cleanLang}"` : '';
+      codeBlocks[token] = `<pre class="overflow-x-auto my-2 p-2.5 rounded bg-surface border text-start" style="max-height: 350px; overflow-x: auto; white-space: pre;" tabindex="0"><code${langClass}>${escapedCode}</code></pre>`;
+      return token;
+    });
+
     const div = document.createElement('div');
-    div.textContent = text;
+    div.textContent = cleanText;
     let escaped = div.innerHTML;
-    return escaped.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+
+    // Format `inline code`
+    escaped = escaped.replace(/`([^`]+)`/g, '<code class="inline-code"></code>');
+    // Format **bold**
+    escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong class="md-bold"></strong>');
+    // Format *italic*
+    escaped = escaped.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em class="md-italic"></em>');
+
+    // Restore fenced code blocks
+    for (const token in codeBlocks) {
+      escaped = escaped.replace(token, codeBlocks[token]);
+    }
+
+    return escaped;
   },
 
-  parseQuestion(rawText) {
+    parseQuestion(rawText) {
     let sourceTag = null;
     let text = (rawText || '').trim();
 
@@ -47,39 +130,16 @@ const QuizShell = {
       text = text.slice(tagMatch[0].length).trim();
     }
 
-    // Sentence splitting with decimal/abbr protection
-    let protectedText = text.replace(/(\d+)\.(\d+)/g, '$1__DOT__$2');
-    protectedText = protectedText.replace(/\b(e\.g|i\.e|vs|mr|ms|dr|fig|approx|no|p|q|r|s|t)\./gi, '$1__ABBR__');
-    const rawSentences = protectedText.split(/(?<=[.?!])\s+(?=[A-Z0-9"\'`])/);
-    const sentences = [];
-    if (rawSentences) {
-      rawSentences.forEach(s => {
-        const clean = s.replace(/__DOT__/g, '.').replace(/__ABBR__/g, '.').trim();
-        if (clean) sentences.push(clean);
-      });
-    }
-
-    if ((text.length > 200 || sentences.length >= 3) && sentences.length >= 2) {
-      const last = sentences[sentences.length - 1];
-      const isPrompt = /\?$/.test(last) || /^(Which|What|How|Find|Determine|Calculate|Identify|Select|Choose)\b/i.test(last);
-      if (isPrompt) {
-        const setupSentences = sentences.slice(0, sentences.length - 1);
-        return {
-          sourceTag,
-          setupSentences,
-          prompt: last,
-          fullText: text,
-          isSplit: true
-        };
-      }
-    }
-
     return {
       sourceTag,
+      source_tag: sourceTag,
       setupSentences: [],
+      setup_sentences: [],
       prompt: text,
       fullText: text,
-      isSplit: false
+      full_text: text,
+      isSplit: false,
+      is_split: false
     };
   },
 
@@ -137,7 +197,7 @@ function handleQuizExit(e) {
   }
 
   if (window.location.search.includes('action=technical')) {
-    window.location.href = 'index.php?action=technical&view=hub';
+    window.location.href = 'index.php?action=technical';
     return;
   }
   window.location.href = 'index.php?action=practice';
@@ -214,6 +274,10 @@ function openQuizHint() {
     PracticeEngine.openHint();
     return;
   }
+  if (window.TechnicalEngine && typeof TechnicalEngine.openHint === 'function') {
+    TechnicalEngine.openHint();
+    return;
+  }
   const hintModalEl = document.getElementById('hintModal') || document.getElementById('formulaModal');
   if (hintModalEl && window.bootstrap) {
     bootstrap.Modal.getOrCreateInstance(hintModalEl).show();
@@ -245,7 +309,8 @@ function submitReport() {
     body: JSON.stringify({
       question_id: currentQ.id,
       reason: reason,
-      comment: comment
+      comment: comment,
+      csrf_token: window.CSRF_TOKEN || ''
     })
   })
   .then(res => res.json())
@@ -268,6 +333,87 @@ function submitReport() {
     }
   });
 }
+
+async function submitStudentQuestion(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  const alertBox = document.getElementById('subAlertBox');
+  const submitBtn = document.getElementById('subSubmitBtn');
+
+  const payload = {
+    company_name: (document.getElementById('subCompany')?.value || '').trim(),
+    drive_date: document.getElementById('subDriveDate')?.value || '',
+    difficulty: document.getElementById('subDifficulty')?.value || 'medium',
+    round_pattern: (document.getElementById('subRoundPattern')?.value || '').trim(),
+    topic_name: (document.getElementById('subTopicName')?.value || '').trim(),
+    question_text: (document.getElementById('subQuestionText')?.value || '').trim(),
+    code_snippet: (document.getElementById('subCodeSnippet')?.value || '').trim(),
+    option_a: (document.getElementById('subOptA')?.value || '').trim(),
+    option_b: (document.getElementById('subOptB')?.value || '').trim(),
+    option_c: (document.getElementById('subOptC')?.value || '').trim(),
+    option_d: (document.getElementById('subOptD')?.value || '').trim(),
+    correct_option: document.getElementById('subCorrectOpt')?.value || 'A',
+    explanation: (document.getElementById('subExplanation')?.value || '').trim(),
+    csrf_token: window.CSRF_TOKEN || ''
+  };
+
+  if (!payload.company_name || !payload.question_text || !payload.option_a || !payload.option_b) {
+    if (alertBox) {
+      alertBox.className = 'alert alert-warning py-2 small mb-3';
+      alertBox.textContent = 'Please fill all required fields (Company, Question stem, Option A & B).';
+      alertBox.classList.remove('d-none');
+    }
+    return;
+  }
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Submitting...';
+  }
+
+  try {
+    const res = await fetch('index.php?action=api_submit_user_question', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (data.status === 'success') {
+      if (alertBox) {
+        alertBox.className = 'alert alert-success py-2 small mb-3';
+        alertBox.textContent = data.message;
+        alertBox.classList.remove('d-none');
+      }
+      const form = document.getElementById('studentQuestionForm');
+      if (form) form.reset();
+      setTimeout(() => {
+        const modalEl = document.getElementById('submitQuestionModal');
+        if (modalEl && window.bootstrap) {
+          bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+        }
+        if (alertBox) alertBox.classList.add('d-none');
+      }, 2000);
+    } else {
+      if (alertBox) {
+        alertBox.className = 'alert alert-danger py-2 small mb-3';
+        alertBox.textContent = data.message || 'Error submitting question.';
+        alertBox.classList.remove('d-none');
+      }
+    }
+  } catch (err) {
+    if (alertBox) {
+      alertBox.className = 'alert alert-danger py-2 small mb-3';
+      alertBox.textContent = 'Server network error submitting question.';
+      alertBox.classList.remove('d-none');
+    }
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<svg class="exam-icon me-1" style="width:14px;height:14px;"><use href="#icon-rocket"></use></svg> Submit to Moderation (+50 XP)';
+    }
+  }
+}
+window.submitStudentQuestion = submitStudentQuestion;
 
 document.addEventListener('DOMContentLoaded', () => {
   QuizShell.init();

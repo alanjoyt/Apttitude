@@ -84,13 +84,37 @@ class QuestionParser {
 
     public static function renderMarkdown(?string $text): string {
         if ($text === null || $text === '') return '';
+
+        $codeBlocks = [];
+        // 1. Extract fenced code blocks: ```lang\ncode\n```
+        $text = preg_replace_callback('/```([a-zA-Z0-9_\-+]*)\r?\n(.*?)```/s', function($matches) use (&$codeBlocks) {
+            $lang = trim($matches[1]);
+            $code = rtrim($matches[2], "\r\n");
+            $escapedCode = htmlspecialchars($code, ENT_QUOTES, 'UTF-8');
+            $langClass = $lang !== '' ? ' class="language-' . htmlspecialchars($lang, ENT_QUOTES, 'UTF-8') . '"' : '';
+            $html = '<pre class="overflow-x-auto my-2 p-2.5 rounded bg-surface border text-start" style="max-height: 350px; overflow-x: auto; white-space: pre;" tabindex="0"><code' . $langClass . '>' . $escapedCode . '</code></pre>';
+            $token = '%%CODEBLOCK_' . count($codeBlocks) . '%%';
+            $codeBlocks[$token] = $html;
+            return $token;
+        }, $text);
+
+        // 2. Escape HTML for the non-code text
         $escaped = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
-        // Convert `inline code`
+
+        // 3. Convert `inline code`
         $rendered = preg_replace('/`([^`]+)`/', '<code class="inline-code">$1</code>', $escaped);
-        // Convert **bold**
+
+        // 4. Convert **bold**
         $rendered = preg_replace('/\*\*([^*]+)\*\*/', '<strong class="md-bold">$1</strong>', $rendered);
-        // Convert *italic*
+
+        // 5. Convert *italic*
         $rendered = preg_replace('/(?<!\*)\*([^*]+)\*(?!\*)/', '<em class="md-italic">$1</em>', $rendered);
+
+        // 6. Restore code blocks
+        foreach ($codeBlocks as $token => $blockHtml) {
+            $rendered = str_replace($token, $blockHtml, $rendered);
+        }
+
         return $rendered;
     }
 }
