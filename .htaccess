@@ -6,7 +6,7 @@
     RewriteRule (^|/)\. - [F,L]
 
     # 2. Strictly block direct access to internal server directories
-    RewriteRule ^(app|config|database|backups|migrations|scratch|scripts|tests)(/|$) - [F,L]
+    RewriteRule ^(app|config|database|backups|migrations|scratch|scripts|tests|deploy)(/|$) - [F,L]
 
     # Route sitemap.xml dynamically through sitemap.php
     RewriteRule ^sitemap\.xml$ public/sitemap.php [L]

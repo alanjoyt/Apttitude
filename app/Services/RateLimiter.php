@@ -12,6 +12,29 @@ require_once __DIR__ . '/../../config/db.php';
 class RateLimiter {
 
     /**
+     * Resolve the client IP address safely.
+     * Defaults to REMOTE_ADDR to prevent header-spoofing attacks on untrusted proxies.
+     * On Cloudflare / trusted reverse proxies, CF-Connecting-IP can be inspected
+     * if the host environment guarantees proxy header sanitization.
+     */
+    public static function getClientIp(): string {
+        // Prefer REMOTE_ADDR as the unforgeable socket address
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+        
+        // If behind trusted Cloudflare proxy and explicitly confirmed
+        if (defined('TRUST_PROXY_HEADERS') && TRUST_PROXY_HEADERS === true) {
+            if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+                $ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
+            } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+                $ip = trim($parts[0]);
+            }
+        }
+        
+        return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : '127.0.0.1';
+    }
+
+    /**
      * Check if the given identifier has exceeded the maximum attempts within the window
      *
      * @param string $action Action key (e.g., 'login', 'answer_submit')
