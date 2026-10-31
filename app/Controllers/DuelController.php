@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../Services/DuelService.php';
+require_once __DIR__ . '/../Services/RateLimiter.php';
 
 class DuelController {
 
@@ -14,6 +15,17 @@ class DuelController {
             echo json_encode(['status' => 'error', 'message' => 'User not authenticated']);
             exit;
         }
+
+        $clientIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        RateLimiter::enforce(
+            'duel_create', 
+            [$clientIp, 'user:' . $userId], 
+            10, 
+            300, 
+            'Too many duel challenges created recently. Please wait a few minutes.'
+        );
+        RateLimiter::hit('duel_create', $clientIp);
+        RateLimiter::hit('duel_create', 'user:' . $userId);
 
         $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
         

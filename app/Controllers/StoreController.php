@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../config/db.php';
 require_once __DIR__ . '/../Services/WalletService.php';
 require_once __DIR__ . '/../Services/CouponService.php';
+require_once __DIR__ . '/../Services/RateLimiter.php';
 
 class StoreController {
 
@@ -103,6 +104,17 @@ class StoreController {
 
         $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
         self::verifyCsrf($input);
+
+        $clientIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        RateLimiter::enforce(
+            'store_purchase', 
+            [$clientIp, 'user:' . $userId], 
+            10, 
+            60, 
+            'Too many purchase requests. Please wait a moment.'
+        );
+        RateLimiter::hit('store_purchase', $clientIp);
+        RateLimiter::hit('store_purchase', 'user:' . $userId);
 
         $rawUnlockableId = $input['unlockable_id'] ?? null;
         if ($rawUnlockableId === null || !is_numeric($rawUnlockableId) || is_array($rawUnlockableId)) {

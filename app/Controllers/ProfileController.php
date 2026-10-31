@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/db.php';
 require_once __DIR__ . '/../Models/User.php';
+require_once __DIR__ . '/../Services/RateLimiter.php';
 
 class ProfileController {
 
@@ -72,28 +73,49 @@ class ProfileController {
             exit;
         }
 
+        $clientIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        RateLimiter::enforce(
+            'password_reset', 
+            [$clientIp, 'user:' . $userId], 
+            5, 
+            900, 
+            'Too many password update attempts. Please wait 15 minutes.'
+        );
+
         $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
         $oldPassword = $input['old_password'] ?? '';
         $newPassword = $input['new_password'] ?? '';
         $confirmPassword = $input['confirm_password'] ?? '';
 
         if (empty($oldPassword) || empty($newPassword)) {
+            RateLimiter::hit('password_reset', $clientIp);
+            RateLimiter::hit('password_reset', 'user:' . $userId);
+            http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'Please fill in all password fields']);
             exit;
         }
 
         if (strlen($newPassword) < 6) {
+            RateLimiter::hit('password_reset', $clientIp);
+            RateLimiter::hit('password_reset', 'user:' . $userId);
+            http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'New password must be at least 6 characters long']);
             exit;
         }
 
         if ($newPassword !== $confirmPassword) {
+            RateLimiter::hit('password_reset', $clientIp);
+            RateLimiter::hit('password_reset', 'user:' . $userId);
+            http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'New password and confirmation do not match']);
             exit;
         }
 
         $user = User::findById($userId);
         if (!$user || !password_verify($oldPassword, $user['password_hash'])) {
+            RateLimiter::hit('password_reset', $clientIp);
+            RateLimiter::hit('password_reset', 'user:' . $userId);
+            http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'Incorrect current password']);
             exit;
         }
@@ -103,6 +125,9 @@ class ProfileController {
         $db = Database::getConnection();
         $stmt = $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
         $stmt->execute([$newHash, $userId]);
+
+        RateLimiter::reset('password_reset', $clientIp);
+        RateLimiter::reset('password_reset', 'user:' . $userId);
 
         echo json_encode(['status' => 'success', 'message' => 'Password changed successfully!']);
         exit;

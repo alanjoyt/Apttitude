@@ -55,6 +55,7 @@ require_once __DIR__ . '/../app/Controllers/StudentSubmissionController.php';
 require_once __DIR__ . '/../app/Controllers/CompanyController.php';
 require_once __DIR__ . '/../app/Services/DeviceLockService.php';
 require_once __DIR__ . '/../app/Services/CsrfService.php';
+require_once __DIR__ . '/../app/Services/RateLimiter.php';
 
 // Enforce single active session device lock validation
 if (isset($_SESSION['user_id'])) {
@@ -431,18 +432,38 @@ switch ($action) {
             unset($_SESSION['device_lock_error']);
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $user = User::authenticate($_POST['email'], $_POST['password']);
+            $clientIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+            $email = strtolower(trim((string)($_POST['email'] ?? '')));
+
+            RateLimiter::enforce(
+                'login', 
+                array_filter([$clientIp, !empty($email) ? 'account:' . $email : null]), 
+                10, 
+                900, 
+                'Too many failed login attempts. Please try again after 15 minutes.'
+            );
+
+            $user = User::authenticate($_POST['email'] ?? '', $_POST['password'] ?? '');
             if ($user) {
+                RateLimiter::reset('login', $clientIp);
+                if (!empty($email)) {
+                    RateLimiter::reset('login', 'account:' . $email);
+                }
                 session_regenerate_id(true);
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_role'] = $user['role'] ?? 'student';
+                $_SESSION['role'] = $user['role'] ?? 'student';
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                 DeviceLockService::registerDeviceLock($user['id']);
                 $redirectTo = !empty($_POST['redirect']) ? htmlspecialchars($_POST['redirect'], ENT_QUOTES) : (!empty($_GET['redirect']) ? htmlspecialchars($_GET['redirect'], ENT_QUOTES) : 'dashboard');
                 header('Location: index.php?action=' . $redirectTo);
                 exit;
             } else {
+                RateLimiter::hit('login', $clientIp);
+                if (!empty($email)) {
+                    RateLimiter::hit('login', 'account:' . $email);
+                }
                 $error = "Invalid email or password";
             }
         }

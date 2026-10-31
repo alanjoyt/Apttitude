@@ -6,6 +6,7 @@ require_once __DIR__ . '/../Services/SpacedRepetitionService.php';
 require_once __DIR__ . '/../Services/WalletService.php';
 require_once __DIR__ . '/../Services/QuestionParser.php';
 require_once __DIR__ . '/../Models/User.php';
+require_once __DIR__ . '/../Services/RateLimiter.php';
 
 class PracticeController {
 
@@ -267,6 +268,19 @@ class PracticeController {
         }
 
         $userId = $_SESSION['user_id'] ?? null;
+        $clientIp = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        RateLimiter::enforce(
+            'answer_submit', 
+            array_filter([$clientIp, $userId ? 'user:' . $userId : null]), 
+            60, 
+            60, 
+            'Submitting answers too quickly. Please pause a moment.'
+        );
+        RateLimiter::hit('answer_submit', $clientIp);
+        if ($userId) {
+            RateLimiter::hit('answer_submit', 'user:' . $userId);
+        }
+
         $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 
         $questionId = (int)($input['question_id'] ?? 0);
