@@ -1,6 +1,39 @@
 <?php
+// Static file passthrough for PHP CLI development server only
+if (php_sapi_name() === 'cli-server') {
+    $file = __DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    if (is_file($file) && !preg_match('/\.php$/', $file)) {
+        return false;
+    }
+}
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
+}
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+require_once __DIR__ . '/../config/app.php';
+
+// Strictly guarded local test session helper:
+// Requires: 1) PHP CLI server, 2) Client IP is 127.0.0.1 or ::1, 3) APP_ENV explicitly set to 'local'
+$clientIp = $_SERVER['REMOTE_ADDR'] ?? '';
+$isLocalIp = in_array($clientIp, ['127.0.0.1', '::1', 'localhost'], true);
+if (php_sapi_name() === 'cli-server' && $isLocalIp && defined('APP_ENV') && APP_ENV === 'local' && isset($_GET['dev_login'])) {
+    require_once __DIR__ . '/../config/db.php';
+    require_once __DIR__ . '/../app/Models/User.php';
+    require_once __DIR__ . '/../app/Services/DeviceLockService.php';
+    $uid = (int)$_GET['dev_login'];
+    $u = User::findById($uid);
+    if ($u) {
+        $_SESSION['user_id'] = $u['id'];
+        $_SESSION['user_name'] = $u['name'];
+        $_SESSION['role'] = $u['role'] ?? 'user';
+        DeviceLockService::registerDeviceLock($u['id']);
+        header('Location: index.php?action=' . ($_GET['redirect'] ?? 'dashboard'));
+        exit;
+    }
 }
 
 require_once __DIR__ . '/../config/app.php';
@@ -18,7 +51,10 @@ require_once __DIR__ . '/../app/Controllers/SocialController.php';
 require_once __DIR__ . '/../app/Controllers/DuelController.php';
 require_once __DIR__ . '/../app/Controllers/ProfileController.php';
 require_once __DIR__ . '/../app/Controllers/TechnicalController.php';
+require_once __DIR__ . '/../app/Controllers/StudentSubmissionController.php';
+require_once __DIR__ . '/../app/Controllers/CompanyController.php';
 require_once __DIR__ . '/../app/Services/DeviceLockService.php';
+require_once __DIR__ . '/../app/Services/CsrfService.php';
 
 // Enforce single active session device lock validation
 if (isset($_SESSION['user_id'])) {
@@ -27,21 +63,90 @@ if (isset($_SESSION['user_id'])) {
 
 $action = $_GET['action'] ?? 'landing';
 
+// Shield all API AJAX routes: suppress warnings from breaking JSON payloads and log them server-side
+if (str_starts_with($action, 'api_')) {
+    ob_start();
+    set_error_handler(function($errno, $errstr, $errfile, $errline) {
+        error_log("[API ERROR {$errno}] {$errstr} in {$errfile}:{$errline}");
+        return true; // Suppress stdout emission
+    }, E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE | E_DEPRECATED | E_USER_DEPRECATED);
+}
+
+// Central Server-Side Admin Guard: protects all admin pages and api_admin_* endpoints
+$isAdminAction = (
+    $action === 'admin' ||
+    str_starts_with($action, 'admin_') ||
+    str_starts_with($action, 'api_admin_') ||
+    $action === 'api_toggle_dev_mode'
+);
+
+if ($isAdminAction) {
+    // 1. Guest Check: Redirect to login for pages, 401 for API
+    if (!isset($_SESSION['user_id'])) {
+        if (str_starts_with($action, 'api_')) {
+            http_response_code(401);
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Authentication required: Please log in to access this resource.'
+            ]);
+            exit;
+        } else {
+            $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'] ?? 'index.php?action=admin';
+            header('Location: index.php?action=login');
+            exit;
+        }
+    }
+
+    // 2. Role Check: Verify 'admin' role in DB/Session
+    $currentRole = $_SESSION['user_role'] ?? null;
+    if (!$currentRole) {
+        $userRow = User::findById((int)$_SESSION['user_id']);
+        $currentRole = $userRow['role'] ?? 'student';
+        $_SESSION['user_role'] = $currentRole;
+    }
+
+    if ($currentRole !== 'admin') {
+        http_response_code(403);
+        if (str_starts_with($action, 'api_')) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Access Denied: Administrator privileges required.'
+            ]);
+            exit;
+        } else {
+            $_SESSION['auth_error'] = "Access Denied: Administrator privileges required.";
+            header('Content-Type: text/html; charset=utf-8');
+            echo "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><title>403 Forbidden</title><link rel='stylesheet' href='css/style.min.css'></head><body class='bg-light text-center py-5'><div class='container'><h1 class='display-4 text-danger fw-bold'>403 Forbidden</h1><p class='lead'>Access Denied: Administrator privileges required.</p><a href='index.php?action=dashboard' class='btn btn-primary'>Return to Dashboard</a></div></body></html>";
+            exit;
+        }
+    }
+}
+
 // Router Dispatcher
 switch ($action) {
     // API AJAX Routes
     case 'api_update_profile':
+        CsrfService::verify();
         ProfileController::updateProfileJSON();
         break;
 
     case 'api_change_password':
+        CsrfService::verify();
         ProfileController::changePasswordJSON();
         break;
     case 'api_create_duel':
+        CsrfService::verify();
         DuelController::createDuelJSON();
+        break;
+    case 'api_create_bot_duel':
+        CsrfService::verify();
+        DuelController::createBotDuelJSON();
         break;
 
     case 'api_join_duel':
+        CsrfService::verify();
         DuelController::joinDuelJSON();
         break;
 
@@ -49,14 +154,22 @@ switch ($action) {
         DuelController::getDuelQuestionsJSON();
         break;
 
+    case 'api_check_duel_answer':
+        CsrfService::verify();
+        DuelController::checkDuelAnswerJSON();
+        break;
+
     case 'api_submit_duel':
+        CsrfService::verify();
         DuelController::submitDuelJSON();
         break;
     case 'api_add_friend':
+        CsrfService::verify();
         SocialController::addFriendJSON();
         break;
 
     case 'api_accept_friend':
+        CsrfService::verify();
         SocialController::acceptFriendJSON();
         break;
 
@@ -65,16 +178,39 @@ switch ($action) {
         break;
 
     case 'api_import_csv':
-        AdminController::importCSVQuestionsJSON();
+    case 'api_admin_import_batch':
+        AdminController::importBatchQuestionsJSON();
+        break;
+
+    case 'api_submit_user_question':
+        CsrfService::verify();
+        StudentSubmissionController::submitQuestionJSON();
+        break;
+
+    case 'api_admin_approve_submission':
+        AdminController::approveSubmissionJSON();
+        break;
+
+    case 'api_admin_reject_submission':
+        AdminController::rejectSubmissionJSON();
+        break;
+
+    case 'api_admin_update_company_profile':
+        AdminController::updateCompanyProfileJSON();
+        break;
+
+    case 'api_admin_mark_reviewed':
+        AdminController::markQuestionReviewedJSON();
         break;
 
 
-
     case 'api_create_squad':
+        CsrfService::verify();
         SocialController::createSquadJSON();
         break;
 
     case 'api_join_squad':
+        CsrfService::verify();
         SocialController::joinSquadJSON();
         break;
     case 'api_get_quests':
@@ -82,6 +218,7 @@ switch ($action) {
         break;
 
     case 'api_claim_quest':
+        CsrfService::verify();
         QuestController::claimQuestJSON();
         break;
     case 'api_get_diagnostic':
@@ -89,6 +226,7 @@ switch ($action) {
         break;
 
     case 'api_submit_diagnostic':
+        CsrfService::verify();
         DiagnosticController::submitDiagnosticTestJSON();
         break;
 
@@ -101,10 +239,12 @@ switch ($action) {
         break;
 
     case 'api_submit_answer':
+        CsrfService::verify();
         PracticeController::submitAnswerJSON();
         break;
 
     case 'api_tag_mistake':
+        CsrfService::verify();
         PracticeController::tagMistakeJSON();
         break;
 
@@ -112,7 +252,25 @@ switch ($action) {
         PracticeController::saveProgressJSON();
         break;
 
+    case 'api_save_quiz_session':
+        PracticeController::saveQuizSessionJSON();
+        break;
+
+    case 'api_get_quiz_session':
+        PracticeController::getQuizSessionJSON();
+        break;
+
+    case 'api_clear_quiz_session':
+        PracticeController::clearQuizSessionJSON();
+        break;
+
+    case 'api_restart_topic':
+        CsrfService::verify();
+        PracticeController::restartTopicJSON();
+        break;
+
     case 'api_use_hint':
+        CsrfService::verify();
         PracticeController::useHintJSON();
         break;
 
@@ -121,6 +279,7 @@ switch ($action) {
         break;
 
     case 'api_submit_mock':
+        CsrfService::verify();
         MockTestController::submitMockTestJSON();
         break;
 
@@ -145,7 +304,87 @@ switch ($action) {
         StoreController::unlockItemJSON();
         break;
 
+    case 'api_preview_coupon':
+        StoreController::previewCouponJSON();
+        break;
+
+    case 'api_admin_create_coupon':
+        AdminController::createCouponJSON();
+        break;
+
+    case 'api_admin_bulk_coupons':
+        AdminController::bulkCouponsJSON();
+        break;
+
+    case 'api_admin_toggle_coupon':
+        AdminController::toggleCouponJSON();
+        break;
+
+    case 'api_admin_list_coupons':
+        AdminController::listCouponsJSON();
+        break;
+
+    case 'api_admin_coupon_redemptions':
+        AdminController::couponRedemptionsJSON();
+        break;
+
+    case 'api_admin_migrate':
+        AdminController::migrateDatabaseJSON();
+        break;
+
+    case 'api_admin_rollback':
+        AdminController::rollbackDatabaseJSON();
+        break;
+
+    case 'api_admin_search_users':
+    case 'api_admin_users':
+        AdminController::searchUsersJSON();
+        break;
+
+    case 'api_admin_user_details':
+        AdminController::getUserDetailsJSON();
+        break;
+
+    case 'api_admin_credit_coins':
+        CsrfService::verify();
+        AdminController::creditUserCoinsJSON();
+        break;
+
+    case 'api_admin_update_user_role':
+        CsrfService::verify();
+        AdminController::updateUserRoleJSON();
+        break;
+
+    case 'api_admin_update_user_stats':
+        CsrfService::verify();
+        AdminController::updateUserStatsJSON();
+        break;
+
+    case 'api_admin_reset_user_password':
+        CsrfService::verify();
+        AdminController::resetUserPasswordAdminJSON();
+        break;
+
+    case 'api_admin_reset_user_freeze':
+        CsrfService::verify();
+        AdminController::resetUserStreakFreezeJSON();
+        break;
+
+    case 'api_admin_list_questions':
+        AdminController::listQuestionsAdminJSON();
+        break;
+
+    case 'api_admin_bulk_questions':
+        CsrfService::verify();
+        AdminController::bulkQuestionActionJSON();
+        break;
+
+    case 'api_admin_audit_logs':
+        AdminController::getAuditLogsJSON();
+        break;
+
     case 'api_submit_report':
+        CsrfService::verify();
         AdminController::submitReportJSON();
         break;
 
@@ -197,7 +436,8 @@ switch ($action) {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['name'];
                 DeviceLockService::registerDeviceLock($user['id']);
-                header('Location: index.php?action=dashboard');
+                $redirectTo = !empty($_POST['redirect']) ? htmlspecialchars($_POST['redirect'], ENT_QUOTES) : (!empty($_GET['redirect']) ? htmlspecialchars($_GET['redirect'], ENT_QUOTES) : 'dashboard');
+                header('Location: index.php?action=' . $redirectTo);
                 exit;
             } else {
                 $error = "Invalid email or password";
@@ -311,6 +551,10 @@ switch ($action) {
         break;
 
     case 'time_attack':
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login&redirect=time_attack');
+            exit;
+        }
         $pageTitle = "60s Time Attack Aptitude Speed Test | Apttitudee";
         $metaDescription = "Test your speed and accuracy in 60-second rapid-fire Aptitude Time Attack mode. Solve consecutive questions to multiplier combos!";
         require __DIR__ . '/../app/Views/header.php';
@@ -319,6 +563,10 @@ switch ($action) {
         break;
 
     case 'campaign':
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login&redirect=campaign');
+            exit;
+        }
         $pageTitle = "Career Quest Map & Story Campaign | Apttitudee";
         $metaDescription = "Embark on an interactive RPG career campaign. Complete placement chapter quests across TCS NQT, Infosys, Wipro, and Accenture levels.";
         require __DIR__ . '/../app/Views/header.php';
@@ -327,6 +575,10 @@ switch ($action) {
         break;
 
     case 'mock':
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login&redirect=mock');
+            exit;
+        }
         $pageTitle = "Placement Mock Tests & Score Sheet | Apttitudee";
         $metaDescription = "Take full-length simulated company placement mock tests matching actual exam patterns of TCS NQT, Infosys, Wipro NLTH, and Accenture.";
         require __DIR__ . '/../app/Views/header.php';
@@ -381,9 +633,27 @@ switch ($action) {
         $pageTitle = "Admin CMS & Moderation | Apttitudee";
         $metaDescription = "Admin content management system, CSV bulk question importer, moderation queue, and Developer Mode controls.";
         $pendingReports = AdminController::getPendingReports();
+        $pendingSubmissions = AdminController::getPendingSubmissions();
         $isDevMode = DeviceLockService::isDeveloperMode();
         require __DIR__ . '/../app/Views/header.php';
         require __DIR__ . '/../app/Views/admin.php';
+        require __DIR__ . '/../app/Views/footer.php';
+        break;
+
+    case 'companies':
+        $pageTitle = "Company Placement Hub & Recruitment Tracks | Apttitudee";
+        $metaDescription = "Explore placement test patterns, selection rounds, and 1,500+ verified practice questions for TCS NQT, Infosys, Wipro, Accenture, Amazon, and 15 top recruiters.";
+        require __DIR__ . '/../app/Views/header.php';
+        require __DIR__ . '/../app/Views/companies.php';
+        require __DIR__ . '/../app/Views/footer.php';
+        break;
+
+    case 'company':
+        $slug = $_GET['slug'] ?? '';
+        $pageTitle = "Company Placement Pattern & Rounds | Apttitudee";
+        $metaDescription = "Detailed assessment patterns, round structures, syllabus, and curated practice questions on Apttitudee.";
+        require __DIR__ . '/../app/Views/header.php';
+        require __DIR__ . '/../app/Views/company_detail.php';
         require __DIR__ . '/../app/Views/footer.php';
         break;
 
