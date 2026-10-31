@@ -1,6 +1,13 @@
 # Apttitudee Root .htaccess for Apache / InfinityFree
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # 1. Strictly block access to hidden files and directories (dotfiles e.g. .git, .env)
+    RewriteRule (^|/)\. - [F,L]
+
+    # 2. Strictly block direct access to internal server directories
+    RewriteRule ^(app|config|database|backups|migrations|scratch|scripts|tests)(/|$) - [F,L]
+
     # Route sitemap.xml dynamically through sitemap.php
     RewriteRule ^sitemap\.xml$ public/sitemap.php [L]
 
@@ -11,6 +18,17 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
+
+# Block direct access to sensitive file extensions (Apache 2.2 and 2.4 compatible)
+<FilesMatch "\.(env|sql|log|bak|ini|sh|py|bat|cmd|lock|dist|backup|git.*)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
 
 # Gzip / Brotli Compression for Lightning Speed
 <IfModule mod_deflate.c>
