@@ -1,4 +1,4 @@
-/* Apttitudee Gamified Frontend Engine - Phase 2 (mr.ignite ~ Nexyra Solutions) */
+/* Apttitudee Gamified Frontend Engine - Phase 2 (mr.ignite ~ BOLDBYTE) */
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Apttitudee Gamified Engine initialized.');
@@ -44,20 +44,40 @@ function showFloatingXP(amount, element) {
     }, 1200);
 }
 
-// Web Audio API Synthesizer (Zero External Assets)
+// Web Audio API Synthesizer (Zero External Assets) + Haptic Feedback
 const SoundFX = {
     audioCtx: null,
-    muted: false,
+    muted: localStorage.getItem('apttitudee_sound_muted') === 'true',
 
     init() {
-        const toggleBtn = document.getElementById('soundToggleBtn');
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                this.muted = !this.muted;
-                toggleBtn.innerHTML = this.muted ? 
-                    '<i class="bi bi-volume-mute-fill text-danger"></i> Muted' : 
-                    '<i class="bi bi-volume-up-fill text-success"></i> Sound On';
+        const toggleBtns = document.querySelectorAll('#soundToggleBtn, .btn-sound-toggle');
+        if (toggleBtns.length > 0) {
+            toggleBtns.forEach(btn => {
+                this.updateButton(btn);
+                btn.addEventListener('click', () => {
+                    this.muted = !this.muted;
+                    localStorage.setItem('apttitudee_sound_muted', this.muted);
+                    toggleBtns.forEach(b => this.updateButton(b));
+                });
             });
+        }
+    },
+
+    updateButton(toggleBtn) {
+        if (!toggleBtn) return;
+        const iconClass = this.muted ? 'bi bi-volume-mute-fill text-danger' : 'bi bi-volume-up-fill text-success';
+        const label = this.muted ? 'Sound Muted' : 'Sound Enabled';
+        toggleBtn.innerHTML = `<i class="${iconClass}"></i>`;
+        toggleBtn.title = label;
+        toggleBtn.setAttribute('aria-label', label);
+    },
+
+    vibrate(pattern = 15) {
+        if (this.muted) return;
+        if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+            try {
+                navigator.vibrate(pattern);
+            } catch (e) {}
         }
     },
 
@@ -184,8 +204,92 @@ const PracticeEngine = {
             const sId = urlParams.get('subtopic_id');
             if (sId) this.subtopicId = parseInt(sId);
         }
+        this.seenQuestionIds = [];
         this.bindEvents();
+        this.checkInterruptedSession();
         this.loadNextQuestion(this.subtopicId);
+    },
+
+    checkInterruptedSession() {
+        try {
+            const saved = JSON.parse(localStorage.getItem('apttitudee_practice_session') || '{}');
+            if (saved && saved.subtopic_id && (Date.now() - saved.timestamp < 7200000)) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const currentId = urlParams.get('subtopic_id');
+                if (!currentId || parseInt(currentId) !== saved.subtopic_id) {
+                    const banner = document.getElementById('interruptedResumeBanner');
+                    if (banner) {
+                        const label = document.getElementById('resumeSubtopicLabel');
+                        if (label) label.textContent = `${saved.topic_name || ''} · ${saved.subtopic_name || 'Previous Topic'}`;
+                        banner.classList.remove('d-none');
+                        banner.classList.add('d-flex');
+                    }
+                }
+            }
+        } catch (e) {}
+    },
+
+    resumeInterruptedSession() {
+        try {
+            const saved = JSON.parse(localStorage.getItem('apttitudee_practice_session') || '{}');
+            if (saved && saved.subtopic_id) {
+                const banner = document.getElementById('interruptedResumeBanner');
+                if (banner) {
+                    banner.classList.add('d-none');
+                    banner.classList.remove('d-flex');
+                }
+                this.subtopicId = saved.subtopic_id;
+                this.loadNextQuestion(saved.subtopic_id);
+            }
+        } catch (e) {}
+    },
+
+    dismissInterruptedSession() {
+        localStorage.removeItem('apttitudee_practice_session');
+        const banner = document.getElementById('interruptedResumeBanner');
+        if (banner) {
+            banner.classList.add('d-none');
+            banner.classList.remove('d-flex');
+        }
+    },
+
+    restartTopic(subtopicId = null) {
+        const sId = subtopicId || this.subtopicId;
+        if (!sId) {
+            window.location.href = 'index.php?action=practice';
+            return;
+        }
+
+        const csrfToken = window.CSRF_TOKEN || (document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '');
+
+        fetch('index.php?action=api_restart_topic', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({
+                subtopic_id: sId,
+                csrf_token: csrfToken
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success') {
+                this.seenQuestionIds = [];
+                try {
+                    localStorage.removeItem('apttitudee_practice_session');
+                } catch (e) {}
+                this.subtopicId = sId;
+                this.loadNextQuestion(sId);
+            } else {
+                alert(data.message || 'Could not restart topic');
+            }
+        })
+        .catch(err => {
+            console.error('Restart failed', err);
+            window.location.href = `index.php?action=practice&subtopic_id=${sId}&session=1&reset=1`;
+        });
     },
 
     bindEvents() {
@@ -249,6 +353,7 @@ const PracticeEngine = {
         document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
         this.selectedOption = optionKey;
+        SoundFX.vibrate(15);
         const sBtn = document.getElementById('submitBtn');
         if (sBtn) {
             sBtn.disabled = false;
@@ -283,7 +388,7 @@ const PracticeEngine = {
 
     startAutoNextCountdown() {
         clearInterval(this.autoNextTimerInterval);
-        this.autoNextSeconds = 10;
+        this.autoNextSeconds = 4;
 
         const countdownBadge = document.getElementById('autoNextCountdownBadge');
         const countdownText = document.getElementById('autoNextSecondsText');
@@ -292,10 +397,10 @@ const PracticeEngine = {
 
         if (submitBtn) submitBtn.style.display = 'none';
         if (countdownBadge) countdownBadge.style.display = 'inline-flex';
-        if (countdownText) countdownText.innerText = '10';
+        if (countdownText) countdownText.innerText = '4';
         if (nextBtn) {
             nextBtn.style.display = 'inline-flex';
-            nextBtn.innerText = 'Next (10s)';
+            nextBtn.innerText = 'Next (4s)';
         }
 
         this.autoNextTimerInterval = setInterval(() => {
@@ -321,6 +426,7 @@ const PracticeEngine = {
 
         this.selectedOption = null;
         this.hintUnlockedQuestionId = null;
+        this.eliminatedOption = null;
         
         // Reset and show Submit button, hide Next button completely
         const submitBtn = document.getElementById('submitBtn');
@@ -362,9 +468,12 @@ const PracticeEngine = {
             }
         });
 
-        document.querySelectorAll('.option-btn').forEach(b => {
-            b.classList.remove('selected', 'correct', 'wrong');
+        document.querySelectorAll('.option-btn, .tech-opt-btn').forEach(b => {
+            b.classList.remove('selected', 'correct', 'wrong', 'eliminated');
             b.disabled = false;
+            b.removeAttribute('aria-disabled');
+            const bBadge = b.querySelector('.eliminated-badge');
+            if (bBadge) bBadge.remove();
         });
 
         if (subtopicId !== undefined && subtopicId !== null) {
@@ -380,10 +489,19 @@ const PracticeEngine = {
         if (this.difficultyMode && this.difficultyMode !== 'adaptive') {
             url += `&difficulty=${encodeURIComponent(this.difficultyMode)}`;
         }
+        this.seenQuestionIds = this.seenQuestionIds || [];
+        if (this.seenQuestionIds.length > 0) {
+            url += `&exclude=${encodeURIComponent(this.seenQuestionIds.join(','))}`;
+        }
 
         fetch(url)
             .then(res => res.json())
             .then(res => {
+                if (res.status === 'success' && res.data && res.data.id) {
+                    if (!this.seenQuestionIds.includes(res.data.id)) {
+                        this.seenQuestionIds.push(res.data.id);
+                    }
+                }
                 if (res.status === 'guest_limit_reached') {
                     const guestModalEl = document.getElementById('guestLimitModal');
                     if (guestModalEl) {
@@ -395,20 +513,62 @@ const PracticeEngine = {
                     }
                     return;
                 }
-                if (res.status === 'empty') {
-                    document.getElementById('questionText').innerHTML = `
-                        <div class="text-center py-4">
-                            <h3 class="text-warning fw-bold mb-2"><svg class="exam-icon text-warning me-1" style="width:24px;height:24px;"><use href="#icon-sparkles"></use></svg> Topic Practice Complete!</h3>
-                            <p class="text-muted mb-4">You have attempted all questions for today. Revise your weak deck or try a timed mock!</p>
-                            <div class="d-flex justify-content-center gap-3">
-                                <a href="index.php?action=practice" class="btn btn-primary rounded-pill px-4">Practice Random Topic</a>
-                                <a href="index.php?action=mock" class="btn btn-outline-warning rounded-pill px-4">Take Timed Mock</a>
+                if (res.status === 'empty' || res.status === 'completed') {
+                    const subtopicName = res.subtopic_name || (this.currentQuestion && this.currentQuestion.subtopic_name) || 'Topic';
+                    const sId = res.subtopic_id || this.subtopicId;
+
+                    const topicBadge = document.getElementById('topicBadge');
+                    if (topicBadge && subtopicName) {
+                        topicBadge.innerText = subtopicName;
+                        topicBadge.title = subtopicName;
+                    }
+
+                    if (res.empty_topic) {
+                        document.getElementById('questionText').innerHTML = `
+                            <div class="text-center py-4">
+                                <div class="mb-3 text-warning">
+                                    <svg class="exam-icon" style="width:36px;height:36px;color:var(--marker-orange);"><use href="#icon-clock"></use></svg>
+                                </div>
+                                <h3 class="text-ink fw-bold mb-2 font-serif">Questions Arriving Soon</h3>
+                                <p class="text-ink-muted mb-4 fs-7" style="max-width: 480px; margin: 0 auto;">
+                                    ${res.message || `Practice questions for <strong>${window.QuizShell ? QuizShell.formatInlineCode(subtopicName) : subtopicName}</strong> are currently being prepared.`}
+                                </p>
+                                <div class="d-flex justify-content-center flex-wrap gap-2">
+                                    <a href="index.php?action=practice" class="btn btn-primary-gamified px-4 py-2.5 fw-bold d-inline-flex align-items-center">
+                                        <svg class="exam-icon me-1 icon-14"><use href="#icon-grid"></use></svg> Back to Syllabus
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    } else {
+                        document.getElementById('questionText').innerHTML = `
+                            <div class="text-center py-4">
+                                <div class="mb-3">
+                                    <span class="badge-stamp-sm" style="font-size: 0.82rem; padding: 0.35rem 0.75rem; background: var(--success-bg); color: var(--success-text); border: 1.5px solid var(--success-border);">
+                                        <svg class="exam-icon me-1 icon-14"><use href="#icon-shield-check"></use></svg> 100% COMPLETED
+                                    </span>
+                                </div>
+                                <h3 class="text-ink fw-bold mb-2 font-serif">All Questions Completed!</h3>
+                                <p class="text-ink-muted mb-4 fs-7" style="max-width: 480px; margin: 0 auto;">
+                                    You have answered all available questions in <strong>${window.QuizShell ? QuizShell.formatInlineCode(subtopicName) : subtopicName}</strong> without repetition.
+                                    You can restart this topic to practice fresh from question 1, or practice another topic.
+                                </p>
+                                <div class="d-flex justify-content-center flex-wrap gap-2">
+                                    <button type="button" class="btn btn-primary-gamified px-4 py-2.5 fw-bold d-inline-flex align-items-center" onclick="PracticeEngine.restartTopic(${sId})">
+                                        <svg class="exam-icon me-1 icon-14"><use href="#icon-arrow-repeat"></use></svg> Restart Topic
+                                    </button>
+                                    <a href="index.php?action=practice" class="btn btn-outline-gamified px-4 py-2.5 fw-bold d-inline-flex align-items-center">
+                                        <svg class="exam-icon me-1 icon-14"><use href="#icon-grid"></use></svg> Back to Syllabus
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    }
                     document.getElementById('optionsContainer').style.display = 'none';
                     if (confContainer) confContainer.style.display = 'none';
                     if (submitBtn) submitBtn.style.display = 'none';
+                    const nextBtn = document.getElementById('nextBtn');
+                    if (nextBtn) nextBtn.style.display = 'none';
                     const codeBox = document.getElementById('practiceCodeContainer');
                     if (codeBox) codeBox.style.display = 'none';
                     return;
@@ -418,6 +578,16 @@ const PracticeEngine = {
                 this.currentQuestion = data;
                 this.startTime = Date.now();
                 this.startPracticeTimer();
+
+                try {
+                    localStorage.setItem('apttitudee_practice_session', JSON.stringify({
+                        subtopic_id: activeSubtopicId,
+                        topic_name: data.topic_name,
+                        subtopic_name: data.subtopic_name,
+                        question_id: data.id,
+                        timestamp: Date.now()
+                    }));
+                } catch (e) {}
 
                 // Shorten topic stamp: e.g. "Logical > Number Series" with single line ellipsis
                 let shortTopic = data.topic_name || '';
@@ -444,34 +614,53 @@ const PracticeEngine = {
 
                 document.getElementById('difficultyBadge').innerText = data.difficulty.toUpperCase();
 
-                // Question parsing: source tag stamp, setup sentences, prompt
+                // Question parsing: source tag stamp, verification badges, round pattern, setup sentences, prompt
                 const parsed = data.parsed_question || (window.QuizShell ? QuizShell.parseQuestion(data.question_text) : { prompt: data.question_text });
                 const tagWrap = document.getElementById('quizSourceTagWrap');
                 const tagStamp = document.getElementById('quizSourceTag');
-                if (parsed.sourceTag && tagWrap && tagStamp) {
-                    tagWrap.style.display = 'block';
-                    tagStamp.innerText = parsed.sourceTag;
-                } else if (tagWrap) {
-                    tagWrap.style.display = 'none';
+                const vBadgeWrap = document.getElementById('verificationBadgeWrap');
+                const roundBadge = document.getElementById('roundPatternBadge');
+
+                const sourceTagText = parsed.sourceTag || parsed.source_tag || (data.company_name && data.company_name !== 'General' ? data.company_name : null);
+                if (tagStamp && sourceTagText) {
+                    tagStamp.innerText = sourceTagText;
+                    tagStamp.style.display = 'inline-block';
+                } else if (tagStamp) {
+                    tagStamp.style.display = 'none';
                 }
 
+                if (vBadgeWrap) {
+                    const vStatus = data.verification_status || 'practice_style';
+                    if (vStatus === 'verified_pyq') {
+                        vBadgeWrap.innerHTML = '<span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 fs-8 fw-semibold"><i class="bi bi-patch-check-fill me-1"></i>Verified PYQ</span>';
+                    } else if (vStatus === 'student_reported') {
+                        vBadgeWrap.innerHTML = '<span class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1 fs-8 fw-semibold"><i class="bi bi-mortarboard-fill me-1"></i>Reported by Students</span>';
+                    } else {
+                        vBadgeWrap.innerHTML = '<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 fs-8 fw-semibold"><i class="bi bi-briefcase me-1"></i>Practice Question in Company Style</span>';
+                    }
+                    vBadgeWrap.style.display = 'inline-block';
+                }
+
+                if (roundBadge) {
+                    if (data.round_pattern) {
+                        roundBadge.style.display = 'inline-block';
+                        roundBadge.innerHTML = '<i class="bi bi-diagram-3 me-1"></i>' + data.round_pattern;
+                    } else {
+                        roundBadge.style.display = 'none';
+                    }
+                }
+
+                if (tagWrap) {
+                    tagWrap.style.display = 'flex';
+                }
+
+                const fullQuestionText = parsed.fullText || parsed.full_text || parsed.prompt || data.question_text || '';
                 const setupWrap = document.getElementById('quizQuestionSetup');
                 const qTextEl = document.getElementById('questionText');
-                if (parsed.isSplit && parsed.setupSentences && parsed.setupSentences.length > 0) {
-                    if (setupWrap) {
-                        setupWrap.style.display = 'flex';
-                        setupWrap.innerHTML = parsed.setupSentences.map(s => `<p class="setup-sentence mb-0">${window.QuizShell ? QuizShell.formatInlineCode(s) : s}</p>`).join('');
-                    }
-                    if (qTextEl) {
-                        qTextEl.classList.add('is-prompt');
-                        qTextEl.innerHTML = window.QuizShell ? QuizShell.formatInlineCode(parsed.prompt) : parsed.prompt;
-                    }
-                } else {
-                    if (setupWrap) setupWrap.style.display = 'none';
-                    if (qTextEl) {
-                        qTextEl.classList.remove('is-prompt');
-                        qTextEl.innerHTML = window.QuizShell ? QuizShell.formatInlineCode(parsed.prompt || parsed.fullText || data.question_text) : data.question_text;
-                    }
+                if (setupWrap) setupWrap.style.display = 'none';
+                if (qTextEl) {
+                    qTextEl.classList.remove('is-prompt');
+                    qTextEl.innerHTML = (window.QuizShell && QuizShell.formatInlineCode) ? QuizShell.formatInlineCode(fullQuestionText) : fullQuestionText;
                 }
 
                 // Render Code Snippet ONLY if non-trivial
@@ -509,11 +698,38 @@ const PracticeEngine = {
                 });
             })
             .catch(err => {
-                console.error(err);
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Check';
+                console.error('Failed to load next question:', err);
+                const qText = document.getElementById('questionText');
+                if (qText) {
+                    qText.innerHTML = `
+                        <div class="text-center py-4">
+                            <div class="mb-3 text-warning">
+                                <svg class="exam-icon" style="width:36px;height:36px;color:var(--marker-orange);"><use href="#icon-clock"></use></svg>
+                            </div>
+                            <h4 class="text-ink fw-bold mb-2 font-serif">Unable to load question</h4>
+                            <p class="text-ink-muted mb-4 fs-7" style="max-width: 440px; margin: 0 auto;">
+                                We encountered a network connection issue or the session could not be reached. Please check your connection and try again.
+                            </p>
+                            <div class="d-flex justify-content-center flex-wrap gap-2">
+                                <button type="button" class="btn btn-primary-gamified px-4 py-2 fw-bold d-inline-flex align-items-center" onclick="PracticeEngine.loadNextQuestion(${activeSubtopicId || ''})">
+                                    <svg class="exam-icon me-1 icon-14"><use href="#icon-arrow-repeat"></use></svg> Retry
+                                </button>
+                                <a href="index.php?action=practice" class="btn btn-outline-gamified px-4 py-2 fw-bold d-inline-flex align-items-center">
+                                    <svg class="exam-icon me-1 icon-14"><use href="#icon-grid"></use></svg> Back to Syllabus
+                                </a>
+                            </div>
+                        </div>
+                    `;
                 }
+                const optBox = document.getElementById('optionsContainer');
+                if (optBox) optBox.style.display = 'none';
+                const cBox = document.querySelector('.confidence-container');
+                if (cBox) cBox.style.display = 'none';
+                if (submitBtn) submitBtn.style.display = 'none';
+                const nBtn = document.getElementById('nextBtn');
+                if (nBtn) nBtn.style.display = 'none';
+                const codeBox = document.getElementById('practiceCodeContainer');
+                if (codeBox) codeBox.style.display = 'none';
             });
     },
 
@@ -542,7 +758,8 @@ const PracticeEngine = {
                 question_id: this.currentQuestion.id,
                 selected_option: this.selectedOption,
                 confidence: this.confidence,
-                time_taken_seconds: timeTakenSeconds
+                time_taken_seconds: timeTakenSeconds,
+                csrf_token: window.CSRF_TOKEN || ''
             })
         })
         .then(res => res.json())
@@ -562,6 +779,9 @@ const PracticeEngine = {
                 b.disabled = true;
                 if (b.dataset.option === data.correct_option) {
                     b.classList.add('correct');
+                    b.classList.remove('eliminated');
+                    const elim = b.querySelector('.eliminated-badge');
+                    if (elim) elim.remove();
                 } else if (b.dataset.option === this.selectedOption && !data.is_correct) {
                     b.classList.add('wrong');
                 }
@@ -620,11 +840,13 @@ const PracticeEngine = {
 
             // Micro-interactions & Combo Meter
             if (data.is_correct) {
+                SoundFX.vibrate([20, 40, 20]);
                 ComboManager.increment();
                 showFloatingXP(data.xp_earned, submitBtn);
                 if (data.coins_earned > 0) SoundFX.playCoin();
                 if (data.trigger_confetti) launchConfetti();
             } else {
+                SoundFX.vibrate(60);
                 ComboManager.reset();
                 if (data.xp_earned < 0) {
                     showFloatingXP(data.xp_earned, submitBtn);
@@ -653,7 +875,8 @@ const PracticeEngine = {
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({
                                         attempt_id: data.attempt_id,
-                                        mistake_type: btn.dataset.type
+                                        mistake_type: btn.dataset.type,
+                                        csrf_token: window.CSRF_TOKEN || ''
                                     })
                                 })
                                 .then(r => r.json())
@@ -714,14 +937,46 @@ const PracticeEngine = {
             });
     },
 
+    applyEliminatedOption(optKey, optText) {
+        if (!optKey) return;
+        const btn = document.querySelector(`.option-btn[data-option="${optKey}"], .tech-opt-btn[data-option="${optKey}"]`);
+        if (btn) {
+            btn.classList.add('eliminated');
+            btn.classList.remove('selected');
+            btn.disabled = true;
+            btn.setAttribute('aria-disabled', 'true');
+
+            // If user had previously selected this option, clear selection
+            if (this.selectedOption === optKey) {
+                this.selectedOption = null;
+                const submitBtn = document.getElementById('submitBtn') || document.getElementById('techSubmitBtn');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.setAttribute('aria-disabled', 'true');
+                }
+            }
+
+            // Add ELIMINATED badge if not present
+            if (!btn.querySelector('.eliminated-badge')) {
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-danger-subtle text-danger extra-small ms-auto font-monospace eliminated-badge';
+                badge.style.fontSize = '0.72rem';
+                badge.style.letterSpacing = '0.04em';
+                badge.innerHTML = '❌ ELIMINATED';
+                btn.appendChild(badge);
+            }
+        }
+    },
+
     openHint() {
         if (!this.currentQuestion) {
             alert('Question is loading, please wait a moment.');
             return;
         }
 
-        // If already unlocked for this question, open modal without charging again
-        if (this.hintUnlockedQuestionId === this.currentQuestion.id) {
+        // If already unlocked for this question, reopen modal with the already eliminated option
+        if (this.hintUnlockedQuestionId === this.currentQuestion.id && this.eliminatedOption) {
+            this.applyEliminatedOption(this.eliminatedOption);
             const hintModalEl = document.getElementById('hintModal');
             if (hintModalEl) {
                 const modal = bootstrap.Modal.getOrCreateInstance(hintModalEl);
@@ -734,54 +989,73 @@ const PracticeEngine = {
         const origText = hintBtn ? hintBtn.innerHTML : '';
         if (hintBtn) {
             hintBtn.disabled = true;
-            hintBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Unlocking...';
+            hintBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Eliminating...';
         }
+
+        const visibleOpts = {};
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            const opt = btn.dataset.option;
+            if (opt) {
+                const textSpan = btn.querySelector('.option-text') || btn;
+                let txt = textSpan.innerText || '';
+                txt = txt.replace(/^[A-D]\s*/, '').replace(/❌\s*ELIMINATED.*/i, '').replace(/✔\s*CORRECT.*/i, '').replace(/✖\s*INCORRECT.*/i, '').trim();
+                visibleOpts[opt] = txt;
+            }
+        });
 
         fetch('index.php?action=api_use_hint', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question_id: this.currentQuestion.id })
+            body: JSON.stringify({ question_id: this.currentQuestion.id, visible_options: visibleOpts, csrf_token: window.CSRF_TOKEN || '' })
         })
         .then(res => res.json())
         .then(data => {
             if (data.status === 'insufficient_coins') {
-                alert(data.message || 'You need at least 1 Speed Coin to unlock this Formula Hint!');
+                alert(data.message || 'You need at least 5 Speed Coins to eliminate a wrong option!');
                 return;
             }
             if (data.status !== 'success') {
-                alert(data.message || 'Unable to unlock hint.');
+                alert(data.message || 'Unable to eliminate option.');
                 return;
             }
 
             // Update user coins on navbar if logged in
             if (typeof data.new_coin_balance !== 'undefined') {
-                const userCoinsEl = document.getElementById('userCoinsDisplay');
-                if (userCoinsEl) {
-                    userCoinsEl.innerText = Number(data.new_coin_balance).toLocaleString();
-                }
+                const formatted = Number(data.new_coin_balance).toLocaleString();
+                ['userCoinsDisplay', 'userCoinsDisplayMobile', 'dropdownUserCoins', 'drawerUserCoins', 'navCoinsDisplay', 'storeUserCoinsDisplay'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerText = formatted;
+                });
+            }
+
+            // Save state for this question
+            this.hintUnlockedQuestionId = this.currentQuestion.id;
+            this.eliminatedOption = data.eliminated_option;
+
+            // Apply visual strike-through to the eliminated button on the board
+            this.applyEliminatedOption(data.eliminated_option, data.eliminated_text);
+
+            if (typeof SoundFX !== 'undefined' && SoundFX.playCoin) {
+                SoundFX.playCoin();
             }
 
             // Populate hint modal content
-            if (data.hint) {
-                const titleEl = document.getElementById('hintModalTitle');
-                const formulaEl = document.getElementById('hintModalFormula');
-                const strategyEl = document.getElementById('hintModalStrategy');
+            const headingEl = document.getElementById('hintModalEliminatedHeading');
+            const textEl = document.getElementById('hintModalEliminatedText');
+            const tipEl = document.getElementById('hintModalTip');
+            const badgeEl = document.getElementById('hintModalStatusBadge');
 
-                if (titleEl && data.hint.title) {
-                    titleEl.innerHTML = `<i class="bi bi-lightbulb-fill me-2" style="color: var(--highlight);"></i> ${data.hint.title}`;
-                }
-                if (formulaEl && data.hint.formula) {
-                    formulaEl.innerText = data.hint.formula;
-                }
-                if (strategyEl && data.hint.strategy) {
-                    strategyEl.innerText = data.hint.strategy;
-                }
+            if (headingEl) {
+                headingEl.innerHTML = `❌ Option ${data.eliminated_option} Eliminated!`;
             }
-
-            // Mark unlocked for current question
-            this.hintUnlockedQuestionId = this.currentQuestion.id;
-            if (typeof SoundFX !== 'undefined' && SoundFX.playCoin) {
-                SoundFX.playCoin();
+            if (textEl && data.eliminated_text) {
+                textEl.innerText = `"${data.eliminated_text}" is incorrect.`;
+            }
+            if (tipEl && data.hint && data.hint.tip) {
+                tipEl.innerText = data.hint.tip;
+            }
+            if (badgeEl) {
+                badgeEl.innerHTML = `<svg class="exam-icon me-0.5 icon-11"><use href="#icon-check"></use></svg> Option ${data.eliminated_option} Eliminated`;
             }
 
             const hintModalEl = document.getElementById('hintModal');
@@ -855,7 +1129,7 @@ function claimQuest(questId) {
     fetch('index.php?action=api_claim_quest', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quest_id: questId })
+        body: JSON.stringify({ quest_id: questId, csrf_token: window.CSRF_TOKEN || '' })
     })
     .then(res => res.json())
     .then(res => {
@@ -885,3 +1159,41 @@ function setPracticeDifficulty(mode) {
         PracticeEngine.loadNextQuestion(PracticeEngine.subtopicId);
     }
 }
+
+// Global Accessible Keyboard Listener: Escape key closes any active dropdowns or menus
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' || e.key === 'Esc') {
+        document.querySelectorAll('.dropdown-menu.show').forEach(function(menu) {
+            const toggle = menu.closest('.dropdown')?.querySelector('[data-bs-toggle="dropdown"]');
+            if (toggle && window.bootstrap && bootstrap.Dropdown) {
+                const instance = bootstrap.Dropdown.getInstance(toggle);
+                if (instance) instance.hide();
+            } else {
+                menu.classList.remove('show');
+            }
+        });
+    }
+});
+
+// Dropdown Viewport Clamping Defense (Ensures dropdowns never clip off screen edges)
+document.addEventListener('shown.bs.dropdown', function (e) {
+    const dropdownToggle = e.target;
+    const menu = dropdownToggle ? dropdownToggle.closest('.dropdown')?.querySelector('.dropdown-menu') : null;
+    if (!menu) return;
+
+    const rect = menu.getBoundingClientRect();
+    const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+    
+    if (rect.right > viewportWidth) {
+        const excess = Math.ceil(rect.right - viewportWidth) + 12; // 12px margin from edge
+        menu.style.setProperty('transform', `translateX(-${excess}px)`, 'important');
+    }
+});
+
+document.addEventListener('hidden.bs.dropdown', function (e) {
+    const dropdownToggle = e.target;
+    const menu = dropdownToggle ? dropdownToggle.closest('.dropdown')?.querySelector('.dropdown-menu') : null;
+    if (menu) {
+        menu.style.removeProperty('transform');
+    }
+});

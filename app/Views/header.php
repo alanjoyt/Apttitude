@@ -2,13 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  
+  <!-- PWA & Mobile Web App Capabilities -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Apttitudee">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+  
+  <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+  <script>
+    window.CSRF_TOKEN = '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>';
+    (function() {
+      const origFetch = window.fetch;
+      window.fetch = function(resource, init) {
+        init = init || {};
+        const method = (init.method || 'GET').toUpperCase();
+        if (method !== 'GET' && method !== 'HEAD') {
+          init.headers = init.headers || {};
+          if (init.headers instanceof Headers) {
+            if (!init.headers.has('X-CSRF-Token')) {
+              init.headers.set('X-CSRF-Token', window.CSRF_TOKEN);
+            }
+          } else if (Array.isArray(init.headers)) {
+            if (!init.headers.some(h => h[0].toLowerCase() === 'x-csrf-token')) {
+              init.headers.push(['X-CSRF-Token', window.CSRF_TOKEN]);
+            }
+          } else {
+            const hasCsrf = Object.keys(init.headers).some(k => k.toLowerCase() === 'x-csrf-token');
+            if (!hasCsrf) {
+              init.headers['X-CSRF-Token'] = window.CSRF_TOKEN;
+            }
+          }
+        }
+        return origFetch(resource, init);
+      };
+    })();
+  </script>
   
   <?php
     $currentAction = $_GET['action'] ?? 'landing';
     $isQuizSession = ($currentAction === 'practice' && (isset($_GET['session']) || isset($_GET['subtopic_id']) || (isset($_GET['mode']) && $_GET['mode'] === 'quiz')))
-                  || ($currentAction === 'technical' && (!isset($_GET['view']) || $_GET['view'] !== 'hub'))
-                  || in_array($currentAction, ['mock', 'duel', 'time_attack']);
+                  || ($currentAction === 'mock' && isset($_GET['session']) && $_GET['session'] === 'active')
+                  || ($currentAction === 'technical' && (isset($_GET['session']) || isset($_GET['start']) || (isset($_GET['mode']) && $_GET['mode'] === 'quiz')));
 
     // Unique SEO titles (< 60 chars) and meta descriptions (< 160 chars)
     $defaultTitle = "Apttitudee - Gamified Placement Prep Platform";
@@ -35,9 +74,13 @@
         $title = "Aptitude Practice & Syllabus | Apttitudee";
         $desc = "Interactive aptitude practice syllabus covering Quantitative Aptitude, Logical Reasoning, Verbal Ability, and placement PYQs.";
         $canonicalUrl = APP_BASE_URL . '/index.php?action=practice';
-    } elseif ($currentAction === 'technical' && isset($_GET['view']) && $_GET['view'] === 'hub') {
+    } elseif ($currentAction === 'technical' && !$isQuizSession) {
         $title = "Technical Coding & Placement PYQs | Apttitudee";
         $desc = "Master core programming concepts and placement coding questions in C, C++, Java, Python, SQL, and Innovature Labs PYQs.";
+        $canonicalUrl = APP_BASE_URL . '/index.php?action=technical';
+    } elseif ($currentAction === 'technical' && $isQuizSession) {
+        $title = "Technical Practice Session | Apttitudee";
+        $desc = "Solve technical coding and aptitude questions with live timer, instant explanation, and placement analysis.";
         $canonicalUrl = APP_BASE_URL . '/index.php?action=technical';
     } else {
         $title = !empty($pageTitle) ? $pageTitle : $defaultTitle;
@@ -58,7 +101,7 @@
   <?php else: ?>
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <?php endif; ?>
-  <meta name="author" content="Nexyra Solutions">
+  <meta name="author" content="BOLDBYTE">
   <meta name="theme-color" content="#F6F1E7" id="metaThemeColor">
   <link rel="canonical" href="<?= htmlspecialchars($canonicalUrl) ?>">
 
@@ -82,30 +125,64 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
 
-  <!-- Bootstrap 5 CSS CDN -->
+  <!-- Bootstrap 5 CSS CDN Preload -->
+  <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <!-- Google Fonts: Bitter (Headings), Atkinson Hyperlegible (Body & Stem), JetBrains Mono (Code) -->
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bitter:wght@700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Bootstrap Icons (Async font stylesheet to unblock initial paint) -->
+  <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"></noscript>
+
+  <!-- Google Fonts: Bitter, Atkinson Hyperlegible, JetBrains Mono (Non-render-blocking swap) -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bitter:wght@700&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bitter:wght@700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bitter:wght@700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"></noscript>
   
-  <!-- Canvas Confetti & Chart.js CDNs (Deferred to avoid blocking initial render) -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <?php
+    $needsChart = in_array($currentAction, ['dashboard', 'profile', 'diagnostic', 'mock']);
+    $needsConfetti = in_array($currentAction, ['dashboard', 'practice', 'technical', 'mock', 'diagnostic', 'trophy_room']);
+  ?>
+  <!-- Canvas Confetti & Chart.js CDNs (Loaded strictly on pages where used, pinned versions) -->
+  <?php if ($needsConfetti): ?>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js" crossorigin="anonymous" defer></script>
+  <?php endif; ?>
+  <?php if ($needsChart): ?>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous" defer></script>
+  <?php endif; ?>
 
-  <!-- Legacy Gamified CSS -->
-  <link rel="stylesheet" href="<?= asset_url('css/style.css') ?>">
-  <!-- Exam Hall Theme CSS (Design Tokens, Exam Components, Mobile-First Overrides) -->
-  <link rel="stylesheet" href="<?= asset_url('css/theme.css') ?>">
+  <!-- Minified Stylesheets with real-time cache busting -->
+  <link rel="stylesheet" href="<?= file_exists(__DIR__ . '/../../public/css/style.min.css') ? asset_url('css/style.min.css') : asset_url('css/style.css') ?>">
+  <link rel="stylesheet" href="<?= file_exists(__DIR__ . '/../../public/css/theme.min.css') ? asset_url('css/theme.min.css') : asset_url('css/theme.css') ?>">
 
-  <!-- Early Theme Initialization to Prevent FOUC -->
+  <!-- Early Theme & Accessibility Initialization to Prevent FOUC -->
   <script>
     (function() {
+      // 1. Single dark mode system ([data-theme] only)
       const savedTheme = localStorage.getItem('apttitudee_theme');
       if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
       } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+
+      // 2. Color-blind palette
+      const savedPalette = localStorage.getItem('apttitudee_palette');
+      if (savedPalette === 'colorblind') {
+        document.documentElement.setAttribute('data-palette', 'colorblind');
+      }
+
+      // 3. Font size (Aa)
+      const savedFontSize = localStorage.getItem('apttitudee_font_size');
+      if (savedFontSize) {
+        document.documentElement.setAttribute('data-font-size', savedFontSize);
+      }
+
+      // 4. Reduced motion
+      const savedMotion = localStorage.getItem('apttitudee_reduced_motion');
+      if (savedMotion === 'reduce' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+        document.documentElement.setAttribute('data-reduced-motion', 'reduce');
       }
     })();
 
@@ -123,10 +200,17 @@
       }
     }
     function onChartReady(fn) {
+      const run = () => {
+        if (typeof Chart !== 'undefined') {
+          fn();
+        } else {
+          setTimeout(run, 50);
+        }
+      };
       if (typeof Chart !== 'undefined') {
         fn();
       } else {
-        window.addEventListener('load', fn, { once: true });
+        window.addEventListener('load', run, { once: true });
       }
     }
   </script>
@@ -168,11 +252,16 @@ if (isset($_SESSION['user_id'])) {
 </head>
 <body class="<?= $isQuizSession ? 'is-quiz quiz-session-body' : 'has-bottom-nav' ?>">
 
+<!-- Global Offline Status Indicator Banner -->
+<div id="offlineBanner" role="status" aria-live="polite">
+  <i class="bi bi-wifi-off me-1"></i> You are currently offline. Ongoing practice and progress are cached locally.
+</div>
+
 <?php if (!$isQuizSession): ?>
 <!-- ======================================================================
      MOBILE SLIM TOP BAR (< 768px, Hub & Syllabus Pages)
      ====================================================================== -->
-<header class="top-header-exam d-md-none">
+<header class="top-header-exam d-lg-none">
   <div class="container px-3">
     <!-- Brand Logo -->
     <a href="index.php?action=landing" class="brand-exam" aria-label="Apttitudee Home">
@@ -194,20 +283,25 @@ if (isset($_SESSION['user_id'])) {
       <?php if ($currentUser): ?>
         <!-- Daily Practice Streak -->
         <div class="streak-pill-exam" title="Current Daily Streak">
-          <span class="flame-icon"><svg class="exam-icon text-danger" style="width:14px;height:14px;"><use href="#icon-flame"></use></svg></span>
+          <span class="flame-icon"><svg class="exam-icon text-danger icon-14"><use href="#icon-flame"></use></svg></span>
           <span id="mobileStreakCount"><?= (int)$currentUser['current_streak'] ?></span><small>d</small>
         </div>
 
         <!-- Speed Coins Brass Token -->
         <a href="index.php?action=store" class="coin-token text-decoration-none" title="Speed Coins Wallet">
-          <span class="coin-icon"><svg class="exam-icon text-warning" style="width:14px;height:14px;"><use href="#icon-coin"></use></svg></span>
+          <span class="coin-icon"><svg class="exam-icon text-warning icon-14"><use href="#icon-coin"></use></svg></span>
           <span id="userCoinsDisplayMobile"><?= number_format((int)$currentUser['coins']) ?></span>
         </a>
       <?php else: ?>
-        <a href="index.php?action=login" class="btn btn-outline-gamified btn-sm px-2.5 py-1 text-decoration-none font-sans fw-bold" style="font-size: 0.85rem !important; min-height: 36px;">
+        <a href="index.php?action=login" class="btn btn-outline-gamified btn-login-cta btn-sm px-2.5 py-1 text-decoration-none font-sans fw-bold d-inline-flex align-items-center">
           Log In
         </a>
       <?php endif; ?>
+
+      <!-- Accessibility Font Size (Aa) -->
+      <button type="button" class="btn-exam-icon fw-bold" onclick="cycleGlobalTextSize()" title="Adjust Text Size (Aa)" aria-label="Adjust Text Size">
+        Aa
+      </button>
 
       <!-- Theme Switcher Toggle (Chalk/Paper) -->
       <button type="button" class="btn-exam-icon" onclick="toggleExamTheme()" title="Toggle Dark/Light Mode" aria-label="Toggle Dark/Light Mode">
@@ -215,7 +309,7 @@ if (isset($_SESSION['user_id'])) {
       </button>
 
       <!-- Sound FX Toggle Button -->
-      <button id="soundToggleBtn" class="btn-exam-icon" title="Toggle Sound FX" aria-label="Toggle Sound Effects">
+      <button id="soundToggleBtnMobile" class="btn-exam-icon btn-sound-toggle" title="Toggle Sound FX" aria-label="Toggle Sound Effects">
         <i class="bi bi-volume-up-fill text-success"></i>
       </button>
     </div>
@@ -226,17 +320,17 @@ if (isset($_SESSION['user_id'])) {
 <!-- ======================================================================
      DESKTOP NAVIGATION (>= 768px)
      ====================================================================== -->
-<nav class="navbar navbar-expand-md nav-gamified sticky-top py-2 d-none d-md-block">
-  <div class="container-fluid px-3 px-xl-4" style="max-width: 1440px;">
+<nav class="navbar navbar-expand-lg nav-gamified sticky-top py-2 d-none d-lg-block">
+  <div class="container-fluid px-3 px-xl-4 nav-max-bound">
     <!-- Brand Logo -->
-    <a class="navbar-brand d-flex align-items-center gap-2 me-lg-3" href="index.php?action=landing" aria-label="Apttitudee Homepage">
-      <div class="brand-icon-box">
+    <a class="navbar-brand d-flex align-items-center gap-2 me-lg-2 me-xl-3 flex-shrink-0 text-nowrap" href="index.php?action=landing" aria-label="Apttitudee Homepage">
+      <div class="brand-icon-box flex-shrink-0">
         <i class="bi bi-book-half fs-4 text-accent"></i>
       </div>
-      <div class="d-flex flex-column leading-tight">
-        <span class="font-serif fw-bold fs-4 text-ink" style="letter-spacing: -0.02em;">Apttitud<span class="brand-accent-text">ee</span></span>
+      <div class="d-flex flex-column leading-tight flex-shrink-0 text-nowrap">
+        <span class="font-serif fw-bold fs-4 text-ink brand-title-text flex-shrink-0">Apttitud<span class="brand-accent-text">ee</span></span>
       </div>
-      <span class="stamp-badge-highlight d-none d-sm-inline-block ms-1" style="font-size:0.65rem; padding: 2px 6px;">EXAM HALL</span>
+      <span class="stamp-badge-highlight brand-hall-pill d-none d-xl-inline-block ms-1 flex-shrink-0 text-nowrap">EXAM HALL</span>
     </a>
 
     <!-- Desktop Menu Container -->
@@ -360,16 +454,16 @@ if (isset($_SESSION['user_id'])) {
       </ul>
 
       <!-- Right Utility Actions & User Stat Bar -->
-      <div class="d-flex align-items-center gap-1.5 gap-xl-2 ms-auto flex-nowrap">
+      <div class="d-flex align-items-center gap-1.5 gap-xl-2 ms-auto flex-nowrap flex-shrink-0">
         <!-- Quick Utility Icon Buttons (Theme, Sound, Intro, Guide) -->
-        <div class="nav-utility-bar d-flex align-items-center gap-1 p-1 rounded-pill ms-1">
+        <div class="nav-utility-bar d-flex align-items-center gap-1 p-1 rounded-pill ms-1 flex-shrink-0">
           <button type="button" class="btn btn-utility-icon" onclick="toggleExamTheme()" title="Toggle Dark/Light Mode" aria-label="Toggle Dark/Light Mode">
             <i class="bi bi-circle-half text-warning"></i>
           </button>
-          <button id="soundToggleBtn" class="btn btn-utility-icon" title="Toggle Sound FX" aria-label="Toggle Sound Effects">
+          <button id="soundToggleBtn" class="btn btn-utility-icon btn-sound-toggle" title="Toggle Sound FX" aria-label="Toggle Sound Effects">
             <i class="bi bi-volume-up-fill text-success"></i>
           </button>
-          <button type="button" class="btn btn-utility-icon" onclick="playNexyraIntro()" title="Play Exam Intro" aria-label="Play Exam Intro">
+          <button type="button" class="btn btn-utility-icon" onclick="playBoldbyteIntro()" title="Play Exam Intro" aria-label="Play Exam Intro">
             <i class="bi bi-play-circle-fill text-info"></i>
           </button>
           <button type="button" class="btn btn-utility-icon" data-bs-toggle="modal" data-bs-target="#featureGuideModal" title="How Apttitudee Works Guide" aria-label="Feature Guide">
@@ -379,7 +473,7 @@ if (isset($_SESSION['user_id'])) {
 
         <?php if ($currentUser): ?>
           <!-- Stat Summary Pill (Shown on large desktop >= 1400px to ensure laptop navbars never overflow) -->
-          <div class="stat-pill-gamified d-none d-xxl-inline-flex align-items-center gap-2 py-1 px-3" title="Streak, Total XP & Speed Coins">
+          <div class="stat-pill-gamified d-none d-xxl-inline-flex align-items-center gap-2 py-1 px-3 flex-shrink-0" title="Streak, Total XP & Speed Coins">
             <span class="stat-item" title="Current Daily Practice Streak"><i class="bi bi-fire text-danger animate-pulse"></i> <strong><?= $currentUser['current_streak'] ?></strong><small>d</small></span>
             <span class="stat-divider"></span>
             <span class="stat-item" title="Total XP Earned"><i class="bi bi-star-fill text-warning"></i> <strong id="userXPDisplay"><?= number_format($currentUser['total_xp']) ?></strong></span>
@@ -388,18 +482,18 @@ if (isset($_SESSION['user_id'])) {
           </div>
 
           <!-- User Profile Dropdown -->
-          <div class="dropdown">
-            <button class="btn btn-user-profile dropdown-toggle d-flex align-items-center gap-2 py-1 px-2 px-sm-2.5" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-              <div class="avatar-circle">
+          <div class="dropdown flex-shrink-0">
+            <button class="btn btn-user-profile dropdown-toggle d-flex align-items-center gap-2 py-1 px-2 px-sm-2.5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="avatar-circle flex-shrink-0">
                 <i class="bi <?= !empty($currentUser['avatar_icon']) ? $currentUser['avatar_icon'] : 'bi-person-circle' ?>"></i>
               </div>
-              <div class="d-none d-md-flex flex-column text-start me-1">
-                <span class="fw-bold small text-ink leading-tight text-truncate" style="max-width: 110px;"><?= htmlspecialchars($currentUser['name']) ?></span>
-                <span class="text-muted extra-small" style="font-size:0.7rem;"><?= htmlspecialchars($currentUser['tier']) ?> Tier</span>
+              <div class="d-none d-xl-flex flex-column text-start me-1 flex-shrink-0">
+                <span class="fw-bold small text-ink leading-tight text-truncate user-name-text"><?= htmlspecialchars($currentUser['name']) ?></span>
+                <span class="text-muted extra-small user-tier-label"><?= htmlspecialchars($currentUser['tier']) ?> Tier</span>
               </div>
             </button>
 
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-2 user-dropdown-card">
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-2 user-dropdown-card" style="right: 0 !important; left: auto !important; max-width: min(340px, calc(100vw - 20px)) !important;">
               <!-- Header Info -->
               <li class="px-3 py-3 rounded mb-2 user-card-header">
                 <div class="d-flex align-items-center gap-3">
@@ -416,7 +510,7 @@ if (isset($_SESSION['user_id'])) {
                 <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top border-secondary border-opacity-10 text-center">
                   <div>
                     <div class="extra-small text-muted">STREAK</div>
-                    <div class="fw-bold text-ink"><svg class="exam-icon text-danger me-1" style="width:14px;height:14px;"><use href="#icon-flame"></use></svg><?= $currentUser['current_streak'] ?>d</div>
+                    <div class="fw-bold text-ink"><svg class="exam-icon text-danger me-1 icon-14"><use href="#icon-flame"></use></svg><?= $currentUser['current_streak'] ?>d</div>
                   </div>
                   <div>
                     <div class="extra-small text-muted">TOTAL XP</div>
@@ -424,7 +518,7 @@ if (isset($_SESSION['user_id'])) {
                   </div>
                   <div>
                     <div class="extra-small text-muted">COINS</div>
-                    <div class="fw-bold text-ink"><svg class="exam-icon text-warning me-1" style="width:14px;height:14px;"><use href="#icon-coin"></use></svg><?= number_format($currentUser['coins']) ?></div>
+                    <div class="fw-bold text-ink"><svg class="exam-icon text-warning me-1 icon-14"><use href="#icon-coin"></use></svg><span id="dropdownUserCoins"><?= number_format($currentUser['coins']) ?></span></div>
                   </div>
                 </div>
               </li>
@@ -473,11 +567,11 @@ if (isset($_SESSION['user_id'])) {
             </div>
           </div>
           <div class="d-flex justify-content-around align-items-center pt-2 border-top text-center fs-7">
-            <div><span class="text-muted extra-small">STREAK</span><br><strong><svg class="exam-icon text-danger me-0.5" style="width:13px;height:13px;"><use href="#icon-flame"></use></svg><?= $currentUser['current_streak'] ?>d</strong></div>
+            <div><span class="text-muted extra-small">STREAK</span><br><strong><svg class="exam-icon text-danger me-0.5 icon-13"><use href="#icon-flame"></use></svg><?= $currentUser['current_streak'] ?>d</strong></div>
             <div class="vr opacity-25"></div>
             <div><span class="text-muted extra-small">XP</span><br><strong><i class="bi bi-star-fill text-warning me-0.5"></i><?= number_format($currentUser['total_xp']) ?></strong></div>
             <div class="vr opacity-25"></div>
-            <div><span class="text-muted extra-small">COINS</span><br><strong><svg class="exam-icon text-warning me-0.5" style="width:13px;height:13px;"><use href="#icon-coin"></use></svg><?= number_format($currentUser['coins']) ?></strong></div>
+            <div><span class="text-muted extra-small">COINS</span><br><strong id="drawerUserCoins"><svg class="exam-icon text-warning me-0.5 icon-13"><use href="#icon-coin"></use></svg><?= number_format($currentUser['coins']) ?></strong></div>
           </div>
         </div>
       <?php endif; ?>
@@ -576,7 +670,7 @@ if (isset($_SESSION['user_id'])) {
       <div class="d-flex justify-content-between align-items-center mb-3">
         <span class="small text-muted fw-semibold">Quick Actions:</span>
         <div class="d-flex gap-2">
-          <button onclick="playNexyraIntro()" class="btn btn-sm btn-outline-gamified px-3 py-1"><i class="bi bi-play-circle-fill text-info me-1"></i>Intro</button>
+          <button onclick="playBoldbyteIntro()" class="btn btn-sm btn-outline-gamified px-3 py-1"><i class="bi bi-play-circle-fill text-info me-1"></i>Intro</button>
           <button data-bs-toggle="modal" data-bs-target="#featureGuideModal" class="btn btn-sm btn-outline-gamified px-3 py-1"><i class="bi bi-compass-fill text-warning me-1"></i>Guide</button>
         </div>
       </div>
@@ -659,7 +753,27 @@ function toggleExamTheme() {
   html.setAttribute('data-theme', target);
   localStorage.setItem('apttitudee_theme', target);
   const metaTheme = document.getElementById('metaThemeColor');
-  if (metaTheme) metaTheme.setAttribute('content', target === 'dark' ? '#1B2420' : '#F6F1E7');
+  if (metaTheme) metaTheme.setAttribute('content', target === 'dark' ? '#16201B' : '#F6F1E7');
+}
+
+function cycleGlobalTextSize() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-font-size') || 'md';
+  const next = current === 'sm' ? 'md' : (current === 'md' ? 'lg' : 'sm');
+  html.setAttribute('data-font-size', next);
+  localStorage.setItem('apttitudee_font_size', next);
+}
+
+function toggleColorblindMode() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-palette');
+  const target = current === 'colorblind' ? 'standard' : 'colorblind';
+  if (target === 'colorblind') {
+    html.setAttribute('data-palette', 'colorblind');
+  } else {
+    html.removeAttribute('data-palette');
+  }
+  localStorage.setItem('apttitudee_palette', target);
 }
 
 function openModesBottomSheet() {
@@ -670,6 +784,20 @@ function openModesBottomSheet() {
 function closeModesBottomSheet() {
   const sheet = document.getElementById('modesBottomSheet');
   if (sheet) sheet.classList.remove('open');
+}
+
+// Global Online / Offline detection
+window.addEventListener('offline', function() {
+  const b = document.getElementById('offlineBanner');
+  if (b) b.style.display = 'block';
+});
+window.addEventListener('online', function() {
+  const b = document.getElementById('offlineBanner');
+  if (b) b.style.display = 'none';
+});
+if (!navigator.onLine) {
+  const b = document.getElementById('offlineBanner');
+  if (b) b.style.display = 'block';
 }
 </script>
 

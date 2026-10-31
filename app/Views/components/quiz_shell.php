@@ -37,7 +37,7 @@ $isTech = ($quizContext ?? '') === 'technical';
 
       <!-- [Timer] -->
       <div class="quiz-bar-timer d-flex align-items-center gap-1 me-2" id="sharedQuizTopTimer">
-        <svg class="exam-icon text-danger" style="width:14px;height:14px;"><use href="#icon-clock"></use></svg>
+        <svg class="exam-icon text-danger icon-14"><use href="#icon-clock"></use></svg>
         <span class="quiz-time-display font-mono fw-bold fs-7" id="sharedQuizTopTimeText">0s</span>
       </div>
 
@@ -62,7 +62,7 @@ $isTech = ($quizContext ?? '') === 'technical';
         <div class="d-flex align-items-center justify-content-center gap-2 fw-bold fs-7">
           <i class="bi bi-lightning-charge-fill text-accent"></i>
           <span>BOSS QUESTION! Double Rewards (2x XP + 2x Coins)</span>
-          <svg class="exam-icon text-accent" style="width:16px;height:16px;"><use href="#icon-flame"></use></svg>
+          <svg class="exam-icon text-accent icon-16"><use href="#icon-flame"></use></svg>
         </div>
       </div>
       <span id="techBossBanner" class="d-none"></span>
@@ -77,7 +77,7 @@ $isTech = ($quizContext ?? '') === 'technical';
           <span id="techSubtopicBadge" class="d-none"></span>
 
           <span class="badge bg-danger text-white px-2 py-0.5 fs-8" id="sessionComboDisplay" style="display: none;">
-            <svg class="exam-icon" style="width:12px;height:12px;"><use href="#icon-flame"></use></svg> 2x
+            <svg class="exam-icon icon-12"><use href="#icon-flame"></use></svg> 2x
           </span>
           <span id="techComboBadge" class="d-none"></span>
         </div>
@@ -99,7 +99,7 @@ $isTech = ($quizContext ?? '') === 'technical';
 
           <!-- Live Practice Timer -->
           <span class="status-pill-timer" id="practiceTimerPill" title="Time Spent on Current Question">
-            <svg class="exam-icon text-danger me-0.5" style="width:12px;height:12px;"><use href="#icon-clock"></use></svg> 
+            <svg class="exam-icon text-danger me-0.5 icon-12"><use href="#icon-clock"></use></svg> 
             <span class="practice-time-display font-mono" id="practiceTimeDisplay">0s</span>
           </span>
           <!-- Tech timer aliases -->
@@ -119,9 +119,11 @@ $isTech = ($quizContext ?? '') === 'technical';
            - Prompt question (semibold, Atkinson Hyperlegible, top dashed rule if split)
            ================================================================== -->
       <div class="quiz-question-container mb-3" id="quizQuestionContainer">
-        <!-- Leading Bracket Prefix Source Tag Stamp -->
-        <div class="quiz-source-tag-wrap mb-2" id="quizSourceTagWrap" style="display: none;">
+        <!-- Leading Bracket Prefix Source Tag Stamp & Verification Badges -->
+        <div class="quiz-source-tag-wrap mb-2 d-flex flex-wrap align-items-center gap-1.5" id="quizSourceTagWrap" style="display: none;">
           <span class="quiz-source-tag-stamp" id="quizSourceTag"></span>
+          <span id="verificationBadgeWrap"></span>
+          <span id="roundPatternBadge" class="badge rounded-pill border px-2 py-1 fs-8" style="display: none; background-color: var(--surface); color: var(--ink-muted); border-color: var(--border) !important;"></span>
           <span id="techSourceTag" class="d-none"></span>
         </div>
 
@@ -142,7 +144,7 @@ $isTech = ($quizContext ?? '') === 'technical';
             <span id="codeSnippetLang" class="d-none"></span>
 
             <button type="button" class="btn-copy-code" id="codeCopyBtn" onclick="copySnippetCode()" aria-label="Copy code" title="Copy code">
-              <svg class="exam-icon copy-icon" style="width:16px;height:16px;"><use href="#icon-copy"></use></svg>
+              <svg class="exam-icon copy-icon icon-16"><use href="#icon-copy"></use></svg>
               <svg class="exam-icon check-icon d-none" style="width:16px;height:16px;color:var(--success);"><use href="#icon-check"></use></svg>
             </button>
           </div>
@@ -187,16 +189,16 @@ $isTech = ($quizContext ?? '') === 'technical';
           <button type="button" class="confidence-pill-col active" data-confidence="sure" aria-label="Sure: +5 XP if correct, -3 XP if incorrect">
             <div class="conf-btn-content">
               <span class="conf-label-row d-inline-flex align-items-center justify-content-center gap-1">
-                <svg class="exam-icon" style="width:13px;height:13px;"><use href="#icon-target"></use></svg>
+                <svg class="exam-icon icon-13"><use href="#icon-target"></use></svg>
                 <span class="conf-title">Sure</span>
               </span>
-              <span class="conf-xp-sub">+5 / -3 XP</span>
+              <span class="conf-xp-sub">+5 / -5 XP</span>
             </div>
           </button>
           <button type="button" class="confidence-pill-col" data-confidence="not_sure" aria-label="Unsure: standard XP">
             <div class="conf-btn-content">
               <span class="conf-label-row d-inline-flex align-items-center justify-content-center gap-1">
-                <svg class="exam-icon" style="width:13px;height:13px;"><use href="#icon-help"></use></svg>
+                <svg class="exam-icon icon-13"><use href="#icon-help"></use></svg>
                 <span class="conf-title">Unsure</span>
               </span>
               <span class="conf-xp-sub">0 XP risk</span>
@@ -205,7 +207,7 @@ $isTech = ($quizContext ?? '') === 'technical';
           <button type="button" class="confidence-pill-col" data-confidence="guessing" aria-label="Guess: standard XP">
             <div class="conf-btn-content">
               <span class="conf-label-row d-inline-flex align-items-center justify-content-center gap-1">
-                <svg class="exam-icon" style="width:13px;height:13px;"><use href="#icon-dice"></use></svg>
+                <svg class="exam-icon icon-13"><use href="#icon-dice"></use></svg>
                 <span class="conf-title">Guess</span>
               </span>
               <span class="conf-xp-sub">0 XP risk</span>
@@ -223,7 +225,7 @@ $isTech = ($quizContext ?? '') === 'technical';
           <div class="d-flex align-items-center gap-2">
             <span id="techResultIcon" class="fs-5"></span>
             <h6 class="font-serif fw-bold d-flex align-items-center gap-2 mb-0" id="techResultTitle" style="color: var(--accent);">
-              <svg class="exam-icon text-warning" style="width:16px;height:16px;"><use href="#icon-lightbulb"></use></svg> Step-by-Step Explanation
+              <svg class="exam-icon text-warning icon-16"><use href="#icon-lightbulb"></use></svg> Step-by-Step Explanation
             </h6>
           </div>
           <div class="d-flex align-items-center gap-2">
@@ -246,20 +248,20 @@ $isTech = ($quizContext ?? '') === 'technical';
           <label class="small fw-bold mb-0" style="color: var(--danger);">
             <i class="bi bi-exclamation-octagon-fill me-1"></i> What caused this miss? Tag to prioritize revision:
           </label>
-          <span class="badge text-white small rounded-pill px-2 py-1" id="mistakeTaggedBadge" style="display: none; background-color: var(--success);"><svg class="exam-icon me-1" style="width:11px;height:11px;"><use href="#icon-check"></use></svg> Tag Saved</span>
+          <span class="badge text-white small rounded-pill px-2 py-1" id="mistakeTaggedBadge" style="display: none; background-color: var(--success);"><svg class="exam-icon me-1 icon-11"><use href="#icon-check"></use></svg> Tag Saved</span>
         </div>
         <div class="d-flex flex-wrap gap-2 mt-2" id="mistakeTagButtons">
           <button type="button" class="btn btn-outline-gamified btn-sm mistake-tag-btn" data-type="concept_gap">
-            <svg class="exam-icon me-1" style="width:14px;height:14px;"><use href="#icon-brain"></use></svg> Concept Gap
+            <svg class="exam-icon me-1 icon-14"><use href="#icon-brain"></use></svg> Concept Gap
           </button>
           <button type="button" class="btn btn-outline-gamified btn-sm mistake-tag-btn" data-type="calculation_error">
-            <svg class="exam-icon me-1" style="width:14px;height:14px;"><use href="#icon-calculator"></use></svg> Calculation Error
+            <svg class="exam-icon me-1 icon-14"><use href="#icon-calculator"></use></svg> Calculation Error
           </button>
           <button type="button" class="btn btn-outline-gamified btn-sm mistake-tag-btn" data-type="misread_question">
-            <svg class="exam-icon me-1" style="width:14px;height:14px;"><use href="#icon-eye"></use></svg> Misread Question
+            <svg class="exam-icon me-1 icon-14"><use href="#icon-eye"></use></svg> Misread Question
           </button>
           <button type="button" class="btn btn-outline-gamified btn-sm mistake-tag-btn" data-type="ran_out_of_time">
-            <svg class="exam-icon me-1" style="width:14px;height:14px;"><use href="#icon-hourglass"></use></svg> Ran Out of Time
+            <svg class="exam-icon me-1 icon-14"><use href="#icon-hourglass"></use></svg> Ran Out of Time
           </button>
         </div>
       </div>
@@ -282,27 +284,27 @@ $isTech = ($quizContext ?? '') === 'technical';
 
       <!-- Secondary Utilities (Hint, Report, Save, Exit) -->
       <div class="quiz-utility-tools d-flex align-items-center gap-1 gap-sm-1.5">
-        <!-- 1. Hint Button -->
-        <button type="button" class="btn-quiz-util" id="formulaHintBtn" onclick="openQuizHint()" title="Strategy & Formula Hint" aria-label="Strategy & Formula Hint">
-          <svg class="exam-icon text-warning" style="width:16px;height:16px;"><use href="#icon-lightbulb"></use></svg>
-          <span class="btn-quiz-util-label">Hint</span>
+        <!-- 1. Hint Button: Lifeline (Eliminate 1 Wrong Option) -->
+        <button type="button" class="btn-quiz-util" id="formulaHintBtn" onclick="openQuizHint()" title="Eliminate 1 Wrong Option (5 Speed Coins)" aria-label="Eliminate 1 Wrong Option">
+          <svg class="exam-icon text-warning icon-16"><use href="#icon-lightbulb"></use></svg>
+          <span class="btn-quiz-util-label">Hint (5¢)</span>
         </button>
 
         <!-- 2. Report Question Button -->
         <button type="button" class="btn-quiz-util" id="reportQuestionBtn" data-bs-toggle="modal" data-bs-target="#reportModal" title="Report Question" aria-label="Report Question">
-          <svg class="exam-icon text-danger" style="width:15px;height:15px;"><use href="#icon-flag"></use></svg>
+          <svg class="exam-icon text-danger icon-15"><use href="#icon-flag"></use></svg>
           <span class="btn-quiz-util-label">Report</span>
         </button>
 
         <!-- 3. Save Progress Button -->
         <button type="button" class="btn-quiz-util" id="saveProgressBtn" onclick="saveQuizProgress()" title="Save Progress" aria-label="Save Progress">
-          <svg class="exam-icon text-accent" style="width:15px;height:15px;"><use href="#icon-save"></use></svg>
+          <svg class="exam-icon text-accent icon-15"><use href="#icon-save"></use></svg>
           <span class="btn-quiz-util-label">Save</span>
         </button>
 
-        <!-- 4. Exit Button -->
+        <!-- 5. Exit Button -->
         <button type="button" class="btn-quiz-util btn-quiz-util-exit" id="quizBottomExitBtn" onclick="handleQuizExit(event)" title="Save & Exit Quiz" aria-label="Save & Exit Quiz">
-          <svg class="exam-icon text-ink-muted" style="width:15px;height:15px;"><use href="#icon-exit"></use></svg>
+          <svg class="exam-icon text-ink-muted icon-15"><use href="#icon-exit"></use></svg>
           <span class="btn-quiz-util-label">Exit</span>
         </button>
       </div>
@@ -318,7 +320,7 @@ $isTech = ($quizContext ?? '') === 'technical';
         <!-- After submitting: Next button -->
         <button type="button" class="btn btn-primary-gamified btn-quiz-primary d-none" id="nextBtn" onclick="handleQuizNext()">
           <span class="btn-quiz-primary-text">Next</span>
-          <svg class="exam-icon ms-1" style="width:14px;height:14px;"><use href="#icon-arrow-right"></use></svg>
+          <svg class="exam-icon ms-1 icon-14"><use href="#icon-arrow-right"></use></svg>
         </button>
         <span id="techNextBtn" class="d-none"></span>
 
@@ -340,7 +342,7 @@ $isTech = ($quizContext ?? '') === 'technical';
     <div class="modal-content text-ink border rounded-4" style="background-color: var(--surface); border: 2px solid var(--border-strong) !important;">
       <div class="modal-header border-bottom" style="border-color: var(--border) !important;">
         <h5 class="modal-title font-serif fw-bold" id="reportModalLabel">
-          <svg class="exam-icon text-danger me-2" style="width:18px;height:18px;"><use href="#icon-flag"></use></svg> Report Question
+          <svg class="exam-icon text-danger me-2 icon-18"><use href="#icon-flag"></use></svg> Report Question
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -365,44 +367,170 @@ $isTech = ($quizContext ?? '') === 'technical';
       <div class="modal-footer border-top d-flex justify-content-between" style="border-color: var(--border) !important;">
         <button type="button" class="btn btn-outline-gamified btn-sm" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary-gamified btn-sm fw-bold px-3" id="reportSubmitBtn" onclick="submitReport()">
-          <svg class="exam-icon me-1" style="width:13px;height:13px;"><use href="#icon-check"></use></svg> Submit Report
+          <svg class="exam-icon me-1 icon-13"><use href="#icon-check"></use></svg> Submit Report
         </button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Formula & Strategy Hint Modal -->
-<div class="modal fade" id="hintModal" tabindex="-1" aria-labelledby="hintModalTitle" aria-hidden="true">
+<!-- Eliminate 1 Wrong Option Lifeline Modal -->
+<div class="modal fade" id="hintModal" tabindex="-1" aria-labelledby="hintModalTitle" aria-hidden="true" data-bs-keyboard="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content text-ink border rounded-4" style="background-color: var(--surface); border: 2px solid var(--border-strong) !important;">
       <div class="modal-header border-bottom" style="border-color: var(--border) !important;">
-        <h5 class="modal-title font-serif fw-bold" id="hintModalTitle">
-          <svg class="exam-icon text-warning me-2" style="width:20px;height:20px;"><use href="#icon-lightbulb"></use></svg> Topic Strategy & Formula Hint
+        <h5 class="modal-title font-serif fw-bold d-flex align-items-center gap-2" id="hintModalTitle">
+          <svg class="exam-icon text-warning icon-20"><use href="#icon-sparkles"></use></svg>
+          <span>Eliminate 1 Wrong Option</span>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body p-4">
         <div class="border rounded-3 p-2 mb-3 d-flex align-items-center justify-content-between small" style="background-color: var(--highlight-tint); border: 1.5px solid var(--border-strong); color: var(--ink);">
-          <span><svg class="exam-icon text-warning me-1" style="width:14px;height:14px;"><use href="#icon-coin"></use></svg> Cost: <strong>1 Speed Coin</strong></span>
-          <span class="badge bg-success text-white"><svg class="exam-icon me-0.5" style="width:11px;height:11px;"><use href="#icon-check"></use></svg> Unlocked for this question</span>
+          <span><svg class="exam-icon text-warning me-1 icon-14"><use href="#icon-coin"></use></svg> Cost: <strong>5 Speed Coins</strong></span>
+          <span class="badge bg-success text-white" id="hintModalStatusBadge"><svg class="exam-icon me-0.5 icon-11"><use href="#icon-check"></use></svg> 1 Option Eliminated</span>
         </div>
-        <div class="p-3 rounded-3 mb-3 border" style="background-color: var(--surface); border: 1.5px solid var(--border) !important;">
-          <h6 class="font-serif fw-bold text-ink mb-1"><svg class="exam-icon text-accent me-1" style="width:15px;height:15px;"><use href="#icon-brain"></use></svg> Core Formula / Rules:</h6>
-          <p class="text-ink-muted small mb-0 lh-base" id="hintModalFormula">
-            Reviewing fundamental relationships and quick conversion shortcuts.
+        <div class="p-3 rounded-3 mb-3 border text-center" style="background-color: rgba(197, 48, 48, 0.08); border: 1.5px dashed var(--danger, #c53030) !important;">
+          <div class="text-danger fw-bold fs-5 mb-1" id="hintModalEliminatedHeading">
+            ❌ Option Eliminated
+          </div>
+          <p class="text-ink-muted small mb-0 font-monospace" id="hintModalEliminatedText" style="word-break: break-word;">
+            An incorrect option has been removed from this question.
           </p>
         </div>
         <div class="p-3 rounded-3 border" style="background-color: var(--surface); border: 1.5px solid var(--border) !important;">
-          <h6 class="font-serif fw-bold text-ink mb-1"><svg class="exam-icon text-warning me-1" style="width:15px;height:15px;"><use href="#icon-target"></use></svg> Solving Tip & Strategy:</h6>
-          <p class="text-ink-muted small mb-0 lh-base" id="hintModalStrategy">
-            Identify given constraints, cancel out dimensions, and eliminate extreme answers first.
+          <h6 class="font-serif fw-bold text-ink mb-1 d-flex align-items-center gap-1.5">
+            <svg class="exam-icon text-success icon-15"><use href="#icon-target"></use></svg>
+            <span>3 Options Remaining</span>
+          </h6>
+          <p class="text-ink-muted small mb-0 lh-base" id="hintModalTip">
+            The eliminated option is crossed out and disabled on your question card. You now have a 1-in-3 chance to pick the correct answer!
           </p>
         </div>
       </div>
       <div class="modal-footer border-top" style="border-color: var(--border) !important;">
-        <button type="button" class="btn btn-primary-gamified btn-sm px-4 fw-bold w-100" data-bs-dismiss="modal">Got it!</button>
+        <button type="button" class="btn btn-primary-gamified btn-sm px-4 fw-bold w-100" data-bs-dismiss="modal">Continue with 3 Options &rarr;</button>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Student Question Contribution Modal -->
+<div class="modal fade" id="submitQuestionModal" tabindex="-1" aria-labelledby="submitQuestionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content text-ink border rounded-4" style="background-color: var(--surface); border: 2px solid var(--border-strong) !important;">
+      <div class="modal-header border-bottom align-items-start" style="border-color: var(--border) !important;">
+        <div class="min-w-0 pe-2">
+          <h5 class="modal-title font-serif fw-bold d-flex align-items-center gap-1.5 fs-6 mb-1 text-wrap" id="submitQuestionModalLabel">
+            <svg class="exam-icon text-success flex-shrink-0 icon-18"><use href="#icon-rocket"></use></svg>
+            <span>Submit Placement Question</span>
+          </h5>
+          <span class="badge bg-success-subtle text-success border border-success-subtle fs-8">+50 XP &bull; +10 Speed Coins</span>
+        </div>
+        <button type="button" class="btn-close flex-shrink-0" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p class="text-ink-muted small mb-3">
+          Encountered a memorable question in a recent campus placement drive (e.g. TCS NQT, Infosys, Innovature Labs)? Contribute it to our peer community! Once verified by content moderators, you earn <strong>50 XP</strong> and <strong>10 Speed Coins</strong>.
+        </p>
+        <form id="studentQuestionForm" onsubmit="event.preventDefault(); submitStudentQuestion(event);">
+          <div class="row g-2 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Company Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="subCompany" required placeholder="e.g. Innovature Labs, TCS, Infosys" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-bold text-ink">Drive Date</label>
+              <input type="date" class="form-control form-control-sm" id="subDriveDate" value="<?= date('Y-m-d') ?>" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-bold text-ink">Difficulty</label>
+              <select class="form-select form-select-sm" id="subDifficulty" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard (Boss)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Round / Exam Pattern</label>
+              <input type="text" class="form-control form-control-sm" id="subRoundPattern" placeholder="e.g. Round 1 Online Aptitude, Technical MCQ" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Topic / Category</label>
+              <input type="text" class="form-control form-control-sm" id="subTopicName" placeholder="e.g. Speed Distance Time, Pointers in C, Syllogisms" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-ink">Question Stem / Problem Statement <span class="text-danger">*</span></label>
+            <textarea class="form-control" id="subQuestionText" rows="3" required placeholder="Type the question as asked in the placement test..." style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-ink">Optional Code Snippet (For Technical Questions)</label>
+            <textarea class="form-control font-mono fs-8" id="subCodeSnippet" rows="2" placeholder="#include <stdio.h>&#10;int main() { ... }" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);"></textarea>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Option A <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="subOptA" required placeholder="Option A" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Option B <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="subOptB" required placeholder="Option B" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Option C</label>
+              <input type="text" class="form-control form-control-sm" id="subOptC" placeholder="Option C" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-ink">Option D</label>
+              <input type="text" class="form-control form-control-sm" id="subOptD" placeholder="Option D" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-md-4">
+              <label class="form-label small fw-bold text-ink">Correct Option <span class="text-danger">*</span></label>
+              <select class="form-select form-select-sm" id="subCorrectOpt" style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+                <option value="A">Option A</option>
+                <option value="B">Option B</option>
+                <option value="C">Option C</option>
+                <option value="D">Option D</option>
+              </select>
+            </div>
+            <div class="col-md-8">
+              <label class="form-label small fw-bold text-ink">Explanation / Solution Steps</label>
+              <input type="text" class="form-control form-control-sm" id="subExplanation" placeholder="Brief step-by-step logic or derivation..." style="background-color: var(--surface); color: var(--ink); border: 1.5px solid var(--border-strong);">
+            </div>
+          </div>
+
+          <div id="subAlertBox" class="alert d-none py-2 small mb-3" role="alert"></div>
+
+          <div class="modal-footer border-top p-0 pt-3 d-flex justify-content-between" style="border-color: var(--border) !important;">
+            <button type="button" class="btn btn-outline-gamified btn-sm" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary-gamified btn-sm fw-bold px-4" id="subSubmitBtn">
+              <svg class="exam-icon me-1 icon-14"><use href="#icon-rocket"></use></svg> Submit to Moderation (+50 XP)
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script id="hintModalEscListener">
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' || e.keyCode === 27) {
+    const hintModalEl = document.getElementById('hintModal');
+    if (hintModalEl && hintModalEl.classList.contains('show')) {
+      const modal = bootstrap.Modal.getInstance(hintModalEl);
+      if (modal) modal.hide();
+    }
+  }
+});
+</script>
