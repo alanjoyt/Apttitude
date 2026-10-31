@@ -286,12 +286,21 @@ class PracticeController {
         $questionId = (int)($input['question_id'] ?? 0);
         $selectedOption = strtoupper(trim($input['selected_option'] ?? ''));
         $confidence = strtolower(trim($input['confidence'] ?? 'sure'));
-        $timeTaken = (int)($input['time_taken_seconds'] ?? 15);
+        $rawTime = $input['time_taken_seconds'] ?? null;
+        $isImplausible = false;
+        if ($rawTime === null || !is_numeric($rawTime)) {
+            $timeTaken = 15;
+        } else {
+            $val = (int)$rawTime;
+            if ($val < 2 || $val > 300) {
+                $isImplausible = true;
+            }
+            $timeTaken = max(1, min(300, $val));
+        }
         $mode = trim($input['mode'] ?? 'practice');
 
         // Anti-Exploit: Sanitize parameters & enforce strict server-side bounds
         $confidence = in_array($confidence, ['sure', 'not_sure', 'guessing']) ? $confidence : 'sure';
-        $timeTaken = max(1, min(300, $timeTaken));
 
         $db = Database::getConnection();
 
@@ -528,6 +537,8 @@ class PracticeController {
             'attempt_id' => $attemptId,
             'is_correct' => $isCorrect,
             'correct_option' => $correctOption,
+            'time_taken_seconds' => $timeTaken,
+            'is_implausible_time' => $isImplausible,
             'explanation' => $question['explanation'],
             'xp_earned' => $xpEarned,
             'coins_earned' => $coinsEarned,
