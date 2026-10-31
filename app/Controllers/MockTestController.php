@@ -585,7 +585,8 @@ class MockTestController {
         $rawScore = ($correctCount * 1.0) - ($wrongCount * 0.25);
         $scoreMarks = round(max(-2.5, $rawScore), 2); // Cap minimum loss gracefully
         $totalMarks = round($totalQuestions * 1.0, 2);
-        $accuracyPercent = ($totalQuestions > 0) ? round(($correctCount / $totalQuestions) * 100, 1) : 0;
+        $attemptedCount = $correctCount + $wrongCount;
+        $accuracyPercent = ($attemptedCount > 0) ? round(max(0.0, min(100.0, ($correctCount / $attemptedCount) * 100)), 1) : 0.0;
         $scorePercent = ($totalMarks > 0) ? round(($scoreMarks / $totalMarks) * 100, 1) : 0;
 
         // Band Determination
@@ -765,6 +766,7 @@ class MockTestController {
                 'marks' => $scoreMarks,
                 'total_marks' => $totalMarks,
                 'percentage' => $scorePercent,
+                'accuracy' => $accuracyPercent,
                 'formula' => '+1 per correct, -0.25 per wrong',
                 'band' => $band,
                 'qualifies_confetti' => ($scorePercent >= 60)
@@ -923,7 +925,8 @@ class MockTestController {
         $rawScore = ($correctCount * 1.0) - ($wrongCount * 0.25);
         $scoreMarks = round(max(-2.5, $rawScore), 2);
         $totalMarks = round($totalQuestions * 1.0, 2);
-        $accuracyPercent = ($totalQuestions > 0) ? round(($correctCount / $totalQuestions) * 100, 1) : 0;
+        $attemptedCount = $correctCount + $wrongCount;
+        $accuracyPercent = ($attemptedCount > 0) ? round(max(0.0, min(100.0, ($correctCount / $attemptedCount) * 100)), 1) : 0.0;
         $scorePercent = ($totalMarks > 0) ? round(($scoreMarks / $totalMarks) * 100, 1) : 0;
 
         $band = 'Needs Practice';
