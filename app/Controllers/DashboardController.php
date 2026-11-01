@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../config/db.php';
 require_once __DIR__ . '/../Services/GamificationEngine.php';
 require_once __DIR__ . '/../Services/SpacedRepetitionService.php';
+require_once __DIR__ . '/../Services/FixPlanService.php';
 require_once __DIR__ . '/../Models/User.php';
 
 class DashboardController {
@@ -42,13 +43,35 @@ class DashboardController {
         $mistakeStmt->execute([$userId]);
         $mistakeBreakdown = $mistakeStmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
+        // Fetch questions solved today for Daily Goal Ring
+        $todayAttemptsStmt = $db->prepare("SELECT COUNT(*) FROM attempts WHERE user_id = ? AND DATE(attempted_at) = CURRENT_DATE");
+        $todayAttemptsStmt->execute([$userId]);
+        $todaySolved = (int)$todayAttemptsStmt->fetchColumn();
+
+        // Fetch user's latest practiced subtopic for "Continue Where You Left Off"
+        $lastAttemptStmt = $db->prepare("
+            SELECT s.id as subtopic_id, s.name as subtopic_name, t.name as topic_name
+            FROM attempts a
+            JOIN questions q ON a.question_id = q.id
+            JOIN subtopics s ON q.subtopic_id = s.id
+            JOIN topics t ON s.topic_id = t.id
+            WHERE a.user_id = ?
+            ORDER BY a.attempted_at DESC
+            LIMIT 1
+        ");
+        $lastAttemptStmt->execute([$userId]);
+        $lastPracticed = $lastAttemptStmt->fetch(PDO::FETCH_ASSOC);
+
         return [
             'user' => $user,
             'tier_progress' => $tierProgress,
             'topic_stats' => $topicStats,
             'weak_deck_count' => count($weakDeck),
             'weak_deck' => $weakDeck,
-            'mistake_breakdown' => $mistakeBreakdown
+            'mistake_breakdown' => $mistakeBreakdown,
+            'today_solved' => $todaySolved,
+            'last_practiced' => $lastPracticed,
+            'fix_plan' => FixPlanService::getActivePlanSummary($userId)
         ];
     }
 }

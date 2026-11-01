@@ -313,6 +313,28 @@ switch ($action) {
         MockTestController::getMockModesInfoJSON();
         break;
 
+    case 'api_get_fix_plan':
+        require_once __DIR__ . '/../app/Controllers/FixPlanController.php';
+        FixPlanController::getPlanJSON();
+        break;
+
+    case 'api_verify_fix_plan_task':
+        CsrfService::verify();
+        require_once __DIR__ . '/../app/Controllers/FixPlanController.php';
+        FixPlanController::verifyTaskJSON();
+        break;
+
+    case 'api_replace_fix_plan':
+        CsrfService::verify();
+        require_once __DIR__ . '/../app/Controllers/FixPlanController.php';
+        FixPlanController::replacePlanJSON();
+        break;
+
+    case 'api_get_fix_plan_questions':
+        require_once __DIR__ . '/../app/Controllers/FixPlanController.php';
+        FixPlanController::getDayQuestionsJSON();
+        break;
+
     case 'api_profile_progress':
         header('Content-Type: application/json');
         if (session_status() === PHP_SESSION_NONE) session_start();

@@ -1,19 +1,19 @@
 {
     "project": "Apttitudee",
     "version": "2.5.0-predeploy",
-    "generated_at": "2026-11-01T14:32:43+00:00",
+    "generated_at": "2026-11-01T14:47:01+00:00",
     "environment_target": "Production LAMP / MariaDB (apttitudee.xo.je / staging: apttitudee.rf.gd)",
     "domain_target": "apttitudee.xo.je",
-    "total_files": 95,
-    "total_bytes": 2225868,
+    "total_files": 98,
+    "total_bytes": 2270656,
     "categories": {
         "root": {
             "count": 1,
             "bytes": 3120
         },
         "app": {
-            "count": 59,
-            "bytes": 1014366
+            "count": 61,
+            "bytes": 1056214
         },
         "config": {
             "count": 4,
@@ -24,8 +24,8 @@
             "bytes": 2686
         },
         "deploy/migrations": {
-            "count": 4,
-            "bytes": 647856
+            "count": 5,
+            "bytes": 650045
         },
         "deploy/scripts": {
             "count": 3,
@@ -33,7 +33,7 @@
         },
         "public": {
             "count": 22,
-            "bytes": 514004
+            "bytes": 514755
         }
     },
     "files": [
@@ -57,8 +57,8 @@
         },
         {
             "path": "app/Controllers/DashboardController.php",
-            "size_bytes": 2956,
-            "sha256": "6d5126d4ef4ce4c25c9c3c43134b155478f60ecf62a1ce21958f8254b6e7cea9",
+            "size_bytes": 3087,
+            "sha256": "c18b5fb3758f7125a5b92f01b850a2a18a227383563a20967c02a65bc2f60b6e",
             "category": "app"
         },
         {
@@ -74,9 +74,15 @@
             "category": "app"
         },
         {
+            "path": "app/Controllers/FixPlanController.php",
+            "size_bytes": 7447,
+            "sha256": "88be3d0ef1ac990ce0ebbf3d50fb02abe0cc028efa274c17f1bb98c9a71aea51",
+            "category": "app"
+        },
+        {
             "path": "app/Controllers/MockTestController.php",
-            "size_bytes": 61029,
-            "sha256": "f41f7c6171fe4bfd126a78743fecc8807f4e9fb07af5236f1ad0df08879edd57",
+            "size_bytes": 61942,
+            "sha256": "f5ab51f82ed64e4fe9b37dc15241ceb4286d3761441c31db3bf0c65d060014d8",
             "category": "app"
         },
         {
@@ -161,6 +167,12 @@
             "path": "app/Services/DuelService.php",
             "size_bytes": 21957,
             "sha256": "2d3c079fa20a1dd5ed3214fe550242edd09ade8af6fac607062881ac107b0e4b",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/FixPlanService.php",
+            "size_bytes": 23444,
+            "sha256": "d7f5fe48e78922a55eee8742bb6b254bdf104a7f407a9f1d387cd5dec9475659",
             "category": "app"
         },
         {
@@ -279,8 +291,8 @@
         },
         {
             "path": "app/Views/dashboard.php",
-            "size_bytes": 29759,
-            "sha256": "6413adccf78b95aafcd4cfee0165f2e3c18c723fb4fc0e14526aec90021706bb",
+            "size_bytes": 34078,
+            "sha256": "58eb5de8eb508ec4d981a199e07e5dc7c58fbb640b89f824b8ff297566690999",
             "category": "app"
         },
         {
@@ -327,8 +339,8 @@
         },
         {
             "path": "app/Views/mock.php",
-            "size_bytes": 72241,
-            "sha256": "a9f8f076a39ae63b0cb6ebd0ef66719dddf53564f77368a0f12647f9d59f5ec4",
+            "size_bytes": 77835,
+            "sha256": "0ce1c22370c8c66b9cf2e343c6a9c69acf6557e5431d46c623d0339e859ca217",
             "category": "app"
         },
         {
@@ -458,6 +470,12 @@
             "category": "deploy/migrations"
         },
         {
+            "path": "deploy/migrations/05_seven_day_fix_plan.sql",
+            "size_bytes": 2189,
+            "sha256": "5f1075e52295464151750d1e6568a805e5df0c5260aebe6fd1af52f21c6087c9",
+            "category": "deploy/migrations"
+        },
+        {
             "path": "deploy/scripts/check_innodb_engines.sql",
             "size_bytes": 1861,
             "sha256": "1e559b44d83a4521fb12ee7686a62a03b905f2f4066f3a53726e71cc56a0a156",
@@ -549,8 +567,8 @@
         },
         {
             "path": "public/index.php",
-            "size_bytes": 29590,
-            "sha256": "39a9941411ae3dedc56cbfdb29b958cf84012386bc60f0ec047cccd5e07ef50d",
+            "size_bytes": 30341,
+            "sha256": "c429341ab30669b13a5ec998ca59f32a1f2baec9cc2523438ef29dc4765d8303",
             "category": "public"
         },
         {

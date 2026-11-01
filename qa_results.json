@@ -1,8 +1,8 @@
 {
     "summary": {
-        "run_timestamp": "2026-11-01T14:32:11+00:00",
-        "total_tests": 41,
-        "passed": 41,
+        "run_timestamp": "2026-11-01T14:46:39+00:00",
+        "total_tests": 50,
+        "passed": 50,
         "failed": 0,
         "status": "ALL_PASSED"
     },
@@ -13,7 +13,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "mode=quick: count=30(exp:30), dur=1800s(exp:1800s) | mode=standard: count=60(exp:60), dur=3600s(exp:3600s) | mode=full: count=100(exp:100), dur=6000s(exp:6000s) | full duration override (50m -> 3000s) verified",
-            "timestamp": "2026-11-01 14:31:53",
+            "timestamp": "2026-11-01 14:46:23",
             "meta": {
                 "modes": [
                     "mode=quick: count=30(exp:30), dur=1800s(exp:1800s)",
@@ -29,7 +29,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Resume verified: remaining time decreased from 3600s to 3598s; Tab-switch skip recorded with skip_reason='tab_switch' on single question; Expired exam rejected by server-authoritative deadline validation (HTTP 400 DEADLINE_EXCEEDED)",
-            "timestamp": "2026-11-01 14:31:55",
+            "timestamp": "2026-11-01 14:46:25",
             "meta": []
         },
         "ML3": {
@@ -38,7 +38,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Zero duplicates verified across 210 independent generations across multiple packs",
-            "timestamp": "2026-11-01 14:32:09",
+            "timestamp": "2026-11-01 14:46:37",
             "meta": []
         },
         "ML4": {
@@ -47,7 +47,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Blueprint Section Match: QUANT=30/30, LR=30/30, VERBAL=17/15, TECHNICAL=23/25. Difficulty Mix: Easy=61, Med=34, Hard=5",
-            "timestamp": "2026-11-01 14:32:09",
+            "timestamp": "2026-11-01 14:46:37",
             "meta": []
         },
         "ML5": {
@@ -56,7 +56,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Amazon pool size=24, requested=60, capped_returned=24, is_capped=true, duration=1440s, zero_repeats=true",
-            "timestamp": "2026-11-01 14:32:09",
+            "timestamp": "2026-11-01 14:46:37",
             "meta": []
         },
         "ML6": {
@@ -65,7 +65,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "TCS: formula='+1 per correct, no penalty for wrong'; Mphasis (0.25 pen): score=1.5 (exp 1.5), acc=50%; All-wrong acc=0% (never negative)",
-            "timestamp": "2026-11-01 14:32:09",
+            "timestamp": "2026-11-01 14:46:37",
             "meta": []
         },
         "ML7": {
@@ -74,7 +74,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Locked user: [Q:403, S:403, F:403]; Unlocked user: [Q:200, S:200, F:200]; Guest: [Q:401, S:401, F:401]",
-            "timestamp": "2026-11-01 14:32:10",
+            "timestamp": "2026-11-01 14:46:38",
             "meta": []
         },
         "ML8": {
@@ -83,7 +83,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Quick LB: 1 entry (score=25); Standard LB: 1 entry (score=55); Percentile isolated to mode=quick (total_attempts=1, pct=0%)",
-            "timestamp": "2026-11-01 14:32:10",
+            "timestamp": "2026-11-01 14:46:38",
             "meta": []
         },
         "ML9": {
@@ -92,7 +92,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Counts mismatch: HTTP 400; Invalid topic: HTTP 400; Negative < 0: HTTP 400; Valid save: HTTP 200",
-            "timestamp": "2026-11-01 14:32:10",
+            "timestamp": "2026-11-01 14:46:38",
             "meta": []
         },
         "ML10": {
@@ -101,7 +101,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Legacy session resumed: true; submitted HTTP 200; DB status=completed",
-            "timestamp": "2026-11-01 14:32:10",
+            "timestamp": "2026-11-01 14:46:38",
             "meta": []
         },
         "SM1 \ud83d\udd34": {
@@ -110,7 +110,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Landing page loaded HTTP 200",
-            "timestamp": "2026-11-01 14:32:10",
+            "timestamp": "2026-11-01 14:46:38",
             "meta": []
         },
         "SM2 \ud83d\udd34": {
@@ -119,7 +119,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Registration and auto-login returned HTTP 302",
-            "timestamp": "2026-11-01 14:32:10",
+            "timestamp": "2026-11-01 14:46:38",
             "meta": []
         },
         "SM3 \ud83d\udd34": {
@@ -127,8 +127,8 @@
             "title": "Regression test SM3",
             "status": "PASS",
             "passed": true,
-            "evidence": "Practice question returned HTTP 200 with valid ID 1810",
-            "timestamp": "2026-11-01 14:32:10",
+            "evidence": "Practice question returned HTTP 200 with valid ID 1831",
+            "timestamp": "2026-11-01 14:46:38",
             "meta": []
         },
         "SM4 \ud83d\udd34": {
@@ -137,7 +137,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Leaderboard page returned HTTP 200",
-            "timestamp": "2026-11-01 14:32:10",
+            "timestamp": "2026-11-01 14:46:38",
             "meta": []
         },
         "SM5 \ud83d\udd34": {
@@ -146,7 +146,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Admin access: HTTP 200, Student denied: HTTP 403",
-            "timestamp": "2026-11-01 14:32:10",
+            "timestamp": "2026-11-01 14:46:38",
             "meta": []
         },
         "AU1 \ud83d\udd34": {
@@ -155,7 +155,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "User row created in database with bcrypt hash",
-            "timestamp": "2026-11-01 14:32:10",
+            "timestamp": "2026-11-01 14:46:38",
             "meta": []
         },
         "AU5 \ud83d\udd34": {
@@ -164,7 +164,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Rate limiter returned HTTP 429 after 10 failed login attempts",
-            "timestamp": "2026-11-01 14:32:10",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "AU7 \ud83d\udd34": {
@@ -173,7 +173,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "session_regenerate_id() rotated session identifier upon authentication",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "PR1 \ud83d\udd34": {
@@ -182,7 +182,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Answer evaluation correctly verified true for matching option B",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "PR7 \ud83d\udd34": {
@@ -191,7 +191,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Repeat answer submitted twice yields decayed XP (0 XP earned on repeat)",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "MK1 \ud83d\udd34": {
@@ -200,7 +200,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Mock timer rule enforced: 30 questions = 30 minutes",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "MK2 \ud83d\udd34": {
@@ -209,7 +209,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "No per-question countdown timer in mock view; single exam countdown #examTimer verified",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "MK3 \ud83d\udd34": {
@@ -218,7 +218,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Tab switch records skip_reason='tab_switch' in attempts table without exam disqualification",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "MK7 \ud83d\udd34": {
@@ -227,7 +227,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Timer expiration auto-submits exam when timer <= 0 in client controller",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "MK8 \ud83d\udd34": {
@@ -236,7 +236,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Server calculates remaining seconds from deadline timestamp; client tampering cannot extend",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "MK9 \ud83d\udd34": {
@@ -245,7 +245,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Active session recovered on reload via server session persistence",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "MK23 \ud83d\udd34": {
@@ -254,7 +254,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Direct score tampering rejected: forged 999.0 marks evaluated strictly on server to -0.25",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "EC1 \ud83d\udd34": {
@@ -263,7 +263,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Economy XP and coin formula loaded from authoritative GamificationEngine config",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "EC2 \ud83d\udd34": {
@@ -272,7 +272,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Wallet coins equal sum of coin_transactions ledger for all users (0 mismatches)",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "EC3 \ud83d\udd34": {
@@ -281,7 +281,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Coin debit transaction executes inside SELECT ... FOR UPDATE to eliminate race conditions",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "EC4 \ud83d\udd34": {
@@ -290,7 +290,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Double unlock prevented; returned error on repeat unlock (HTTP 400)",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "ST1 \ud83d\udd34": {
@@ -299,7 +299,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "User streak recorded in users table (current streak: 1)",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "LG1 \ud83d\udd34": {
@@ -308,7 +308,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Five competitive league tiers defined with promotion cutoffs",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "DU1 \ud83d\udd34": {
@@ -316,8 +316,8 @@
             "title": "Regression test DU1",
             "status": "PASS",
             "passed": true,
-            "evidence": "Duel created with wager escrow; returned duel_id 3",
-            "timestamp": "2026-11-01 14:32:11",
+            "evidence": "Duel created with wager escrow; returned duel_id 4",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "DU2 \ud83d\udd34": {
@@ -326,7 +326,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Duel join endpoint processed successfully",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "CP1 \ud83d\udd34": {
@@ -335,7 +335,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Company mock packs unlockable with Speed Coins; verified in user_unlocks",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "SE1 \ud83d\udd34": {
@@ -344,7 +344,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "SQL injection inputs rejected cleanly without database syntax error or 500 crashes",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "SE2 \ud83d\udd34": {
@@ -353,7 +353,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Stored XSS safely escaped with htmlspecialchars on user profile page",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "SE4 \ud83d\udd34": {
@@ -362,7 +362,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Unauthenticated state-changing POST rejected with HTTP 403",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "DB1 \ud83d\udd34": {
@@ -371,7 +371,7 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Foreign key cascade cleanly removed associated records upon user deletion",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
             "meta": []
         },
         "DB2 \ud83d\udd34": {
@@ -380,7 +380,88 @@
             "status": "PASS",
             "passed": true,
             "evidence": "Zero orphan attempt records found referencing non-existent question IDs",
-            "timestamp": "2026-11-01 14:32:11",
+            "timestamp": "2026-11-01 14:46:39",
+            "meta": []
+        },
+        "FP1": {
+            "id": "FP1",
+            "title": "Plan creation is idempotent: double-submit and refresh create one plan",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Initial submission created plan 50. Second submission returned loaded_existing (plan 50). DB rows with mock_session_id: 1 (strictly 1).",
+            "timestamp": "2026-11-01 20:16:14",
+            "meta": []
+        },
+        "FP2": {
+            "id": "FP2",
+            "title": "Weakest-subtopic selection is correct on seeded attempt data, including ties and tiny samples",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Eligible subtopics: [1002, 1003, 1004, 1005] (1001 with 2 attempts excluded). Top 3 weakest selected: [1002, 1003, 1004] (1002 > 1003 tiebreak on sure_but_wrong).",
+            "timestamp": "2026-11-01 20:16:14",
+            "meta": []
+        },
+        "FP3": {
+            "id": "FP3",
+            "title": "A task cannot be completed without matching real attempts (try forging completion request)",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Forged attempt with 0 practice attempts rejected (HTTP 400: Insufficient verified attempts. Completed 0 of 5 required questions.). Status remained pending. After 5 verified attempts, legitimate call succeeded (HTTP 200) and status changed to completed.",
+            "timestamp": "2026-11-01 20:16:15",
+            "meta": []
+        },
+        "FP4": {
+            "id": "FP4",
+            "title": "IST midnight boundary advances the day correctly; a missed day behaves as designed (documented)",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Day 2 was locked on same day start. When started_at moved across IST midnight boundary, Day 2 unlocked to pending. After 3 days missed, sequential progression held: Day 3 stayed locked until Day 2 is finished.",
+            "timestamp": "2026-11-01 20:16:15",
+            "meta": []
+        },
+        "FP5": {
+            "id": "FP5",
+            "title": "Rewards: written to the ledger once per day, capped, balance equals ledger for every user afterward",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Day 1 rewarded 5 coins to ledger. Day 2 completion on same calendar day applied daily cap (0 coins awarded). Ledger sum (30) strictly equals users.coins (30). Fix plan reward entries today: 1.",
+            "timestamp": "2026-11-01 20:16:15",
+            "meta": []
+        },
+        "FP6": {
+            "id": "FP6",
+            "title": "Perfect-score and no-data users get the right alternative plan",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Insufficient subtopic data produced plan_type='needs_data' ('Not enough data yet. Complete another mock to unlock a personalized 7-day fix plan.'). 100% score produced plan_type='challenge' with advanced challenge tasks.",
+            "timestamp": "2026-11-01 20:16:15",
+            "meta": []
+        },
+        "FP7": {
+            "id": "FP7",
+            "title": "Replacing a plan keeps history and leaves no orphan rows",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Prior plan 54 status updated to 'replaced', all 7 days retained in history. New plan activated. Orphan rows in fix_plan_days: 0.",
+            "timestamp": "2026-11-01 20:16:15",
+            "meta": []
+        },
+        "FP8": {
+            "id": "FP8",
+            "title": "One user cannot read or change another user's plan (IDOR)",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "GET fix_plan for different user returned HTTP 403 Forbidden. POST verify_fix_plan_task returned HTTP 403 Forbidden.",
+            "timestamp": "2026-11-01 20:16:15",
+            "meta": []
+        },
+        "FP9": {
+            "id": "FP9",
+            "title": "Day 7 retest shows before/after correctly",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Retest verified with 15 questions (12 correct). Plan status='completed'. Baseline accuracy: 33.33%, Retest accuracy: 80.00%.",
+            "timestamp": "2026-11-01 20:16:15",
             "meta": []
         }
     }

@@ -352,6 +352,11 @@ $packTitle = $packTitles[$packCode] ?? 'Company Placement Pattern Mock';
         </div>
       </div>
 
+      <!-- 7-Day Fix Plan Banner -->
+      <section class="card card-gamified p-3 p-sm-4 mb-4 border-2 d-none" id="mockFixPlanCard" style="border-color: var(--accent); background: linear-gradient(135deg, rgba(var(--accent-rgb, 43, 90, 237), 0.05) 0%, rgba(var(--surface-rgb, 255, 255, 255), 1) 100%);">
+        <div id="mockFixPlanContent"></div>
+      </section>
+
       <!-- Row 4: Review Answers Accordion -->
       <section class="card card-gamified p-3 p-sm-4 mb-4" aria-labelledby="reviewAnswersHeading">
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -1314,6 +1319,121 @@ function displayExamHallScorecard(data) {
             launchConfetti();
         }
     }
+
+    // 9. 7-Day Fix Plan Banner
+    if (data.fix_plan) {
+        displayFixPlanInScorecard(data);
+    }
+}
+
+/**
+ * Render 7-Day Fix Plan in Scorecard
+ */
+function displayFixPlanInScorecard(data) {
+    const card = document.getElementById('mockFixPlanCard');
+    const content = document.getElementById('mockFixPlanContent');
+    if (!card || !content) return;
+
+    const fp = data.fix_plan || data;
+    if (!fp) {
+        card.classList.add('d-none');
+        return;
+    }
+
+    card.classList.remove('d-none');
+
+    if (fp.plan_type === 'needs_data' || (fp.plan && fp.plan.plan_type === 'needs_data')) {
+        content.innerHTML = `
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+              <div class="p-2.5 rounded-3 bg-secondary-subtle text-ink fs-3">
+                <i class="bi bi-info-circle-fill"></i>
+              </div>
+              <div>
+                <h5 class="font-serif fw-bold text-ink mb-1">7-Day Targeted Fix Plan</h5>
+                <p class="small text-ink-muted mb-0">Not enough data yet. Complete another mock test with at least 3 questions across key topics to unlock your personalized fix plan.</p>
+              </div>
+            </div>
+            <a href="index.php?action=mock" class="btn btn-outline-gamified fw-bold btn-sm">Take Another Mock</a>
+          </div>
+        `;
+        return;
+    }
+
+    if (fp.status === 'has_active_plan') {
+        content.innerHTML = `
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-warning text-dark small fw-bold">Active Fix Plan In Progress</span>
+              </div>
+              <h5 class="font-serif fw-bold text-ink mb-1">Replace Active Plan with this Mock?</h5>
+              <p class="small text-ink-muted mb-0">You currently have an active 7-day plan. You can keep your existing plan or replace it with a new 7-day plan focused on this test's weak areas.</p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <a href="index.php?action=dashboard" class="btn btn-outline-gamified fw-bold btn-sm">Keep Current Plan</a>
+              <button type="button" class="btn btn-primary-gamified fw-bold btn-sm" onclick="replaceFixPlan('${fp.new_mock_session_id}')">
+                Replace with New Plan
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+    }
+
+    // Active plan generated or loaded
+    const plan = fp.plan || fp;
+    const weakest = plan.weakest_subtopics || [];
+    const isChallenge = plan.plan_type === 'challenge';
+    const title = isChallenge ? '7-Day Advanced Challenge Plan Unlocked!' : 'Your 7-Day Targeted Fix Plan is Ready!';
+    const badge = isChallenge ? '<span class="badge bg-danger text-white small px-2 py-0.5 rounded-pill fw-bold">Advanced Challenge</span>' : '<span class="badge bg-primary text-white small px-2 py-0.5 rounded-pill fw-bold">Personalized Fix</span>';
+
+    let topicsHtml = '';
+    weakest.forEach(w => {
+        const topicName = w.name || w.subtopic_name || 'Topic';
+        const acc = w.accuracy !== undefined ? Number(w.accuracy).toFixed(0) : '0';
+        topicsHtml += `<span class="badge bg-secondary-subtle text-ink border px-2 py-1 small me-1 mb-1">${formatSafeText(topicName)} (${acc}%)</span>`;
+    });
+
+    content.innerHTML = `
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            ${badge}
+            <span class="small text-ink-muted">Baseline Accuracy: <strong>${Number(plan.baseline_accuracy || 0).toFixed(1)}%</strong></span>
+          </div>
+          <h5 class="font-serif fw-bold text-ink mb-1">${title}</h5>
+          <p class="small text-ink-muted mb-2">Focused daily practice on your 3 identified areas. Day 7 features a 15-question retest to measure your accuracy gains.</p>
+          <div class="d-flex align-items-center flex-wrap">${topicsHtml}</div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <a href="index.php?action=dashboard" class="btn btn-primary-gamified fw-bold px-3 py-2 text-nowrap d-inline-flex align-items-center gap-1 shadow-sm">
+            View on Dashboard <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    `;
+}
+
+function replaceFixPlan(mockSessionId) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    fetch('index.php?action=api_replace_fix_plan', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken
+        },
+        body: JSON.stringify({ mock_session_id: mockSessionId })
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.status === 'success') {
+            displayFixPlanInScorecard({ fix_plan: res });
+        } else {
+            alert(res.message || 'Failed to replace plan.');
+        }
+    })
+    .catch(() => alert('Network error while replacing plan.'));
 }
 
 /**

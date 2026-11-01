@@ -533,6 +533,7 @@ class MockTestController {
         
         $answers = $input['answers'] ?? []; // Map of question_id => selected_option
         $questionTimes = $input['question_times'] ?? []; // Map of question_id => seconds
+        $confidences = $input['confidences'] ?? []; // Map of question_id => confidence (sure, not_sure, guessing)
         $questionIds = $input['question_ids'] ?? [];
         $packCode = $input['pack_code'] ?? 'GENERAL_MOCK';
         $packTitle = $input['pack_title'] ?? 'Company Placement Mock';
@@ -722,8 +723,12 @@ class MockTestController {
             // Save individual question attempt to attempts table if logged in
             if ($userId) {
                 try {
+                    $userConf = isset($confidences[$qId]) ? strtolower(trim((string)$confidences[$qId])) : 'sure';
+                    if (!in_array($userConf, ['sure', 'not_sure', 'guessing'], true)) {
+                        $userConf = 'sure';
+                    }
                     $cols = ['user_id', 'question_id', 'selected_option', 'is_correct', 'confidence', 'time_taken_seconds', 'mode'];
-                    $vals = [$userId, $qId, $userAns ?: 'A', $isCorrect ? 1 : 0, 'sure', $timeTaken, 'mock'];
+                    $vals = [$userId, $qId, $userAns ?: 'A', $isCorrect ? 1 : 0, $userConf, $timeTaken, 'mock'];
 
                     if (self::$hasMockSessionIdCol) {
                         $cols[] = 'mock_session_id';
@@ -978,6 +983,17 @@ class MockTestController {
             $xpResult = User::addXP($userId, $mockXP);
         }
 
+        $fixPlanData = null;
+        if ($userId) {
+            try {
+                require_once __DIR__ . '/../Services/FixPlanService.php';
+                $forceReplace = !empty($input['replace_fix_plan']);
+                $fixPlanData = FixPlanService::processMockSubmission((int)$userId, $clientSessionId, (float)$scorePercent, $forceReplace);
+            } catch (\Throwable $e) {
+                error_log("FixPlanService error: " . $e->getMessage());
+            }
+        }
+
         $formulaStr = ($negPenalty > 0)
             ? "+1 per correct, -" . number_format($negPenalty, 2) . " per wrong"
             : "+1 per correct, no penalty for wrong";
@@ -999,6 +1015,7 @@ class MockTestController {
                 'band' => $band,
                 'qualifies_confetti' => ($scorePercent >= 60)
             ],
+            'fix_plan' => $fixPlanData,
             'counts' => [
                 'total' => $totalQuestions,
                 'correct' => $correctCount,

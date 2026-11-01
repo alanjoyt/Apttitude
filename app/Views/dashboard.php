@@ -16,7 +16,75 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
   <?php 
     $todaySolved = (int)($dashboardData['today_solved'] ?? 0);
     $lastPracticed = $dashboardData['last_practiced'] ?? null;
+    $fixPlan = $dashboardData['fix_plan'] ?? null;
   ?>
+
+  <?php if (!empty($fixPlan)): ?>
+  <!-- 7-Day Fix Plan Active Card -->
+  <div class="col-12">
+    <div class="card card-gamified p-3 position-relative overflow-hidden" style="border: 2px solid var(--accent); background: linear-gradient(135deg, rgba(var(--accent-rgb, 43, 90, 237), 0.04) 0%, rgba(var(--surface-rgb, 255, 255, 255), 1) 100%);">
+      <?php if (($fixPlan['plan_type'] ?? '') === 'needs_data'): ?>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <div class="d-flex align-items-center gap-3">
+            <div class="p-2.5 rounded-3 bg-primary-tint text-primary fs-4">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <div>
+              <h6 class="font-serif fw-bold text-ink mb-1">7-Day Targeted Fix Plan</h6>
+              <p class="small text-ink-muted mb-0">More mock data needed to identify your specific weak subtopics. Complete another mock test to unlock your customized plan.</p>
+            </div>
+          </div>
+          <a href="index.php?action=mock" class="btn btn-sm btn-outline-primary fw-bold px-3">Take a Mock</a>
+        </div>
+      <?php else: 
+        $currentDay = $fixPlan['current_day'] ?? null;
+        $dayNo = $currentDay['day_no'] ?? 1;
+        $dayTitle = $currentDay['title'] ?? 'Targeted Practice';
+        $dayStatus = $currentDay['status'] ?? 'pending';
+        $completedCount = (int)($fixPlan['completed_count'] ?? 0);
+        $percentProgress = round(($completedCount / 7) * 100);
+      ?>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="p-2.5 rounded-3 bg-accent-tint text-accent fs-3">
+              <i class="bi bi-calendar-check-fill"></i>
+            </div>
+            <div>
+              <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                <span class="badge bg-primary text-white small px-2.5 py-0.5 rounded-pill fw-bold">Day <?= (int)$dayNo ?> of 7</span>
+                <span class="badge bg-secondary-subtle text-ink small px-2 py-0.5 rounded-pill"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $currentDay['task_type'] ?? 'Practice'))) ?></span>
+                <?php if ($dayStatus === 'completed'): ?>
+                  <span class="badge bg-success text-white small px-2 py-0.5 rounded-pill"><i class="bi bi-check2"></i> Completed Today</span>
+                <?php endif; ?>
+              </div>
+              <h6 class="font-serif fw-bold text-ink mb-1"><?= htmlspecialchars($dayTitle) ?></h6>
+              <p class="small text-ink-muted mb-0">
+                Focus on high-leverage subtopics. Retest on Day 7 to review your progress.
+                <?php if (!empty($fixPlan['retest_accuracy'])): ?>
+                  <strong class="text-accent ms-1">Retest Result: <?= number_format($fixPlan['retest_accuracy'], 1) ?>% (Baseline: <?= number_format($fixPlan['baseline_accuracy'], 1) ?>%)</strong>
+                <?php endif; ?>
+              </p>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <?php if (!empty($currentDay['subtopic_id'])): ?>
+              <a href="index.php?action=practice&subtopic_id=<?= (int)$currentDay['subtopic_id'] ?>" class="btn btn-primary-gamified fw-bold px-3 py-2 text-nowrap d-inline-flex align-items-center gap-1 shadow-sm">
+                <?= $dayStatus === 'completed' ? 'Practice Again' : 'Start Day Task' ?> <i class="bi bi-arrow-right"></i>
+              </a>
+            <?php else: ?>
+              <a href="index.php?action=practice" class="btn btn-primary-gamified fw-bold px-3 py-2 text-nowrap d-inline-flex align-items-center gap-1 shadow-sm">
+                Start Task <i class="bi bi-arrow-right"></i>
+              </a>
+            <?php endif; ?>
+          </div>
+        </div>
+        <div class="progress mt-3" style="height: 6px;" title="<?= $completedCount ?>/7 Days Completed">
+          <div class="progress-bar bg-accent" role="progressbar" style="width: <?= $percentProgress ?>%;" aria-valuenow="<?= $percentProgress ?>" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+  <?php endif; ?>
 
   <!-- Mobile Quick Action Strip: Daily Goal Ring & 5-Min Blitz -->
   <div class="col-12 col-md-6">
