@@ -85,7 +85,7 @@ if ($isAdminAction) {
     // 1. Guest Check: Redirect to login for pages, 401 for API
     if (!isset($_SESSION['user_id'])) {
         if (str_starts_with($action, 'api_')) {
-            http_response_code(401);
+            http_response_code(403);
             header('Content-Type: application/json');
             echo json_encode([
                 'status' => 'error',
@@ -335,6 +335,86 @@ switch ($action) {
         FixPlanController::getDayQuestionsJSON();
         break;
 
+    case 'api_get_colleges':
+        require_once __DIR__ . '/../app/Controllers/CollegeController.php';
+        CollegeController::getCollegesJSON();
+        break;
+
+    case 'api_request_college':
+        CsrfService::verify();
+        require_once __DIR__ . '/../app/Controllers/CollegeController.php';
+        CollegeController::requestCollegeJSON();
+        break;
+
+    case 'api_update_college':
+        CsrfService::verify();
+        require_once __DIR__ . '/../app/Controllers/CollegeController.php';
+        CollegeController::updateCollegeJSON();
+        break;
+
+    case 'api_toggle_college_privacy':
+        CsrfService::verify();
+        require_once __DIR__ . '/../app/Controllers/CollegeController.php';
+        CollegeController::togglePrivacyJSON();
+        break;
+
+    case 'api_college_leaderboards':
+        require_once __DIR__ . '/../app/Controllers/CollegeController.php';
+        CollegeController::getCollegeVsCollegeJSON();
+        break;
+
+    case 'api_college_students':
+        require_once __DIR__ . '/../app/Controllers/CollegeController.php';
+        CollegeController::getCollegeStudentsJSON();
+        break;
+
+    case 'api_admin_get_colleges':
+        if (empty($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
+            http_response_code(403);
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'error', 'message' => 'Admin authorization required.']);
+            exit;
+        }
+        require_once __DIR__ . '/../app/Controllers/CollegeController.php';
+        CollegeController::adminGetCollegesJSON();
+        break;
+
+    case 'api_admin_approve_college':
+        if (empty($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
+            http_response_code(403);
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'error', 'message' => 'Admin authorization required.']);
+            exit;
+        }
+        CsrfService::verify();
+        require_once __DIR__ . '/../app/Controllers/CollegeController.php';
+        CollegeController::adminApproveCollegeJSON();
+        break;
+
+    case 'api_admin_reject_college':
+        if (empty($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
+            http_response_code(403);
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'error', 'message' => 'Admin authorization required.']);
+            exit;
+        }
+        CsrfService::verify();
+        require_once __DIR__ . '/../app/Controllers/CollegeController.php';
+        CollegeController::adminRejectCollegeJSON();
+        break;
+
+    case 'api_admin_merge_colleges':
+        if (empty($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
+            http_response_code(403);
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'error', 'message' => 'Admin authorization required.']);
+            exit;
+        }
+        CsrfService::verify();
+        require_once __DIR__ . '/../app/Controllers/CollegeController.php';
+        CollegeController::adminMergeCollegesJSON();
+        break;
+
     case 'api_profile_progress':
         header('Content-Type: application/json');
         if (session_status() === PHP_SESSION_NONE) session_start();
@@ -531,6 +611,8 @@ switch ($action) {
             $email = trim($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
             $refCode = trim($_POST['referral_code'] ?? '');
+            $collegeId = !empty($_POST['college_id']) ? (int)$_POST['college_id'] : null;
+            $showName = !empty($_POST['show_name_on_boards']);
 
             if (empty($name) || empty($email) || empty($password)) {
                 $error = "Please fill in all required fields.";
@@ -540,7 +622,7 @@ switch ($action) {
                 $error = "Password must be at least 6 characters.";
             } else {
                 try {
-                    $userId = User::register($name, $email, $password, $refCode);
+                    $userId = User::register($name, $email, $password, $refCode, $collegeId, $showName);
                     session_regenerate_id(true);
                     $_SESSION['user_id'] = $userId;
                     $_SESSION['user_name'] = $name;
@@ -554,6 +636,8 @@ switch ($action) {
                 }
             }
         }
+        require_once __DIR__ . '/../app/Services/CollegeService.php';
+        $colleges = CollegeService::getActiveColleges();
         require __DIR__ . '/../app/Views/register.php';
         break;
 
@@ -676,12 +760,31 @@ switch ($action) {
         break;
 
     case 'leaderboard':
-        $pageTitle = "Global Ranks & Tier Leaderboards | Apttitudee";
-        $metaDescription = "Check weekly and all-time student rankings across Bronze, Silver, Gold, Platinum, and Diamond tiers on Apttitudee.";
+        $pageTitle = "Leaderboards & Campus Rankings | Apttitudee";
+        $metaDescription = "Check weekly and all-time student rankings across Bronze, Silver, Gold, Platinum, and Diamond tiers, or explore College vs College rankings on Apttitudee.";
         $period = $_GET['period'] ?? 'weekly';
         $tier = $_GET['tier'] ?? null;
+        $tab = $_GET['tab'] ?? 'global'; // 'global', 'colleges', 'campus'
+        
+        require_once __DIR__ . '/../app/Services/CollegeService.php';
+        $activeColleges = CollegeService::getActiveColleges();
         $rankings = Leaderboard::getRankings($period, $tier);
         $userRank = isset($_SESSION['user_id']) ? Leaderboard::getUserRankContext($_SESSION['user_id'], $period) : null;
+        
+        $collegeBoard = ($tab === 'colleges') ? CollegeService::getCollegeVsCollegeBoard(50) : [];
+        
+        $selectedCollegeId = isset($_GET['college_id']) ? (int)$_GET['college_id'] : null;
+        if (!$selectedCollegeId && isset($_SESSION['user_id'])) {
+            $userObj = User::findById((int)$_SESSION['user_id']);
+            if (!empty($userObj['college_id'])) {
+                $selectedCollegeId = (int)$userObj['college_id'];
+            }
+        }
+        if (!$selectedCollegeId && !empty($activeColleges)) {
+            $selectedCollegeId = (int)$activeColleges[0]['id'];
+        }
+        $campusBoard = ($tab === 'campus' && $selectedCollegeId) ? CollegeService::getCollegeStudentBoard($selectedCollegeId, $_SESSION['user_id'] ?? null) : null;
+
         require __DIR__ . '/../app/Views/header.php';
         require __DIR__ . '/../app/Views/leaderboard.php';
         require __DIR__ . '/../app/Views/footer.php';
@@ -724,6 +827,8 @@ switch ($action) {
         $pendingReports = AdminController::getPendingReports();
         $pendingSubmissions = AdminController::getPendingSubmissions();
         $isDevMode = DeviceLockService::isDeveloperMode();
+        require_once __DIR__ . '/../app/Services/CollegeService.php';
+        $adminColleges = CollegeService::getAllCollegesForAdmin();
         require __DIR__ . '/../app/Views/header.php';
         require __DIR__ . '/../app/Views/admin.php';
         require __DIR__ . '/../app/Views/footer.php';

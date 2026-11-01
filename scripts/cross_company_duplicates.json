@@ -1,0 +1,3292 @@
+{
+    "pairClashes": {
+        "IBM <-> UST": 34,
+        "LTI Mindtree <-> Tech Mahindra": 31,
+        "Deloitte <-> LTI Mindtree": 29,
+        "HCL <-> LTI Mindtree": 29,
+        "Capgemini <-> Deloitte": 28,
+        "Capgemini <-> LTI Mindtree": 28,
+        "Deloitte <-> Tech Mahindra": 28,
+        "Capgemini <-> Tech Mahindra": 27,
+        "Deloitte <-> HCL": 27,
+        "HCL <-> Tech Mahindra": 27,
+        "Amazon <-> HCL": 27,
+        "Tech Mahindra <-> UST": 27,
+        "Amazon <-> Tech Mahindra": 26,
+        "Amazon <-> LTI Mindtree": 26,
+        "IBM <-> Tech Mahindra": 25,
+        "Capgemini <-> Cognizant": 24,
+        "Capgemini <-> HCL": 24,
+        "Amazon <-> Deloitte": 24,
+        "Cognizant <-> Deloitte": 23,
+        "Cognizant <-> Tech Mahindra": 23,
+        "Cognizant <-> LTI Mindtree": 23,
+        "Cognizant <-> HCL": 23,
+        "LTI Mindtree <-> Zoho": 23,
+        "HCL <-> Zoho": 23,
+        "IBM <-> LTI Mindtree": 23,
+        "Amazon <-> Capgemini": 22,
+        "Cognizant <-> Zoho": 21,
+        "Capgemini <-> Zoho": 21,
+        "HCL <-> Wipro NLTH": 20,
+        "Amazon <-> Wipro NLTH": 20,
+        "Accenture <-> Cognizant": 20,
+        "Accenture <-> HCL": 20,
+        "Amazon <-> Cognizant": 20,
+        "Deloitte <-> Zoho": 20,
+        "Tech Mahindra <-> Zoho": 20,
+        "LTI Mindtree <-> UST": 20,
+        "Cognizant <-> Wipro NLTH": 19,
+        "Capgemini <-> Wipro NLTH": 19,
+        "Deloitte <-> Wipro NLTH": 19,
+        "Tech Mahindra <-> Wipro NLTH": 19,
+        "Wipro NLTH <-> Zoho": 19,
+        "LTI Mindtree <-> Wipro NLTH": 19,
+        "Accenture <-> Capgemini": 19,
+        "Accenture <-> Amazon": 19,
+        "Amazon <-> Zoho": 19,
+        "Accenture <-> Wipro NLTH": 18,
+        "Accenture <-> Zoho": 18,
+        "Accenture <-> LTI Mindtree": 18,
+        "Deloitte <-> UST": 18,
+        "HCL <-> UST": 18,
+        "Infosys <-> TCS NQT": 17,
+        "Accenture <-> Deloitte": 17,
+        "Accenture <-> Tech Mahindra": 17,
+        "HCL <-> IBM": 17,
+        "Capgemini <-> UST": 16,
+        "Capgemini <-> IBM": 16,
+        "Deloitte <-> IBM": 16,
+        "Amazon <-> UST": 15,
+        "Amazon <-> IBM": 15,
+        "Accenture <-> Infosys": 12,
+        "Cognizant <-> Infosys": 11,
+        "Capgemini <-> Infosys": 11,
+        "Accenture <-> TCS NQT": 10,
+        "Cognizant <-> TCS NQT": 10,
+        "HCL <-> TCS NQT": 10,
+        "Infosys <-> Zoho": 10,
+        "Infosys <-> LTI Mindtree": 10,
+        "Cognizant <-> UST": 10,
+        "Cognizant <-> IBM": 10,
+        "Capgemini <-> TCS NQT": 9,
+        "Deloitte <-> TCS NQT": 9,
+        "TCS NQT <-> Zoho": 9,
+        "Amazon <-> TCS NQT": 9,
+        "Infosys <-> Wipro NLTH": 9,
+        "Deloitte <-> Infosys": 9,
+        "Infosys <-> Tech Mahindra": 9,
+        "HCL <-> Infosys": 9,
+        "Amazon <-> Infosys": 9,
+        "TCS NQT <-> Wipro NLTH": 8,
+        "TCS NQT <-> Tech Mahindra": 8,
+        "LTI Mindtree <-> TCS NQT": 8,
+        "UST <-> Zoho": 8,
+        "IBM <-> Zoho": 8,
+        "IBM <-> Wipro NLTH": 6,
+        "UST <-> Wipro NLTH": 5,
+        "Accenture <-> UST": 4,
+        "Accenture <-> IBM": 3,
+        "TCS NQT <-> UST": 1,
+        "Infosys <-> UST": 1,
+        "IBM <-> Infosys": 1
+    },
+    "clashingCount": 639,
+    "clashingIds": {
+        "614": {
+            "company": "TCS NQT",
+            "text": "A trader marks an item 21% above cost price and gives a 11% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "627": {
+            "company": "TCS NQT",
+            "text": "A trader marks an item 34% above cost price and gives a 14% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "639": {
+            "company": "Infosys",
+            "text": "A trader marks an item 21% above cost price and gives a 11% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "652": {
+            "company": "Infosys",
+            "text": "A trader marks an item 34% above cost price and gives a 14% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "664": {
+            "company": "Wipro NLTH",
+            "text": "A trader marks an item 21% above cost price and gives a 11% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "677": {
+            "company": "Wipro NLTH",
+            "text": "A trader marks an item 34% above cost price and gives a 14% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "689": {
+            "company": "Accenture",
+            "text": "A trader marks an item 21% above cost price and gives a 11% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "702": {
+            "company": "Accenture",
+            "text": "A trader marks an item 34% above cost price and gives a 14% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "714": {
+            "company": "Cognizant",
+            "text": "A trader marks an item 21% above cost price and gives a 11% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "727": {
+            "company": "Cognizant",
+            "text": "A trader marks an item 34% above cost price and gives a 14% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "739": {
+            "company": "Capgemini",
+            "text": "A trader marks an item 21% above cost price and gives a 11% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "752": {
+            "company": "Capgemini",
+            "text": "A trader marks an item 34% above cost price and gives a 14% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "764": {
+            "company": "Deloitte",
+            "text": "A trader marks an item 21% above cost price and gives a 11% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "777": {
+            "company": "Deloitte",
+            "text": "A trader marks an item 34% above cost price and gives a 14% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "789": {
+            "company": "Tech Mahindra",
+            "text": "A trader marks an item 21% above cost price and gives a 11% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "802": {
+            "company": "Tech Mahindra",
+            "text": "A trader marks an item 34% above cost price and gives a 14% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "814": {
+            "company": "Zoho",
+            "text": "A trader marks an item 21% above cost price and gives a 11% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "827": {
+            "company": "Zoho",
+            "text": "A trader marks an item 34% above cost price and gives a 14% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "839": {
+            "company": "LTI Mindtree",
+            "text": "A trader marks an item 21% above cost price and gives a 11% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "852": {
+            "company": "LTI Mindtree",
+            "text": "A trader marks an item 34% above cost price and gives a 14% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "864": {
+            "company": "HCL",
+            "text": "A trader marks an item 21% above cost price and gives a 11% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "877": {
+            "company": "HCL",
+            "text": "A trader marks an item 34% above cost price and gives a 14% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "889": {
+            "company": "Amazon",
+            "text": "A trader marks an item 21% above cost price and gives a 11% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "902": {
+            "company": "Amazon",
+            "text": "A trader marks an item 34% above cost price and gives a 14% discount. What is the net profit percentage?",
+            "norm": "a trader marks an item <num> above cost price and gives a <num> discount what is the net profit percentage"
+        },
+        "615": {
+            "company": "TCS NQT",
+            "text": "The ratio of present ages of X and Y is 5:6. After 4 years, the ratio of their ages becomes 6:7. What is X's present age?",
+            "norm": "the ratio of present ages of x and y is <num> <num> after <num> years the ratio of their ages becomes <num> <num> what is x s present age"
+        },
+        "640": {
+            "company": "Infosys",
+            "text": "The ratio of present ages of X and Y is 5:6. After 4 years, the ratio of their ages becomes 6:7. What is X's present age?",
+            "norm": "the ratio of present ages of x and y is <num> <num> after <num> years the ratio of their ages becomes <num> <num> what is x s present age"
+        },
+        "616": {
+            "company": "TCS NQT",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "629": {
+            "company": "TCS NQT",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "641": {
+            "company": "Infosys",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "654": {
+            "company": "Infosys",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "666": {
+            "company": "Wipro NLTH",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "679": {
+            "company": "Wipro NLTH",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "691": {
+            "company": "Accenture",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "704": {
+            "company": "Accenture",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "716": {
+            "company": "Cognizant",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "729": {
+            "company": "Cognizant",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "741": {
+            "company": "Capgemini",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "754": {
+            "company": "Capgemini",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "766": {
+            "company": "Deloitte",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "779": {
+            "company": "Deloitte",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "791": {
+            "company": "Tech Mahindra",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "804": {
+            "company": "Tech Mahindra",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "816": {
+            "company": "Zoho",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "829": {
+            "company": "Zoho",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "841": {
+            "company": "LTI Mindtree",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "854": {
+            "company": "LTI Mindtree",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "866": {
+            "company": "HCL",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "879": {
+            "company": "HCL",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "891": {
+            "company": "Amazon",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "904": {
+            "company": "Amazon",
+            "text": "6 executives sit around a circular table. P is opposite Q, R is to the left of P. Who sits to the immediate right of Q?",
+            "norm": "<num> executives sit around a circular table p is opposite q r is to the left of p who sits to the immediate right of q"
+        },
+        "617": {
+            "company": "TCS NQT",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "630": {
+            "company": "TCS NQT",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "642": {
+            "company": "Infosys",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "655": {
+            "company": "Infosys",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "667": {
+            "company": "Wipro NLTH",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "680": {
+            "company": "Wipro NLTH",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "692": {
+            "company": "Accenture",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "705": {
+            "company": "Accenture",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "717": {
+            "company": "Cognizant",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "730": {
+            "company": "Cognizant",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "742": {
+            "company": "Capgemini",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "755": {
+            "company": "Capgemini",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "767": {
+            "company": "Deloitte",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "780": {
+            "company": "Deloitte",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "792": {
+            "company": "Tech Mahindra",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "805": {
+            "company": "Tech Mahindra",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "817": {
+            "company": "Zoho",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "830": {
+            "company": "Zoho",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "842": {
+            "company": "LTI Mindtree",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "855": {
+            "company": "LTI Mindtree",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "867": {
+            "company": "HCL",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "880": {
+            "company": "HCL",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "892": {
+            "company": "Amazon",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "905": {
+            "company": "Amazon",
+            "text": "Pointing to a man, a lady says: 'His sister is my mother's only daughter.' How is the lady related to the man?",
+            "norm": "pointing to a man a lady says his sister is my mother s only daughter how is the lady related to the man"
+        },
+        "618": {
+            "company": "TCS NQT",
+            "text": "Complete the number series: 10, 20, 40, 80, ?",
+            "norm": "complete the number series <num> <num> <num> <num>"
+        },
+        "631": {
+            "company": "TCS NQT",
+            "text": "Complete the number series: 36, 72, 144, 288, ?",
+            "norm": "complete the number series <num> <num> <num> <num>"
+        },
+        "643": {
+            "company": "Infosys",
+            "text": "Complete the number series: 10, 20, 40, 80, ?",
+            "norm": "complete the number series <num> <num> <num> <num>"
+        },
+        "656": {
+            "company": "Infosys",
+            "text": "Complete the number series: 36, 72, 144, 288, ?",
+            "norm": "complete the number series <num> <num> <num> <num>"
+        },
+        "619": {
+            "company": "TCS NQT",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "632": {
+            "company": "TCS NQT",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "644": {
+            "company": "Infosys",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "657": {
+            "company": "Infosys",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "669": {
+            "company": "Wipro NLTH",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "682": {
+            "company": "Wipro NLTH",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "694": {
+            "company": "Accenture",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "707": {
+            "company": "Accenture",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "719": {
+            "company": "Cognizant",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "732": {
+            "company": "Cognizant",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "744": {
+            "company": "Capgemini",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "757": {
+            "company": "Capgemini",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "769": {
+            "company": "Deloitte",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "782": {
+            "company": "Deloitte",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "794": {
+            "company": "Tech Mahindra",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "807": {
+            "company": "Tech Mahindra",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "819": {
+            "company": "Zoho",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "832": {
+            "company": "Zoho",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "844": {
+            "company": "LTI Mindtree",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "857": {
+            "company": "LTI Mindtree",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "869": {
+            "company": "HCL",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "882": {
+            "company": "HCL",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "894": {
+            "company": "Amazon",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "907": {
+            "company": "Amazon",
+            "text": "'Cloud computing lowers infrastructure capital expenditure by enabling pay-as-you-go elastic resources.' What is the key financial benefit?",
+            "norm": "cloud computing lowers infrastructure capital expenditure by enabling pay as you go elastic resources what is the key financial benefit"
+        },
+        "620": {
+            "company": "TCS NQT",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "633": {
+            "company": "TCS NQT",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "645": {
+            "company": "Infosys",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "658": {
+            "company": "Infosys",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "670": {
+            "company": "Wipro NLTH",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "683": {
+            "company": "Wipro NLTH",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "695": {
+            "company": "Accenture",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "708": {
+            "company": "Accenture",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "720": {
+            "company": "Cognizant",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "733": {
+            "company": "Cognizant",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "745": {
+            "company": "Capgemini",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "758": {
+            "company": "Capgemini",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "770": {
+            "company": "Deloitte",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "783": {
+            "company": "Deloitte",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "795": {
+            "company": "Tech Mahindra",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "808": {
+            "company": "Tech Mahindra",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "820": {
+            "company": "Zoho",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "833": {
+            "company": "Zoho",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "845": {
+            "company": "LTI Mindtree",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "858": {
+            "company": "LTI Mindtree",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "870": {
+            "company": "HCL",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "883": {
+            "company": "HCL",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "895": {
+            "company": "Amazon",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "908": {
+            "company": "Amazon",
+            "text": "Identify the error: 'The manager along with his team members (have \/ has) arrived at the client office.'",
+            "norm": "identify the error the manager along with his team members have has arrived at the client office"
+        },
+        "621": {
+            "company": "TCS NQT",
+            "text": "A company quarterly report shows sales revenue increased from $180M in Q1 to $230M in Q2. Find the percentage growth in revenue.",
+            "norm": "a company quarterly report shows sales revenue increased from 180m in q1 to 230m in q2 find the percentage growth in revenue"
+        },
+        "646": {
+            "company": "Infosys",
+            "text": "A company quarterly report shows sales revenue increased from $180M in Q1 to $230M in Q2. Find the percentage growth in revenue.",
+            "norm": "a company quarterly report shows sales revenue increased from 180m in q1 to 230m in q2 find the percentage growth in revenue"
+        },
+        "622": {
+            "company": "TCS NQT",
+            "text": "In TCS NQT code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "635": {
+            "company": "TCS NQT",
+            "text": "In TCS NQT code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "647": {
+            "company": "Infosys",
+            "text": "In Infosys code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "660": {
+            "company": "Infosys",
+            "text": "In Infosys code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "672": {
+            "company": "Wipro NLTH",
+            "text": "In Wipro NLTH code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "685": {
+            "company": "Wipro NLTH",
+            "text": "In Wipro NLTH code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "697": {
+            "company": "Accenture",
+            "text": "In Accenture code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "710": {
+            "company": "Accenture",
+            "text": "In Accenture code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "722": {
+            "company": "Cognizant",
+            "text": "In Cognizant code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "735": {
+            "company": "Cognizant",
+            "text": "In Cognizant code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "747": {
+            "company": "Capgemini",
+            "text": "In Capgemini code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "760": {
+            "company": "Capgemini",
+            "text": "In Capgemini code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "772": {
+            "company": "Deloitte",
+            "text": "In Deloitte code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "785": {
+            "company": "Deloitte",
+            "text": "In Deloitte code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "797": {
+            "company": "Tech Mahindra",
+            "text": "In Tech Mahindra code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "810": {
+            "company": "Tech Mahindra",
+            "text": "In Tech Mahindra code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "822": {
+            "company": "Zoho",
+            "text": "In Zoho code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "835": {
+            "company": "Zoho",
+            "text": "In Zoho code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "847": {
+            "company": "LTI Mindtree",
+            "text": "In LTI Mindtree code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "860": {
+            "company": "LTI Mindtree",
+            "text": "In LTI Mindtree code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "872": {
+            "company": "HCL",
+            "text": "In HCL code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "885": {
+            "company": "HCL",
+            "text": "In HCL code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "897": {
+            "company": "Amazon",
+            "text": "In Amazon code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "910": {
+            "company": "Amazon",
+            "text": "In Amazon code language, 'DATA' is written as 'FCVC'. How is 'CODE' written?",
+            "norm": "in <comp> code language data is written as fcvc how is code written"
+        },
+        "623": {
+            "company": "TCS NQT",
+            "text": "A delivery agent drives 20 km East, turns North and drives 15 km, then drives 20 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "636": {
+            "company": "TCS NQT",
+            "text": "A delivery agent drives 33 km East, turns North and drives 28 km, then drives 33 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "648": {
+            "company": "Infosys",
+            "text": "A delivery agent drives 20 km East, turns North and drives 15 km, then drives 20 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "661": {
+            "company": "Infosys",
+            "text": "A delivery agent drives 33 km East, turns North and drives 28 km, then drives 33 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "673": {
+            "company": "Wipro NLTH",
+            "text": "A delivery agent drives 20 km East, turns North and drives 15 km, then drives 20 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "686": {
+            "company": "Wipro NLTH",
+            "text": "A delivery agent drives 33 km East, turns North and drives 28 km, then drives 33 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "698": {
+            "company": "Accenture",
+            "text": "A delivery agent drives 20 km East, turns North and drives 15 km, then drives 20 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "711": {
+            "company": "Accenture",
+            "text": "A delivery agent drives 33 km East, turns North and drives 28 km, then drives 33 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "723": {
+            "company": "Cognizant",
+            "text": "A delivery agent drives 20 km East, turns North and drives 15 km, then drives 20 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "736": {
+            "company": "Cognizant",
+            "text": "A delivery agent drives 33 km East, turns North and drives 28 km, then drives 33 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "748": {
+            "company": "Capgemini",
+            "text": "A delivery agent drives 20 km East, turns North and drives 15 km, then drives 20 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "761": {
+            "company": "Capgemini",
+            "text": "A delivery agent drives 33 km East, turns North and drives 28 km, then drives 33 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "773": {
+            "company": "Deloitte",
+            "text": "A delivery agent drives 20 km East, turns North and drives 15 km, then drives 20 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "786": {
+            "company": "Deloitte",
+            "text": "A delivery agent drives 33 km East, turns North and drives 28 km, then drives 33 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "798": {
+            "company": "Tech Mahindra",
+            "text": "A delivery agent drives 20 km East, turns North and drives 15 km, then drives 20 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "811": {
+            "company": "Tech Mahindra",
+            "text": "A delivery agent drives 33 km East, turns North and drives 28 km, then drives 33 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "823": {
+            "company": "Zoho",
+            "text": "A delivery agent drives 20 km East, turns North and drives 15 km, then drives 20 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "836": {
+            "company": "Zoho",
+            "text": "A delivery agent drives 33 km East, turns North and drives 28 km, then drives 33 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "848": {
+            "company": "LTI Mindtree",
+            "text": "A delivery agent drives 20 km East, turns North and drives 15 km, then drives 20 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "861": {
+            "company": "LTI Mindtree",
+            "text": "A delivery agent drives 33 km East, turns North and drives 28 km, then drives 33 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "873": {
+            "company": "HCL",
+            "text": "A delivery agent drives 20 km East, turns North and drives 15 km, then drives 20 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "886": {
+            "company": "HCL",
+            "text": "A delivery agent drives 33 km East, turns North and drives 28 km, then drives 33 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "898": {
+            "company": "Amazon",
+            "text": "A delivery agent drives 20 km East, turns North and drives 15 km, then drives 20 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "911": {
+            "company": "Amazon",
+            "text": "A delivery agent drives 33 km East, turns North and drives 28 km, then drives 33 km West. Where is he relative to start?",
+            "norm": "a delivery agent drives <num> km east turns north and drives <num> km then drives <num> km west where is he relative to start"
+        },
+        "624": {
+            "company": "TCS NQT",
+            "text": "Pipe A can fill a cistern in 21 minutes, while Pipe B can empty it in 31 minutes. If both pipes are opened simultaneously, in how many minutes will the empty cistern be completely filled?",
+            "norm": "pipe a can fill a cistern in <num> minutes while pipe b can empty it in <num> minutes if both pipes are opened simultaneously in how many minutes will the empty cistern be completely filled"
+        },
+        "649": {
+            "company": "Infosys",
+            "text": "Pipe A can fill a cistern in 21 minutes, while Pipe B can empty it in 31 minutes. If both pipes are opened simultaneously, in how many minutes will the empty cistern be completely filled?",
+            "norm": "pipe a can fill a cistern in <num> minutes while pipe b can empty it in <num> minutes if both pipes are opened simultaneously in how many minutes will the empty cistern be completely filled"
+        },
+        "625": {
+            "company": "TCS NQT",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "638": {
+            "company": "TCS NQT",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "650": {
+            "company": "Infosys",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "663": {
+            "company": "Infosys",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "675": {
+            "company": "Wipro NLTH",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "688": {
+            "company": "Wipro NLTH",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "700": {
+            "company": "Accenture",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "713": {
+            "company": "Accenture",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "725": {
+            "company": "Cognizant",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "738": {
+            "company": "Cognizant",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "750": {
+            "company": "Capgemini",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "763": {
+            "company": "Capgemini",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "775": {
+            "company": "Deloitte",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "788": {
+            "company": "Deloitte",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "800": {
+            "company": "Tech Mahindra",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "813": {
+            "company": "Tech Mahindra",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "825": {
+            "company": "Zoho",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "838": {
+            "company": "Zoho",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "850": {
+            "company": "LTI Mindtree",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "863": {
+            "company": "LTI Mindtree",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "875": {
+            "company": "HCL",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "888": {
+            "company": "HCL",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "900": {
+            "company": "Amazon",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "913": {
+            "company": "Amazon",
+            "text": "Choose the synonym of 'METICULOUS':",
+            "norm": "choose the synonym of meticulous"
+        },
+        "626": {
+            "company": "TCS NQT",
+            "text": "A train running at a uniform speed of 64.8 km\/h crosses a platform of length 165 m in 18 seconds. What is the length of the train?",
+            "norm": "a train running at a uniform speed of <num> km h crosses a platform of length <num> m in <num> seconds what is the length of the train"
+        },
+        "651": {
+            "company": "Infosys",
+            "text": "A train running at a uniform speed of 64.8 km\/h crosses a platform of length 165 m in 18 seconds. What is the length of the train?",
+            "norm": "a train running at a uniform speed of <num> km h crosses a platform of length <num> m in <num> seconds what is the length of the train"
+        },
+        "628": {
+            "company": "TCS NQT",
+            "text": "The ratio of present ages of X and Y is 3:4. After 6 years, the ratio becomes 4:5. What is X's present age?",
+            "norm": "the ratio of present ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "653": {
+            "company": "Infosys",
+            "text": "The ratio of present ages of X and Y is 3:4. After 6 years, the ratio becomes 4:5. What is X's present age?",
+            "norm": "the ratio of present ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "634": {
+            "company": "TCS NQT",
+            "text": "A software division reported revenue of $310M in Q1 and $360M in Q2. What is the percentage growth in revenue?",
+            "norm": "a software division reported revenue of 310m in q1 and 360m in q2 what is the percentage growth in revenue"
+        },
+        "659": {
+            "company": "Infosys",
+            "text": "A software division reported revenue of $310M in Q1 and $360M in Q2. What is the percentage growth in revenue?",
+            "norm": "a software division reported revenue of 310m in q1 and 360m in q2 what is the percentage growth in revenue"
+        },
+        "637": {
+            "company": "TCS NQT",
+            "text": "Pipe A fills a reservoir in 34 minutes, while Pipe B empties it in 44 minutes. If both pipes are opened simultaneously, in how many minutes will the reservoir be completely filled?",
+            "norm": "pipe a fills a reservoir in <num> minutes while pipe b empties it in <num> minutes if both pipes are opened simultaneously in how many minutes will the reservoir be completely filled"
+        },
+        "662": {
+            "company": "Infosys",
+            "text": "Pipe A fills a reservoir in 34 minutes, while Pipe B empties it in 44 minutes. If both pipes are opened simultaneously, in how many minutes will the reservoir be completely filled?",
+            "norm": "pipe a fills a reservoir in <num> minutes while pipe b empties it in <num> minutes if both pipes are opened simultaneously in how many minutes will the reservoir be completely filled"
+        },
+        "665": {
+            "company": "Wipro NLTH",
+            "text": "The ratio of ages of X and Y is 5:6. After 6 years, the ratio becomes 6:7. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "678": {
+            "company": "Wipro NLTH",
+            "text": "The ratio of ages of X and Y is 3:4. After 6 years, the ratio becomes 4:5. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "690": {
+            "company": "Accenture",
+            "text": "The ratio of ages of X and Y is 5:6. After 6 years, the ratio becomes 6:7. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "703": {
+            "company": "Accenture",
+            "text": "The ratio of ages of X and Y is 3:4. After 6 years, the ratio becomes 4:5. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "715": {
+            "company": "Cognizant",
+            "text": "The ratio of ages of X and Y is 5:6. After 6 years, the ratio becomes 6:7. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "728": {
+            "company": "Cognizant",
+            "text": "The ratio of ages of X and Y is 3:4. After 6 years, the ratio becomes 4:5. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "740": {
+            "company": "Capgemini",
+            "text": "The ratio of ages of X and Y is 5:6. After 6 years, the ratio becomes 6:7. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "753": {
+            "company": "Capgemini",
+            "text": "The ratio of ages of X and Y is 3:4. After 6 years, the ratio becomes 4:5. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "765": {
+            "company": "Deloitte",
+            "text": "The ratio of ages of X and Y is 5:6. After 6 years, the ratio becomes 6:7. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "778": {
+            "company": "Deloitte",
+            "text": "The ratio of ages of X and Y is 3:4. After 6 years, the ratio becomes 4:5. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "790": {
+            "company": "Tech Mahindra",
+            "text": "The ratio of ages of X and Y is 5:6. After 6 years, the ratio becomes 6:7. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "803": {
+            "company": "Tech Mahindra",
+            "text": "The ratio of ages of X and Y is 3:4. After 6 years, the ratio becomes 4:5. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "815": {
+            "company": "Zoho",
+            "text": "The ratio of ages of X and Y is 5:6. After 6 years, the ratio becomes 6:7. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "828": {
+            "company": "Zoho",
+            "text": "The ratio of ages of X and Y is 3:4. After 6 years, the ratio becomes 4:5. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "840": {
+            "company": "LTI Mindtree",
+            "text": "The ratio of ages of X and Y is 5:6. After 6 years, the ratio becomes 6:7. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "853": {
+            "company": "LTI Mindtree",
+            "text": "The ratio of ages of X and Y is 3:4. After 6 years, the ratio becomes 4:5. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "865": {
+            "company": "HCL",
+            "text": "The ratio of ages of X and Y is 5:6. After 6 years, the ratio becomes 6:7. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "878": {
+            "company": "HCL",
+            "text": "The ratio of ages of X and Y is 3:4. After 6 years, the ratio becomes 4:5. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "890": {
+            "company": "Amazon",
+            "text": "The ratio of ages of X and Y is 5:6. After 6 years, the ratio becomes 6:7. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "903": {
+            "company": "Amazon",
+            "text": "The ratio of ages of X and Y is 3:4. After 6 years, the ratio becomes 4:5. What is X's present age?",
+            "norm": "the ratio of ages of x and y is <num> <num> after <num> years the ratio becomes <num> <num> what is x s present age"
+        },
+        "668": {
+            "company": "Wipro NLTH",
+            "text": "Complete the pattern: 10, 20, 40, 80, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "681": {
+            "company": "Wipro NLTH",
+            "text": "Complete the pattern: 36, 72, 144, 288, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "693": {
+            "company": "Accenture",
+            "text": "Complete the pattern: 10, 20, 40, 80, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "706": {
+            "company": "Accenture",
+            "text": "Complete the pattern: 36, 72, 144, 288, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "718": {
+            "company": "Cognizant",
+            "text": "Complete the pattern: 10, 20, 40, 80, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "731": {
+            "company": "Cognizant",
+            "text": "Complete the pattern: 36, 72, 144, 288, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "743": {
+            "company": "Capgemini",
+            "text": "Complete the pattern: 10, 20, 40, 80, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "756": {
+            "company": "Capgemini",
+            "text": "Complete the pattern: 36, 72, 144, 288, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "768": {
+            "company": "Deloitte",
+            "text": "Complete the pattern: 10, 20, 40, 80, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "781": {
+            "company": "Deloitte",
+            "text": "Complete the pattern: 36, 72, 144, 288, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "793": {
+            "company": "Tech Mahindra",
+            "text": "Complete the pattern: 10, 20, 40, 80, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "806": {
+            "company": "Tech Mahindra",
+            "text": "Complete the pattern: 36, 72, 144, 288, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "818": {
+            "company": "Zoho",
+            "text": "Complete the pattern: 10, 20, 40, 80, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "831": {
+            "company": "Zoho",
+            "text": "Complete the pattern: 36, 72, 144, 288, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "843": {
+            "company": "LTI Mindtree",
+            "text": "Complete the pattern: 10, 20, 40, 80, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "856": {
+            "company": "LTI Mindtree",
+            "text": "Complete the pattern: 36, 72, 144, 288, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "868": {
+            "company": "HCL",
+            "text": "Complete the pattern: 10, 20, 40, 80, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "881": {
+            "company": "HCL",
+            "text": "Complete the pattern: 36, 72, 144, 288, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "893": {
+            "company": "Amazon",
+            "text": "Complete the pattern: 10, 20, 40, 80, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "906": {
+            "company": "Amazon",
+            "text": "Complete the pattern: 36, 72, 144, 288, ?",
+            "norm": "complete the pattern <num> <num> <num> <num>"
+        },
+        "671": {
+            "company": "Wipro NLTH",
+            "text": "A table shows sales revenue for Q1=$180M and Q2=$230M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 180m and q2 230m find the percentage growth"
+        },
+        "696": {
+            "company": "Accenture",
+            "text": "A table shows sales revenue for Q1=$180M and Q2=$230M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 180m and q2 230m find the percentage growth"
+        },
+        "721": {
+            "company": "Cognizant",
+            "text": "A table shows sales revenue for Q1=$180M and Q2=$230M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 180m and q2 230m find the percentage growth"
+        },
+        "746": {
+            "company": "Capgemini",
+            "text": "A table shows sales revenue for Q1=$180M and Q2=$230M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 180m and q2 230m find the percentage growth"
+        },
+        "771": {
+            "company": "Deloitte",
+            "text": "A table shows sales revenue for Q1=$180M and Q2=$230M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 180m and q2 230m find the percentage growth"
+        },
+        "796": {
+            "company": "Tech Mahindra",
+            "text": "A table shows sales revenue for Q1=$180M and Q2=$230M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 180m and q2 230m find the percentage growth"
+        },
+        "821": {
+            "company": "Zoho",
+            "text": "A table shows sales revenue for Q1=$180M and Q2=$230M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 180m and q2 230m find the percentage growth"
+        },
+        "846": {
+            "company": "LTI Mindtree",
+            "text": "A table shows sales revenue for Q1=$180M and Q2=$230M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 180m and q2 230m find the percentage growth"
+        },
+        "871": {
+            "company": "HCL",
+            "text": "A table shows sales revenue for Q1=$180M and Q2=$230M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 180m and q2 230m find the percentage growth"
+        },
+        "896": {
+            "company": "Amazon",
+            "text": "A table shows sales revenue for Q1=$180M and Q2=$230M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 180m and q2 230m find the percentage growth"
+        },
+        "674": {
+            "company": "Wipro NLTH",
+            "text": "Pipe A fills a tank in 21 mins, Pipe B empties it in 31 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "687": {
+            "company": "Wipro NLTH",
+            "text": "Pipe A fills a tank in 34 mins, Pipe B empties it in 44 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "699": {
+            "company": "Accenture",
+            "text": "Pipe A fills a tank in 21 mins, Pipe B empties it in 31 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "712": {
+            "company": "Accenture",
+            "text": "Pipe A fills a tank in 34 mins, Pipe B empties it in 44 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "724": {
+            "company": "Cognizant",
+            "text": "Pipe A fills a tank in 21 mins, Pipe B empties it in 31 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "737": {
+            "company": "Cognizant",
+            "text": "Pipe A fills a tank in 34 mins, Pipe B empties it in 44 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "749": {
+            "company": "Capgemini",
+            "text": "Pipe A fills a tank in 21 mins, Pipe B empties it in 31 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "762": {
+            "company": "Capgemini",
+            "text": "Pipe A fills a tank in 34 mins, Pipe B empties it in 44 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "774": {
+            "company": "Deloitte",
+            "text": "Pipe A fills a tank in 21 mins, Pipe B empties it in 31 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "787": {
+            "company": "Deloitte",
+            "text": "Pipe A fills a tank in 34 mins, Pipe B empties it in 44 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "799": {
+            "company": "Tech Mahindra",
+            "text": "Pipe A fills a tank in 21 mins, Pipe B empties it in 31 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "812": {
+            "company": "Tech Mahindra",
+            "text": "Pipe A fills a tank in 34 mins, Pipe B empties it in 44 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "824": {
+            "company": "Zoho",
+            "text": "Pipe A fills a tank in 21 mins, Pipe B empties it in 31 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "837": {
+            "company": "Zoho",
+            "text": "Pipe A fills a tank in 34 mins, Pipe B empties it in 44 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "849": {
+            "company": "LTI Mindtree",
+            "text": "Pipe A fills a tank in 21 mins, Pipe B empties it in 31 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "862": {
+            "company": "LTI Mindtree",
+            "text": "Pipe A fills a tank in 34 mins, Pipe B empties it in 44 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "874": {
+            "company": "HCL",
+            "text": "Pipe A fills a tank in 21 mins, Pipe B empties it in 31 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "887": {
+            "company": "HCL",
+            "text": "Pipe A fills a tank in 34 mins, Pipe B empties it in 44 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "899": {
+            "company": "Amazon",
+            "text": "Pipe A fills a tank in 21 mins, Pipe B empties it in 31 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "912": {
+            "company": "Amazon",
+            "text": "Pipe A fills a tank in 34 mins, Pipe B empties it in 44 mins. If both open together, how long to fill?",
+            "norm": "pipe a fills a tank in <num> mins pipe b empties it in <num> mins if both open together how long to fill"
+        },
+        "676": {
+            "company": "Wipro NLTH",
+            "text": "A train running at 76 km\/h crosses a platform 165 m long in 28 seconds. Find the length of the train.",
+            "norm": "a train running at <num> km h crosses a platform <num> m long in <num> seconds find the length of the train"
+        },
+        "701": {
+            "company": "Accenture",
+            "text": "A train running at 76 km\/h crosses a platform 165 m long in 28 seconds. Find the length of the train.",
+            "norm": "a train running at <num> km h crosses a platform <num> m long in <num> seconds find the length of the train"
+        },
+        "726": {
+            "company": "Cognizant",
+            "text": "A train running at 76 km\/h crosses a platform 165 m long in 28 seconds. Find the length of the train.",
+            "norm": "a train running at <num> km h crosses a platform <num> m long in <num> seconds find the length of the train"
+        },
+        "751": {
+            "company": "Capgemini",
+            "text": "A train running at 76 km\/h crosses a platform 165 m long in 28 seconds. Find the length of the train.",
+            "norm": "a train running at <num> km h crosses a platform <num> m long in <num> seconds find the length of the train"
+        },
+        "776": {
+            "company": "Deloitte",
+            "text": "A train running at 76 km\/h crosses a platform 165 m long in 28 seconds. Find the length of the train.",
+            "norm": "a train running at <num> km h crosses a platform <num> m long in <num> seconds find the length of the train"
+        },
+        "801": {
+            "company": "Tech Mahindra",
+            "text": "A train running at 76 km\/h crosses a platform 165 m long in 28 seconds. Find the length of the train.",
+            "norm": "a train running at <num> km h crosses a platform <num> m long in <num> seconds find the length of the train"
+        },
+        "826": {
+            "company": "Zoho",
+            "text": "A train running at 76 km\/h crosses a platform 165 m long in 28 seconds. Find the length of the train.",
+            "norm": "a train running at <num> km h crosses a platform <num> m long in <num> seconds find the length of the train"
+        },
+        "851": {
+            "company": "LTI Mindtree",
+            "text": "A train running at 76 km\/h crosses a platform 165 m long in 28 seconds. Find the length of the train.",
+            "norm": "a train running at <num> km h crosses a platform <num> m long in <num> seconds find the length of the train"
+        },
+        "876": {
+            "company": "HCL",
+            "text": "A train running at 76 km\/h crosses a platform 165 m long in 28 seconds. Find the length of the train.",
+            "norm": "a train running at <num> km h crosses a platform <num> m long in <num> seconds find the length of the train"
+        },
+        "901": {
+            "company": "Amazon",
+            "text": "A train running at 76 km\/h crosses a platform 165 m long in 28 seconds. Find the length of the train.",
+            "norm": "a train running at <num> km h crosses a platform <num> m long in <num> seconds find the length of the train"
+        },
+        "684": {
+            "company": "Wipro NLTH",
+            "text": "A table shows sales revenue for Q1=$310M and Q2=$360M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 310m and q2 360m find the percentage growth"
+        },
+        "709": {
+            "company": "Accenture",
+            "text": "A table shows sales revenue for Q1=$310M and Q2=$360M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 310m and q2 360m find the percentage growth"
+        },
+        "734": {
+            "company": "Cognizant",
+            "text": "A table shows sales revenue for Q1=$310M and Q2=$360M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 310m and q2 360m find the percentage growth"
+        },
+        "759": {
+            "company": "Capgemini",
+            "text": "A table shows sales revenue for Q1=$310M and Q2=$360M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 310m and q2 360m find the percentage growth"
+        },
+        "784": {
+            "company": "Deloitte",
+            "text": "A table shows sales revenue for Q1=$310M and Q2=$360M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 310m and q2 360m find the percentage growth"
+        },
+        "809": {
+            "company": "Tech Mahindra",
+            "text": "A table shows sales revenue for Q1=$310M and Q2=$360M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 310m and q2 360m find the percentage growth"
+        },
+        "834": {
+            "company": "Zoho",
+            "text": "A table shows sales revenue for Q1=$310M and Q2=$360M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 310m and q2 360m find the percentage growth"
+        },
+        "859": {
+            "company": "LTI Mindtree",
+            "text": "A table shows sales revenue for Q1=$310M and Q2=$360M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 310m and q2 360m find the percentage growth"
+        },
+        "884": {
+            "company": "HCL",
+            "text": "A table shows sales revenue for Q1=$310M and Q2=$360M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 310m and q2 360m find the percentage growth"
+        },
+        "909": {
+            "company": "Amazon",
+            "text": "A table shows sales revenue for Q1=$310M and Q2=$360M. Find the percentage growth.",
+            "norm": "a table shows sales revenue for q1 310m and q2 360m find the percentage growth"
+        },
+        "1342": {
+            "company": "TCS NQT",
+            "text": "[TCS NQT Style Practice] Find the remainder when 7^84 is divided by 342.",
+            "norm": "<comp> style practice find the remainder when <num> <num> is divided by <num>"
+        },
+        "2191": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] Find the remainder when 3^21 is divided by 10.",
+            "norm": "<comp> style practice find the remainder when <num> <num> is divided by <num>"
+        },
+        "1375": {
+            "company": "TCS NQT",
+            "text": "[TCS NQT Style Practice] What does the following Java snippet output?",
+            "norm": "<comp> style practice what does the following java snippet output"
+        },
+        "1655": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] What does the following Java snippet output?",
+            "norm": "<comp> style practice what does the following java snippet output"
+        },
+        "1695": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] What does the following Java snippet output?",
+            "norm": "<comp> style practice what does the following java snippet output"
+        },
+        "1376": {
+            "company": "TCS NQT",
+            "text": "[TCS NQT Style Practice] What is the output of the following Python expression?",
+            "norm": "<comp> style practice what is the output of the following python expression"
+        },
+        "1496": {
+            "company": "Infosys",
+            "text": "[Infosys Style Practice] What is the output of the following Python expression?",
+            "norm": "<comp> style practice what is the output of the following python expression"
+        },
+        "1617": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] What is the output of the following Python expression?",
+            "norm": "<comp> style practice what is the output of the following python expression"
+        },
+        "1696": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] What is the output of the following Python expression?",
+            "norm": "<comp> style practice what is the output of the following python expression"
+        },
+        "1775": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] What is the output of the following Python expression?",
+            "norm": "<comp> style practice what is the output of the following python expression"
+        },
+        "1998": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] What is the output of the following Python expression?",
+            "norm": "<comp> style practice what is the output of the following python expression"
+        },
+        "1383": {
+            "company": "TCS NQT",
+            "text": "[TCS NQT Style Practice] Find the smallest number that when divided by 12, 15, and 20 leaves a remainder of 4 in each case.",
+            "norm": "<comp> style practice find the smallest number that when divided by <num> <num> and <num> leaves a remainder of <num> in each case"
+        },
+        "2116": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Find the smallest number that when divided by 6, 8, and 12 leaves a remainder of 2 in each case.",
+            "norm": "<comp> style practice find the smallest number that when divided by <num> <num> and <num> leaves a remainder of <num> in each case"
+        },
+        "1405": {
+            "company": "TCS NQT",
+            "text": "[TCS NQT Style Practice] Identify the grammatically correct sentence:",
+            "norm": "<comp> style practice identify the grammatically correct sentence"
+        },
+        "1879": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] Identify the grammatically correct sentence:",
+            "norm": "<comp> style practice identify the grammatically correct sentence"
+        },
+        "2300": {
+            "company": "UST",
+            "text": "[UST Style Practice] Identify the grammatically correct sentence:",
+            "norm": "<comp> style practice identify the grammatically correct sentence"
+        },
+        "1407": {
+            "company": "TCS NQT",
+            "text": "[TCS NQT Style Practice] Select the antonym for the word: OBTUSE",
+            "norm": "<comp> style practice select the antonym for the word obtuse"
+        },
+        "2135": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Select the antonym for the word: OBTUSE",
+            "norm": "<comp> style practice select the antonym for the word obtuse"
+        },
+        "1455": {
+            "company": "Infosys",
+            "text": "[Infosys Style Practice] What will the following Java code output?",
+            "norm": "<comp> style practice what will the following java code output"
+        },
+        "1773": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] What will the following Java code output?",
+            "norm": "<comp> style practice what will the following java code output"
+        },
+        "1456": {
+            "company": "Infosys",
+            "text": "[Infosys Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "1536": {
+            "company": "Wipro NLTH",
+            "text": "[Wipro NLTH Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "1656": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "1735": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "1774": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "1850": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "1925": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "1999": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "2075": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "2146": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "2225": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "2314": {
+            "company": "UST",
+            "text": "[UST Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "2414": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What does the following Python statement output?",
+            "norm": "<comp> style practice what does the following python statement output"
+        },
+        "1478": {
+            "company": "Infosys",
+            "text": "[Infosys Style Practice] A is the mother of B. B is the sister of C. How is A related to C?",
+            "norm": "<comp> style practice a is the mother of b b is the sister of c how is a related to c"
+        },
+        "2097": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] A is the mother of B. B is the sister of C. How is A related to C?",
+            "norm": "<comp> style practice a is the mother of b b is the sister of c how is a related to c"
+        },
+        "1485": {
+            "company": "Infosys",
+            "text": "[Infosys Style Practice] Choose the grammatically correct sentence:",
+            "norm": "<comp> style practice choose the grammatically correct sentence"
+        },
+        "1645": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] Choose the grammatically correct sentence:",
+            "norm": "<comp> style practice choose the grammatically correct sentence"
+        },
+        "1497": {
+            "company": "Infosys",
+            "text": "[Infosys Style Practice] What is the output of the following Python code snippet?",
+            "norm": "<comp> style practice what is the output of the following python code snippet"
+        },
+        "1616": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] What is the output of the following Python code snippet?",
+            "norm": "<comp> style practice what is the output of the following python code snippet"
+        },
+        "1697": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] What is the output of the following Python code snippet?",
+            "norm": "<comp> style practice what is the output of the following python code snippet"
+        },
+        "1526": {
+            "company": "Wipro NLTH",
+            "text": "[Wipro NLTH Style Practice] Select the synonym for the word: COGNIZANT",
+            "norm": "<comp> style practice select the synonym for the word <comp>"
+        },
+        "2134": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Select the synonym for the word: COGNIZANT",
+            "norm": "<comp> style practice select the synonym for the word <comp>"
+        },
+        "1535": {
+            "company": "Wipro NLTH",
+            "text": "[Wipro NLTH Style Practice] What is the output of the following Java snippet?",
+            "norm": "<comp> style practice what is the output of the following java snippet"
+        },
+        "1615": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] What is the output of the following Java snippet?",
+            "norm": "<comp> style practice what is the output of the following java snippet"
+        },
+        "1545": {
+            "company": "Wipro NLTH",
+            "text": "[Wipro NLTH Style Practice] What is 15% of 800?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "1705": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] What is 20% of 450?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "1743": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] What is 40% of 250?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "1783": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] What is 30% of 150?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "1859": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] What is 50% of 280?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "1894": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] What is 25% of 600?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "1934": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] What is 10% of 900?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "2008": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] What is 35% of 200?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "2044": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] What is 30% of 400?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "2084": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] What is 20% of 350?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "2118": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] What is 15% of 600?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "2158": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] What is 25% of 800?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "2234": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] What is 20% of 900?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "2274": {
+            "company": "UST",
+            "text": "[UST Style Practice] What is 20% of 750?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "2326": {
+            "company": "UST",
+            "text": "[UST Style Practice] What is 10% of 500?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "2337": {
+            "company": "UST",
+            "text": "[UST Style Practice] What is 50% of 180?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "2374": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What is 25% of 640?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "2426": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What is 30% of 300?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "2437": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What is 40% of 200?",
+            "norm": "<comp> style practice what is <num> of <num>"
+        },
+        "1554": {
+            "company": "Wipro NLTH",
+            "text": "[Wipro NLTH Style Practice] Find the missing term: 100, 95, 90, 85, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "1714": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] Find the missing term: 5, 10, 15, 20, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "1753": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] Find the missing term: 3, 6, 12, 24, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "1792": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] Find the missing term: 100, 200, 300, 400, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "1829": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] Find the missing term: 5, 10, 20, 40, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "1869": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] Find the missing term: 10, 20, 40, 80, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "1904": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] Find the missing term: 1, 4, 9, 16, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "1944": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] Find the missing term: 2, 4, 8, 16, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "2016": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] Find the missing term: 1, 8, 27, 64, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "2054": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Find the missing term: 1, 3, 9, 27, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "2094": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Find the missing term: 1, 2, 4, 8, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "2126": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Find the missing term: 3, 9, 27, 81, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "2166": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Find the missing term: 2, 4, 8, 16, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "2287": {
+            "company": "UST",
+            "text": "[UST Style Practice] Find the missing term: 2, 6, 12, 20, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "2387": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Find the missing term: 2, 4, 8, 16, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "2440": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Find the missing term: 3, 6, 12, 24, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num>"
+        },
+        "1555": {
+            "company": "Wipro NLTH",
+            "text": "[Wipro NLTH Style Practice] Find the next number in the series: 2, 5, 10, 17, 26, ?",
+            "norm": "<comp> style practice find the next number in the series <num> <num> <num> <num> <num>"
+        },
+        "2199": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] Find the next number in the series: 2, 4, 8, 16, 32, ?",
+            "norm": "<comp> style practice find the next number in the series <num> <num> <num> <num> <num>"
+        },
+        "1566": {
+            "company": "Wipro NLTH",
+            "text": "[Wipro NLTH Style Practice] Select the synonym for the word: RESILIENT",
+            "norm": "<comp> style practice select the synonym for the word resilient"
+        },
+        "2248": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] Select the synonym for the word: RESILIENT",
+            "norm": "<comp> style practice select the synonym for the word resilient"
+        },
+        "2402": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Select the synonym for the word: RESILIENT",
+            "norm": "<comp> style practice select the synonym for the word resilient"
+        },
+        "1570": {
+            "company": "Wipro NLTH",
+            "text": "[Wipro NLTH Style Practice] What will be the output of this C code?",
+            "norm": "<comp> style practice what will be the output of this c code"
+        },
+        "1610": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] What will be the output of this C code?",
+            "norm": "<comp> style practice what will be the output of this c code"
+        },
+        "2027": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] What will be the output of this C code?",
+            "norm": "<comp> style practice what will be the output of this c code"
+        },
+        "1573": {
+            "company": "Wipro NLTH",
+            "text": "[Wipro NLTH Style Practice] What is printed by this C++ program?",
+            "norm": "<comp> style practice what is printed by this c program"
+        },
+        "1613": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] What is printed by this C++ program?",
+            "norm": "<comp> style practice what is printed by this c program"
+        },
+        "1693": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] What is printed by this C++ program?",
+            "norm": "<comp> style practice what is printed by this c program"
+        },
+        "1771": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] What is printed by this C++ program?",
+            "norm": "<comp> style practice what is printed by this c program"
+        },
+        "1847": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] What is printed by this C++ program?",
+            "norm": "<comp> style practice what is printed by this c program"
+        },
+        "1922": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] What is printed by this C++ program?",
+            "norm": "<comp> style practice what is printed by this c program"
+        },
+        "2072": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] What is printed by this C++ program?",
+            "norm": "<comp> style practice what is printed by this c program"
+        },
+        "2142": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] What is printed by this C++ program?",
+            "norm": "<comp> style practice what is printed by this c program"
+        },
+        "2261": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] What is printed by this C++ program?",
+            "norm": "<comp> style practice what is printed by this c program"
+        },
+        "2310": {
+            "company": "UST",
+            "text": "[UST Style Practice] What is printed by this C++ program?",
+            "norm": "<comp> style practice what is printed by this c program"
+        },
+        "2410": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What is printed by this C++ program?",
+            "norm": "<comp> style practice what is printed by this c program"
+        },
+        "1575": {
+            "company": "Wipro NLTH",
+            "text": "[Wipro NLTH Style Practice] What will the following Java code print?",
+            "norm": "<comp> style practice what will the following java code print"
+        },
+        "1733": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] What will the following Java code print?",
+            "norm": "<comp> style practice what will the following java code print"
+        },
+        "1810": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] What will the following Java code print?",
+            "norm": "<comp> style practice what will the following java code print"
+        },
+        "1849": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] What will the following Java code print?",
+            "norm": "<comp> style practice what will the following java code print"
+        },
+        "1924": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] What will the following Java code print?",
+            "norm": "<comp> style practice what will the following java code print"
+        },
+        "1996": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] What will the following Java code print?",
+            "norm": "<comp> style practice what will the following java code print"
+        },
+        "2074": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] What will the following Java code print?",
+            "norm": "<comp> style practice what will the following java code print"
+        },
+        "2145": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] What will the following Java code print?",
+            "norm": "<comp> style practice what will the following java code print"
+        },
+        "2263": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] What will the following Java code print?",
+            "norm": "<comp> style practice what will the following java code print"
+        },
+        "2312": {
+            "company": "UST",
+            "text": "[UST Style Practice] What will the following Java code print?",
+            "norm": "<comp> style practice what will the following java code print"
+        },
+        "2412": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What will the following Java code print?",
+            "norm": "<comp> style practice what will the following java code print"
+        },
+        "1595": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] Find the missing term: 1, 8, 27, 64, 125, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num> <num>"
+        },
+        "1635": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] Find the missing term: 1, 3, 7, 15, 31, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num> <num>"
+        },
+        "2240": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] Find the missing term: 1, 2, 4, 8, 16, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num> <num>"
+        },
+        "2340": {
+            "company": "UST",
+            "text": "[UST Style Practice] Find the missing term: 1, 2, 4, 8, 16, ?",
+            "norm": "<comp> style practice find the missing term <num> <num> <num> <num> <num>"
+        },
+        "1622": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] What is the value of 15^2 - 12^2?",
+            "norm": "<comp> style practice what is the value of <num> <num> <num> <num>"
+        },
+        "1740": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] What is the value of 2^5 * 2^3?",
+            "norm": "<comp> style practice what is the value of <num> <num> <num> <num>"
+        },
+        "1634": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] What is the next number: 10, 20, 30, 40, ?",
+            "norm": "<comp> style practice what is the next number <num> <num> <num> <num>"
+        },
+        "2053": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] What is the next number: 7, 14, 21, 28, ?",
+            "norm": "<comp> style practice what is the next number <num> <num> <num> <num>"
+        },
+        "2125": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] What is the next number: 8, 16, 24, 32, ?",
+            "norm": "<comp> style practice what is the next number <num> <num> <num> <num>"
+        },
+        "1638": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] X is the brother of Y. Y is the mother of Z. How is X related to Z?",
+            "norm": "<comp> style practice x is the brother of y y is the mother of z how is x related to z"
+        },
+        "2169": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] X is the brother of Y. Y is the mother of Z. How is X related to Z?",
+            "norm": "<comp> style practice x is the brother of y y is the mother of z how is x related to z"
+        },
+        "1650": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] What will be the output of this C program?",
+            "norm": "<comp> style practice what will be the output of this c program"
+        },
+        "1690": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] What will be the output of this C program?",
+            "norm": "<comp> style practice what will be the output of this c program"
+        },
+        "1768": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] What will be the output of this C program?",
+            "norm": "<comp> style practice what will be the output of this c program"
+        },
+        "1844": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] What will be the output of this C program?",
+            "norm": "<comp> style practice what will be the output of this c program"
+        },
+        "1919": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] What will be the output of this C program?",
+            "norm": "<comp> style practice what will be the output of this c program"
+        },
+        "1994": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] What will be the output of this C++ program?",
+            "norm": "<comp> style practice what will be the output of this c program"
+        },
+        "2069": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] What will be the output of this C program?",
+            "norm": "<comp> style practice what will be the output of this c program"
+        },
+        "2177": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] What will be the output of this C program?",
+            "norm": "<comp> style practice what will be the output of this c program"
+        },
+        "2221": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] What will be the output of this C++ program?",
+            "norm": "<comp> style practice what will be the output of this c program"
+        },
+        "2258": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] What will be the output of this C program?",
+            "norm": "<comp> style practice what will be the output of this c program"
+        },
+        "2307": {
+            "company": "UST",
+            "text": "[UST Style Practice] What will be the output of this C program?",
+            "norm": "<comp> style practice what will be the output of this c program"
+        },
+        "2407": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What will be the output of this C program?",
+            "norm": "<comp> style practice what will be the output of this c program"
+        },
+        "1657": {
+            "company": "Accenture",
+            "text": "[Accenture Style Practice] What is the output of this Python slice operation?",
+            "norm": "<comp> style practice what is the output of this python slice operation"
+        },
+        "2147": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] What is the output of this Python slice operation?",
+            "norm": "<comp> style practice what is the output of this python slice operation"
+        },
+        "2265": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] What is the output of this Python slice operation?",
+            "norm": "<comp> style practice what is the output of this python slice operation"
+        },
+        "1708": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] Divide Rs. 600 in the ratio 2 : 3. What is the smaller share?",
+            "norm": "<comp> style practice divide rs <num> in the ratio <num> <num> what is the smaller share"
+        },
+        "2014": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] Divide Rs. 400 in the ratio 3 : 5. What is the smaller share?",
+            "norm": "<comp> style practice divide rs <num> in the ratio <num> <num> what is the smaller share"
+        },
+        "2164": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Divide Rs. 500 in the ratio 2 : 3. What is the smaller share?",
+            "norm": "<comp> style practice divide rs <num> in the ratio <num> <num> what is the smaller share"
+        },
+        "2283": {
+            "company": "UST",
+            "text": "[UST Style Practice] Divide Rs. 350 in the ratio 2 : 5. What is the smaller share?",
+            "norm": "<comp> style practice divide rs <num> in the ratio <num> <num> what is the smaller share"
+        },
+        "2383": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Divide Rs. 420 in the ratio 3 : 4. What is the smaller share?",
+            "norm": "<comp> style practice divide rs <num> in the ratio <num> <num> what is the smaller share"
+        },
+        "1718": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] A is the brother of B. B is the mother of C. How is A related to C?",
+            "norm": "<comp> style practice a is the brother of b b is the mother of c how is a related to c"
+        },
+        "2129": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] A is the brother of B. B is the mother of C. How is A related to C?",
+            "norm": "<comp> style practice a is the brother of b b is the mother of c how is a related to c"
+        },
+        "1725": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] Identify the correct sentence:",
+            "norm": "<comp> style practice identify the correct sentence"
+        },
+        "1763": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] Identify the correct sentence:",
+            "norm": "<comp> style practice identify the correct sentence"
+        },
+        "1839": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] Identify the correct sentence:",
+            "norm": "<comp> style practice identify the correct sentence"
+        },
+        "1914": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] Identify the correct sentence:",
+            "norm": "<comp> style practice identify the correct sentence"
+        },
+        "2064": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Identify the correct sentence:",
+            "norm": "<comp> style practice identify the correct sentence"
+        },
+        "2353": {
+            "company": "UST",
+            "text": "[UST Style Practice] Identify the correct sentence:",
+            "norm": "<comp> style practice identify the correct sentence"
+        },
+        "2400": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Identify the correct sentence:",
+            "norm": "<comp> style practice identify the correct sentence"
+        },
+        "1730": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] What does this C code print?",
+            "norm": "<comp> style practice what does this c code print"
+        },
+        "1807": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] What does this C code print?",
+            "norm": "<comp> style practice what does this c code print"
+        },
+        "1884": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] What does this C code print?",
+            "norm": "<comp> style practice what does this c code print"
+        },
+        "1958": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] What does this C code print?",
+            "norm": "<comp> style practice what does this c code print"
+        },
+        "2108": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] What does this C code print?",
+            "norm": "<comp> style practice what does this c code print"
+        },
+        "2259": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] What does this C code print?",
+            "norm": "<comp> style practice what does this c code print"
+        },
+        "2359": {
+            "company": "UST",
+            "text": "[UST Style Practice] What does this C code print?",
+            "norm": "<comp> style practice what does this c code print"
+        },
+        "2458": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What does this C code print?",
+            "norm": "<comp> style practice what does this c code print"
+        },
+        "1734": {
+            "company": "Cognizant",
+            "text": "[Cognizant Style Practice] What is the output of the following Python operation?",
+            "norm": "<comp> style practice what is the output of the following python operation"
+        },
+        "1811": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] What is the output of the following Python operation?",
+            "norm": "<comp> style practice what is the output of the following python operation"
+        },
+        "1851": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] What is the output of the following Python operation?",
+            "norm": "<comp> style practice what is the output of the following python operation"
+        },
+        "1926": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] What is the output of the following Python operation?",
+            "norm": "<comp> style practice what is the output of the following python operation"
+        },
+        "2076": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] What is the output of the following Python operation?",
+            "norm": "<comp> style practice what is the output of the following python operation"
+        },
+        "2183": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] What is the output of the following Python operation?",
+            "norm": "<comp> style practice what is the output of the following python operation"
+        },
+        "2315": {
+            "company": "UST",
+            "text": "[UST Style Practice] What is the output of the following Python operation?",
+            "norm": "<comp> style practice what is the output of the following python operation"
+        },
+        "2415": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What is the output of the following Python operation?",
+            "norm": "<comp> style practice what is the output of the following python operation"
+        },
+        "1746": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] A vehicle covers 240 km in 4 hours. What is its speed?",
+            "norm": "<comp> style practice a vehicle covers <num> km in <num> hours what is its speed"
+        },
+        "1864": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] A vehicle covers 90 km in 1.5 hours. What is its speed?",
+            "norm": "<comp> style practice a vehicle covers <num> km in <num> hours what is its speed"
+        },
+        "1939": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] A vehicle covers 200 km in 4 hours. What is its speed?",
+            "norm": "<comp> style practice a vehicle covers <num> km in <num> hours what is its speed"
+        },
+        "2089": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] A vehicle covers 150 km in 3 hours. What is its speed?",
+            "norm": "<comp> style practice a vehicle covers <num> km in <num> hours what is its speed"
+        },
+        "2120": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] A vehicle covers 180 km in 3 hours. What is its speed?",
+            "norm": "<comp> style practice a vehicle covers <num> km in <num> hours what is its speed"
+        },
+        "2160": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] A vehicle covers 240 km in 4 hours. What is its speed?",
+            "norm": "<comp> style practice a vehicle covers <num> km in <num> hours what is its speed"
+        },
+        "2236": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] A vehicle covers 210 km in 3 hours. What is its speed?",
+            "norm": "<comp> style practice a vehicle covers <num> km in <num> hours what is its speed"
+        },
+        "2329": {
+            "company": "UST",
+            "text": "[UST Style Practice] A vehicle covers 120 km in 2 hours. What is its speed?",
+            "norm": "<comp> style practice a vehicle covers <num> km in <num> hours what is its speed"
+        },
+        "2378": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] A vehicle covers 180 km in 3 hours. What is its speed?",
+            "norm": "<comp> style practice a vehicle covers <num> km in <num> hours what is its speed"
+        },
+        "2429": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] A vehicle covers 140 km in 2 hours. What is its speed?",
+            "norm": "<comp> style practice a vehicle covers <num> km in <num> hours what is its speed"
+        },
+        "1752": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] Find the next number: 11, 22, 33, 44, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num>"
+        },
+        "1868": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] Find the next number: 15, 30, 45, 60, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num>"
+        },
+        "1943": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] Find the next number: 20, 40, 60, 80, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num>"
+        },
+        "2093": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Find the next number: 10, 25, 40, 55, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num>"
+        },
+        "2165": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Find the next number: 12, 24, 36, 48, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num>"
+        },
+        "2239": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] Find the next number: 10, 20, 30, 40, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num>"
+        },
+        "2339": {
+            "company": "UST",
+            "text": "[UST Style Practice] Find the next number: 10, 30, 50, 70, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num>"
+        },
+        "2349": {
+            "company": "UST",
+            "text": "[UST Style Practice] Find the next number: 3, 6, 9, 12, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num>"
+        },
+        "2388": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Find the next number: 1, 8, 27, 64, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num>"
+        },
+        "2439": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Find the next number: 15, 30, 45, 60, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num>"
+        },
+        "2449": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Find the next number: 4, 8, 12, 16, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num>"
+        },
+        "1755": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] In a code, CODE is written as DPEF. How is JAVA written in that code?",
+            "norm": "<comp> style practice in a code code is written as dpef how is java written in that code"
+        },
+        "2442": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] In a code, CODE is written as DPEF. How is JAVA written in that code?",
+            "norm": "<comp> style practice in a code code is written as dpef how is java written in that code"
+        },
+        "1758": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] Walking 8 m North, then turning right and walking 6 m. What is the shortest distance from the start point?",
+            "norm": "<comp> style practice walking <num> m north then turning right and walking <num> m what is the shortest distance from the start point"
+        },
+        "1874": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] Walking 15 m North, then turning right and walking 20 m. What is the shortest distance from the start point?",
+            "norm": "<comp> style practice walking <num> m north then turning right and walking <num> m what is the shortest distance from the start point"
+        },
+        "2130": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Walking 12 m North, then turning right and walking 5 m. What is the shortest distance from the start point?",
+            "norm": "<comp> style practice walking <num> m north then turning right and walking <num> m what is the shortest distance from the start point"
+        },
+        "2345": {
+            "company": "UST",
+            "text": "[UST Style Practice] Walking 8 m North, then turning right and walking 6 m. What is the shortest distance from the start point?",
+            "norm": "<comp> style practice walking <num> m north then turning right and walking <num> m what is the shortest distance from the start point"
+        },
+        "2393": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Walking 8 m North, then turning right and walking 6 m. What is the shortest distance from the start point?",
+            "norm": "<comp> style practice walking <num> m north then turning right and walking <num> m what is the shortest distance from the start point"
+        },
+        "1764": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] Select the synonym for the word: RELIABLE",
+            "norm": "<comp> style practice select the synonym for the word reliable"
+        },
+        "2354": {
+            "company": "UST",
+            "text": "[UST Style Practice] Select the synonym for the word: RELIABLE",
+            "norm": "<comp> style practice select the synonym for the word reliable"
+        },
+        "1769": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] What does this C code print using a loop?",
+            "norm": "<comp> style practice what does this c code print using a loop"
+        },
+        "1845": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] What does this C code print using a loop?",
+            "norm": "<comp> style practice what does this c code print using a loop"
+        },
+        "1920": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] What does this C code print using a loop?",
+            "norm": "<comp> style practice what does this c code print using a loop"
+        },
+        "2070": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] What does this C code print using a loop?",
+            "norm": "<comp> style practice what does this c code print using a loop"
+        },
+        "2308": {
+            "company": "UST",
+            "text": "[UST Style Practice] What does this C code print using a loop?",
+            "norm": "<comp> style practice what does this c code print using a loop"
+        },
+        "2408": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What does this C code print using a loop?",
+            "norm": "<comp> style practice what does this c code print using a loop"
+        },
+        "1782": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] Find the perimeter of an equilateral triangle with side 12 cm.",
+            "norm": "<comp> style practice find the perimeter of an equilateral triangle with side <num> cm"
+        },
+        "2082": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Find the perimeter of an equilateral triangle with side 10 cm.",
+            "norm": "<comp> style practice find the perimeter of an equilateral triangle with side <num> cm"
+        },
+        "2424": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Find the perimeter of an equilateral triangle with side 12 cm.",
+            "norm": "<comp> style practice find the perimeter of an equilateral triangle with side <num> cm"
+        },
+        "1784": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] Selling an item for Rs. 540 results in a 10% loss. What was the cost price?",
+            "norm": "<comp> style practice selling an item for rs <num> results in a <num> loss what was the cost price"
+        },
+        "1860": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] Selling an item for Rs. 450 results in a 10% loss. What was the cost price?",
+            "norm": "<comp> style practice selling an item for rs <num> results in a <num> loss what was the cost price"
+        },
+        "2327": {
+            "company": "UST",
+            "text": "[UST Style Practice] Selling an item for Rs. 450 results in a 10% loss. What was the cost price?",
+            "norm": "<comp> style practice selling an item for rs <num> results in a <num> loss what was the cost price"
+        },
+        "1786": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] If ratio of two numbers is 5 : 6 and smaller is 25, what is the larger?",
+            "norm": "<comp> style practice if ratio of two numbers is <num> <num> and smaller is <num> what is the larger"
+        },
+        "1937": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] If ratio of two numbers is 1 : 4 and smaller is 15, what is the larger?",
+            "norm": "<comp> style practice if ratio of two numbers is <num> <num> and smaller is <num> what is the larger"
+        },
+        "2087": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] If ratio of two numbers is 2 : 3 and smaller is 16, what is the larger?",
+            "norm": "<comp> style practice if ratio of two numbers is <num> <num> and smaller is <num> what is the larger"
+        },
+        "1788": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] A car covers 100 km in 2 hours. What is its speed?",
+            "norm": "<comp> style practice a car covers <num> km in <num> hours what is its speed"
+        },
+        "2010": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] A car covers 160 km in 2 hours. What is its speed?",
+            "norm": "<comp> style practice a car covers <num> km in <num> hours what is its speed"
+        },
+        "1793": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] Find the next number: 1, 2, 4, 8, 16, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num> <num>"
+        },
+        "2288": {
+            "company": "UST",
+            "text": "[UST Style Practice] Find the next number: 1, 4, 9, 16, 25, ?",
+            "norm": "<comp> style practice find the next number <num> <num> <num> <num> <num>"
+        },
+        "1803": {
+            "company": "Capgemini",
+            "text": "[Capgemini Style Practice] Select the synonym for the word: PRECISE",
+            "norm": "<comp> style practice select the synonym for the word precise"
+        },
+        "2404": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Select the synonym for the word: PRECISE",
+            "norm": "<comp> style practice select the synonym for the word precise"
+        },
+        "1823": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] A train 150 m long crosses an electric post in 10 seconds. What is its speed in km\/h?",
+            "norm": "<comp> style practice a train <num> m long crosses an electric post in <num> seconds what is its speed in km h"
+        },
+        "2048": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] A train 160 m long crosses an electric post in 8 seconds. What is its speed in km\/h?",
+            "norm": "<comp> style practice a train <num> m long crosses an electric post in <num> seconds what is its speed in km h"
+        },
+        "2121": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] A train 150 m long crosses an electric post in 10 seconds. What is its speed in km\/h?",
+            "norm": "<comp> style practice a train <num> m long crosses an electric post in <num> seconds what is its speed in km h"
+        },
+        "2279": {
+            "company": "UST",
+            "text": "[UST Style Practice] A train 140 m long crosses an electric post in 7 seconds. What is its speed in km\/h?",
+            "norm": "<comp> style practice a train <num> m long crosses an electric post in <num> seconds what is its speed in km h"
+        },
+        "2379": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] A train 120 m long crosses an electric post in 6 seconds. What is its speed in km\/h?",
+            "norm": "<comp> style practice a train <num> m long crosses an electric post in <num> seconds what is its speed in km h"
+        },
+        "1856": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] What is the value of 14^2?",
+            "norm": "<comp> style practice what is the value of <num> <num>"
+        },
+        "1931": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] What is the value of 11^2?",
+            "norm": "<comp> style practice what is the value of <num> <num>"
+        },
+        "2005": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] What is the value of 13^2?",
+            "norm": "<comp> style practice what is the value of <num> <num>"
+        },
+        "2081": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] What is the value of 12^2?",
+            "norm": "<comp> style practice what is the value of <num> <num>"
+        },
+        "2155": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] What is the value of 15^2?",
+            "norm": "<comp> style practice what is the value of <num> <num>"
+        },
+        "2231": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] What is the value of 16^2?",
+            "norm": "<comp> style practice what is the value of <num> <num>"
+        },
+        "2323": {
+            "company": "UST",
+            "text": "[UST Style Practice] What is the value of 14^2?",
+            "norm": "<comp> style practice what is the value of <num> <num>"
+        },
+        "2336": {
+            "company": "UST",
+            "text": "[UST Style Practice] What is the value of 5^3?",
+            "norm": "<comp> style practice what is the value of <num> <num>"
+        },
+        "2423": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What is the value of 13^2?",
+            "norm": "<comp> style practice what is the value of <num> <num>"
+        },
+        "2436": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What is the value of 4^3?",
+            "norm": "<comp> style practice what is the value of <num> <num>"
+        },
+        "1865": {
+            "company": "Deloitte",
+            "text": "[Deloitte Style Practice] A person walks 20 km at 5 km\/h. How many hours did he walk?",
+            "norm": "<comp> style practice a person walks <num> km at <num> km h how many hours did he walk"
+        },
+        "1940": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] A person walks 15 km at 3 km\/h. How many hours did he walk?",
+            "norm": "<comp> style practice a person walks <num> km at <num> km h how many hours did he walk"
+        },
+        "2090": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] A person walks 12 km at 4 km\/h. How many hours did he walk?",
+            "norm": "<comp> style practice a person walks <num> km at <num> km h how many hours did he walk"
+        },
+        "2161": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] A person walks 16 km at 4 km\/h. How many hours did he walk?",
+            "norm": "<comp> style practice a person walks <num> km at <num> km h how many hours did he walk"
+        },
+        "2237": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] A person walks 18 km at 6 km\/h. How many hours did he walk?",
+            "norm": "<comp> style practice a person walks <num> km at <num> km h how many hours did he walk"
+        },
+        "2330": {
+            "company": "UST",
+            "text": "[UST Style Practice] A person walks 15 km at 5 km\/h. How many hours did he walk?",
+            "norm": "<comp> style practice a person walks <num> km at <num> km h how many hours did he walk"
+        },
+        "2430": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] A person walks 20 km at 4 km\/h. How many hours did he walk?",
+            "norm": "<comp> style practice a person walks <num> km at <num> km h how many hours did he walk"
+        },
+        "1893": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] Find the sum of all natural numbers from 1 to 50.",
+            "norm": "<comp> style practice find the sum of all natural numbers from <num> to <num>"
+        },
+        "2117": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Find the sum of all natural numbers from 1 to 40.",
+            "norm": "<comp> style practice find the sum of all natural numbers from <num> to <num>"
+        },
+        "2272": {
+            "company": "UST",
+            "text": "[UST Style Practice] Find the sum of all natural numbers from 1 to 30.",
+            "norm": "<comp> style practice find the sum of all natural numbers from <num> to <num>"
+        },
+        "2372": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Find the sum of all natural numbers from 1 to 35.",
+            "norm": "<comp> style practice find the sum of all natural numbers from <num> to <num>"
+        },
+        "1895": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] An item bought for Rs. 400 is sold for Rs. 500. Find the profit percentage.",
+            "norm": "<comp> style practice an item bought for rs <num> is sold for rs <num> find the profit percentage"
+        },
+        "2275": {
+            "company": "UST",
+            "text": "[UST Style Practice] An item bought for Rs. 500 is sold for Rs. 650. Find the profit percentage.",
+            "norm": "<comp> style practice an item bought for rs <num> is sold for rs <num> find the profit percentage"
+        },
+        "1900": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] A can do a work in 10 days and B in 15 days. How many days will they take together?",
+            "norm": "<comp> style practice a can do a work in <num> days and b in <num> days how many days will they take together"
+        },
+        "2281": {
+            "company": "UST",
+            "text": "[UST Style Practice] A can do a work in 8 days and B in 12 days. How many days will they take together?",
+            "norm": "<comp> style practice a can do a work in <num> days and b in <num> days how many days will they take together"
+        },
+        "2381": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] A can do a work in 10 days and B in 15 days. How many days will they take together?",
+            "norm": "<comp> style practice a can do a work in <num> days and b in <num> days how many days will they take together"
+        },
+        "1903": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] What comes next in the sequence: 4, 8, 12, 16, ?",
+            "norm": "<comp> style practice what comes next in the sequence <num> <num> <num> <num>"
+        },
+        "2286": {
+            "company": "UST",
+            "text": "[UST Style Practice] What comes next in the sequence: 5, 10, 15, 20, ?",
+            "norm": "<comp> style practice what comes next in the sequence <num> <num> <num> <num>"
+        },
+        "2386": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What comes next in the sequence: 6, 12, 18, 24, ?",
+            "norm": "<comp> style practice what comes next in the sequence <num> <num> <num> <num>"
+        },
+        "1910": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] Facing North, turning 90 degrees counter-clockwise faces:",
+            "norm": "<comp> style practice facing north turning <num> degrees counter clockwise faces"
+        },
+        "2060": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Facing North, turning 90 degrees counter-clockwise faces:",
+            "norm": "<comp> style practice facing north turning <num> degrees counter clockwise faces"
+        },
+        "2394": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Facing North, turning 90 degrees counter-clockwise faces:",
+            "norm": "<comp> style practice facing north turning <num> degrees counter clockwise faces"
+        },
+        "1911": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] Four friends sit around a circular table facing center: A, B, C, D. A is opposite C. B is to the right of A. Who is opposite B?",
+            "norm": "<comp> style practice four friends sit around a circular table facing center a b c d a is opposite c b is to the right of a who is opposite b"
+        },
+        "2351": {
+            "company": "UST",
+            "text": "[UST Style Practice] Four friends sit around a circular table facing center: A, B, C, D. A is opposite C. B is to the right of A. Who is opposite B?",
+            "norm": "<comp> style practice four friends sit around a circular table facing center a b c d a is opposite c b is to the right of a who is opposite b"
+        },
+        "2451": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Four friends sit around a circular table facing center: A, B, C, D. A is opposite C. B is to the right of A. Who is opposite B?",
+            "norm": "<comp> style practice four friends sit around a circular table facing center a b c d a is opposite c b is to the right of a who is opposite b"
+        },
+        "1915": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] Select the synonym for the word: ADAPT",
+            "norm": "<comp> style practice select the synonym for the word adapt"
+        },
+        "2358": {
+            "company": "UST",
+            "text": "[UST Style Practice] Select the synonym for the word: ADAPT",
+            "norm": "<comp> style practice select the synonym for the word adapt"
+        },
+        "1930": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] What is the average time complexity of searching an element in a binary search tree?",
+            "norm": "<comp> style practice what is the average time complexity of searching an element in a binary search tree"
+        },
+        "2320": {
+            "company": "UST",
+            "text": "[UST Style Practice] What is the average time complexity of searching an element in a binary search tree?",
+            "norm": "<comp> style practice what is the average time complexity of searching an element in a binary search tree"
+        },
+        "2420": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What is the average time complexity of searching an element in a binary search tree?",
+            "norm": "<comp> style practice what is the average time complexity of searching an element in a binary search tree"
+        },
+        "1938": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] The average of three numbers is 30. If two numbers are 25 and 35, what is the third?",
+            "norm": "<comp> style practice the average of three numbers is <num> if two numbers are <num> and <num> what is the third"
+        },
+        "2088": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] The average of three numbers is 18. If two numbers are 14 and 20, what is the third?",
+            "norm": "<comp> style practice the average of three numbers is <num> if two numbers are <num> and <num> what is the third"
+        },
+        "2335": {
+            "company": "UST",
+            "text": "[UST Style Practice] The average of three numbers is 25. If two numbers are 20 and 30, what is the third?",
+            "norm": "<comp> style practice the average of three numbers is <num> if two numbers are <num> and <num> what is the third"
+        },
+        "2435": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] The average of three numbers is 20. If two numbers are 15 and 25, what is the third?",
+            "norm": "<comp> style practice the average of three numbers is <num> if two numbers are <num> and <num> what is the third"
+        },
+        "1941": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] 2 workers finish a report in 4 days. How many days will 4 workers take at the same pace?",
+            "norm": "<comp> style practice <num> workers finish a report in <num> days how many days will <num> workers take at the same pace"
+        },
+        "2332": {
+            "company": "UST",
+            "text": "[UST Style Practice] 2 workers finish a report in 6 days. How many days will 4 workers take at the same pace?",
+            "norm": "<comp> style practice <num> workers finish a report in <num> days how many days will <num> workers take at the same pace"
+        },
+        "1942": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] Pipe A fills a reservoir in 6 hours and Pipe B in 12 hours. How long together?",
+            "norm": "<comp> style practice pipe a fills a reservoir in <num> hours and pipe b in <num> hours how long together"
+        },
+        "2238": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] Pipe A fills a reservoir in 6 hours and Pipe B in 12 hours. How long together?",
+            "norm": "<comp> style practice pipe a fills a reservoir in <num> hours and pipe b in <num> hours how long together"
+        },
+        "2333": {
+            "company": "UST",
+            "text": "[UST Style Practice] Pipe A fills a reservoir in 5 hours and Pipe B in 20 hours. How long together?",
+            "norm": "<comp> style practice pipe a fills a reservoir in <num> hours and pipe b in <num> hours how long together"
+        },
+        "2433": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Pipe A fills a reservoir in 6 hours and Pipe B in 12 hours. How long together?",
+            "norm": "<comp> style practice pipe a fills a reservoir in <num> hours and pipe b in <num> hours how long together"
+        },
+        "1947": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] A is the daughter of B. B is the mother of C. How is A related to C?",
+            "norm": "<comp> style practice a is the daughter of b b is the mother of c how is a related to c"
+        },
+        "2243": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] A is the daughter of B. B is the mother of C. How is A related to C?",
+            "norm": "<comp> style practice a is the daughter of b b is the mother of c how is a related to c"
+        },
+        "2343": {
+            "company": "UST",
+            "text": "[UST Style Practice] A is the daughter of B. B is the mother of C. How is A related to C?",
+            "norm": "<comp> style practice a is the daughter of b b is the mother of c how is a related to c"
+        },
+        "2443": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] A is the daughter of B. B is the mother of C. How is A related to C?",
+            "norm": "<comp> style practice a is the daughter of b b is the mother of c how is a related to c"
+        },
+        "1948": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] X is the father of Y. Z is the son of Y. How is X related to Z?",
+            "norm": "<comp> style practice x is the father of y z is the son of y how is x related to z"
+        },
+        "2344": {
+            "company": "UST",
+            "text": "[UST Style Practice] X is the father of Y. Z is the son of Y. How is X related to Z?",
+            "norm": "<comp> style practice x is the father of y z is the son of y how is x related to z"
+        },
+        "1949": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] Walking 6 m East, then turning right and walking 8 m. What is the shortest distance from the start point?",
+            "norm": "<comp> style practice walking <num> m east then turning right and walking <num> m what is the shortest distance from the start point"
+        },
+        "2445": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Walking 12 m East, then turning right and walking 5 m. What is the shortest distance from the start point?",
+            "norm": "<comp> style practice walking <num> m east then turning right and walking <num> m what is the shortest distance from the start point"
+        },
+        "1954": {
+            "company": "Tech Mahindra",
+            "text": "[Tech Mahindra Style Practice] Select the synonym for the word: SECURE",
+            "norm": "<comp> style practice select the synonym for the word secure"
+        },
+        "2174": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Select the synonym for the word: SECURE",
+            "norm": "<comp> style practice select the synonym for the word secure"
+        },
+        "2304": {
+            "company": "UST",
+            "text": "[UST Style Practice] Select the synonym for the word: SECURE",
+            "norm": "<comp> style practice select the synonym for the word secure"
+        },
+        "2453": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Select the synonym for the word: SECURE",
+            "norm": "<comp> style practice select the synonym for the word secure"
+        },
+        "1965": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] What is the remainder when 2^20 is divided by 7?",
+            "norm": "<comp> style practice what is the remainder when <num> <num> is divided by <num>"
+        },
+        "2042": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] What is the remainder when 4^13 is divided by 3?",
+            "norm": "<comp> style practice what is the remainder when <num> <num> is divided by <num>"
+        },
+        "2371": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What is the remainder when 5^15 is divided by 4?",
+            "norm": "<comp> style practice what is the remainder when <num> <num> is divided by <num>"
+        },
+        "2009": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] Cost price is Rs. 250 and selling price is Rs. 300. What is the profit percentage?",
+            "norm": "<comp> style practice cost price is rs <num> and selling price is rs <num> what is the profit percentage"
+        },
+        "2045": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Cost price is Rs. 450 and selling price is Rs. 540. What is the profit percentage?",
+            "norm": "<comp> style practice cost price is rs <num> and selling price is rs <num> what is the profit percentage"
+        },
+        "2012": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] A can do a work in 6 days and B in 12 days. How long will they take together?",
+            "norm": "<comp> style practice a can do a work in <num> days and b in <num> days how long will they take together"
+        },
+        "2162": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] A can do a work in 5 days and B in 20 days. How long will they take together?",
+            "norm": "<comp> style practice a can do a work in <num> days and b in <num> days how long will they take together"
+        },
+        "2020": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] Walking 8 m West, then turning right and walking 6 m. What is the shortest distance from the start point?",
+            "norm": "<comp> style practice walking <num> m west then turning right and walking <num> m what is the shortest distance from the start point"
+        },
+        "2059": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Walking 15 m West, then turning right and walking 20 m. What is the shortest distance from the start point?",
+            "norm": "<comp> style practice walking <num> m west then turning right and walking <num> m what is the shortest distance from the start point"
+        },
+        "2025": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] Select the antonym for the word: STATIC",
+            "norm": "<comp> style practice select the antonym for the word static"
+        },
+        "2355": {
+            "company": "UST",
+            "text": "[UST Style Practice] Select the antonym for the word: STATIC",
+            "norm": "<comp> style practice select the antonym for the word static"
+        },
+        "2038": {
+            "company": "Zoho",
+            "text": "[Zoho Style Practice] Which data structure is based on the FIFO principle?",
+            "norm": "<comp> style practice which data structure is based on the fifo principle"
+        },
+        "2186": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Which data structure is based on the FIFO principle?",
+            "norm": "<comp> style practice which data structure is based on the fifo principle"
+        },
+        "2041": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Find the LCM of 15, 20, and 30.",
+            "norm": "<comp> style practice find the lcm of <num> <num> and <num>"
+        },
+        "2370": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Find the LCM of 12, 16, and 24.",
+            "norm": "<comp> style practice find the lcm of <num> <num> and <num>"
+        },
+        "2085": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] An item bought for Rs. 200 is sold for Rs. 250. What is the profit percentage?",
+            "norm": "<comp> style practice an item bought for rs <num> is sold for rs <num> what is the profit percentage"
+        },
+        "2119": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] An item bought for Rs. 500 is sold for Rs. 600. What is the profit percentage?",
+            "norm": "<comp> style practice an item bought for rs <num> is sold for rs <num> what is the profit percentage"
+        },
+        "2235": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] An item bought for Rs. 600 is sold for Rs. 750. What is the profit percentage?",
+            "norm": "<comp> style practice an item bought for rs <num> is sold for rs <num> what is the profit percentage"
+        },
+        "2375": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] An item bought for Rs. 400 is sold for Rs. 520. What is the profit percentage?",
+            "norm": "<comp> style practice an item bought for rs <num> is sold for rs <num> what is the profit percentage"
+        },
+        "2086": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] If price increases by 25%, by what percent must consumption decrease to maintain expenditure?",
+            "norm": "<comp> style practice if price increases by <num> by what percent m<comp> consumption decrease to maintain expenditure"
+        },
+        "2328": {
+            "company": "UST",
+            "text": "[UST Style Practice] If price increases by 20%, by what percent must consumption decrease to maintain expenditure?",
+            "norm": "<comp> style practice if price increases by <num> by what percent m<comp> consumption decrease to maintain expenditure"
+        },
+        "2428": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] If price increases by 50%, by what percent must consumption decrease to maintain expenditure?",
+            "norm": "<comp> style practice if price increases by <num> by what percent m<comp> consumption decrease to maintain expenditure"
+        },
+        "2092": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Pipe A fills a tank in 8 hours and Pipe B in 12 hours. How long together?",
+            "norm": "<comp> style practice pipe a fills a tank in <num> hours and pipe b in <num> hours how long together"
+        },
+        "2123": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Pipe A fills a tank in 4 hours and Pipe B in 6 hours. How long together?",
+            "norm": "<comp> style practice pipe a fills a tank in <num> hours and pipe b in <num> hours how long together"
+        },
+        "2099": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Walking 10 m East, then turning right and walking 10 m. What direction is the final position from the starting point?",
+            "norm": "<comp> style practice walking <num> m east then turning right and walking <num> m what direction is the final position from the starting point"
+        },
+        "2244": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] Walking 10 m East, then turning right and walking 10 m. What direction is the final position from the starting point?",
+            "norm": "<comp> style practice walking <num> m east then turning right and walking <num> m what direction is the final position from the starting point"
+        },
+        "2293": {
+            "company": "UST",
+            "text": "[UST Style Practice] Walking 10 m East, then turning right and walking 10 m. What direction is the final position from the starting point?",
+            "norm": "<comp> style practice walking <num> m east then turning right and walking <num> m what direction is the final position from the starting point"
+        },
+        "2100": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Facing North, turning 180 degrees faces:",
+            "norm": "<comp> style practice facing north turning <num> degrees faces"
+        },
+        "2346": {
+            "company": "UST",
+            "text": "[UST Style Practice] Facing North, turning 180 degrees faces:",
+            "norm": "<comp> style practice facing north turning <num> degrees faces"
+        },
+        "2113": {
+            "company": "LTI Mindtree",
+            "text": "[LTI Mindtree Style Practice] Which data structure follows the LIFO principle?",
+            "norm": "<comp> style practice which data structure follows the lifo principle"
+        },
+        "2319": {
+            "company": "UST",
+            "text": "[UST Style Practice] Which data structure follows the LIFO principle?",
+            "norm": "<comp> style practice which data structure follows the lifo principle"
+        },
+        "2419": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Which data structure follows the LIFO principle?",
+            "norm": "<comp> style practice which data structure follows the lifo principle"
+        },
+        "2115": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] What is the greatest common factor of 24 and 36?",
+            "norm": "<comp> style practice what is the greatest common factor of <num> and <num>"
+        },
+        "2270": {
+            "company": "UST",
+            "text": "[UST Style Practice] What is the greatest common factor of 18 and 42?",
+            "norm": "<comp> style practice what is the greatest common factor of <num> and <num>"
+        },
+        "2171": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Four engineers A, B, C, D sit around a circular table facing center. A is opposite C. B is to the right of A. Who is opposite B?",
+            "norm": "<comp> style practice four engineers a b c d sit around a circular table facing center a is opposite c b is to the right of a who is opposite b"
+        },
+        "2245": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] Four engineers A, B, C, D sit around a circular table facing center. A is opposite C. B is to the right of A. Who is opposite B?",
+            "norm": "<comp> style practice four engineers a b c d sit around a circular table facing center a is opposite c b is to the right of a who is opposite b"
+        },
+        "2175": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Select the antonym for the word: COARSE",
+            "norm": "<comp> style practice select the antonym for the word coarse"
+        },
+        "2209": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] Select the antonym for the word: COARSE",
+            "norm": "<comp> style practice select the antonym for the word coarse"
+        },
+        "2185": {
+            "company": "HCL",
+            "text": "[HCL Style Practice] Which SQL keyword counts the total number of matching rows?",
+            "norm": "<comp> style practice which sql keyword counts the total number of matching rows"
+        },
+        "2317": {
+            "company": "UST",
+            "text": "[UST Style Practice] Which SQL keyword counts the total number of matching rows?",
+            "norm": "<comp> style practice which sql keyword counts the total number of matching rows"
+        },
+        "2242": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] In a code, CODE is written as DPEF. How is RUN written in that code?",
+            "norm": "<comp> style practice in a code code is written as dpef how is run written in that code"
+        },
+        "2342": {
+            "company": "UST",
+            "text": "[UST Style Practice] In a code, CODE is written as DPEF. How is RUN written in that code?",
+            "norm": "<comp> style practice in a code code is written as dpef how is run written in that code"
+        },
+        "2249": {
+            "company": "Amazon",
+            "text": "[Amazon Style Practice] Select the antonym for the word: OPAQUE",
+            "norm": "<comp> style practice select the antonym for the word opaque"
+        },
+        "2454": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Select the antonym for the word: OPAQUE",
+            "norm": "<comp> style practice select the antonym for the word opaque"
+        },
+        "2273": {
+            "company": "UST",
+            "text": "[UST Style Practice] What is the square of 17?",
+            "norm": "<comp> style practice what is the square of <num>"
+        },
+        "2373": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] What is the square of 18?",
+            "norm": "<comp> style practice what is the square of <num>"
+        },
+        "2282": {
+            "company": "UST",
+            "text": "[UST Style Practice] Pipe A fills a tank in 6 hours and Pipe B empties it in 10 hours. If both open together, how long to fill?",
+            "norm": "<comp> style practice pipe a fills a tank in <num> hours and pipe b empties it in <num> hours if both open together how long to fill"
+        },
+        "2382": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Pipe A fills a tank in 8 hours and Pipe B empties it in 12 hours. If both open together, how long to fill?",
+            "norm": "<comp> style practice pipe a fills a tank in <num> hours and pipe b empties it in <num> hours if both open together how long to fill"
+        },
+        "2325": {
+            "company": "UST",
+            "text": "[UST Style Practice] Find the area of a square with perimeter 40 cm.",
+            "norm": "<comp> style practice find the area of a square with perimeter <num> cm"
+        },
+        "2425": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Find the area of a square with perimeter 48 cm.",
+            "norm": "<comp> style practice find the area of a square with perimeter <num> cm"
+        },
+        "2334": {
+            "company": "UST",
+            "text": "[UST Style Practice] If ratio of two numbers is 3 : 5 and sum is 80, find the smaller number.",
+            "norm": "<comp> style practice if ratio of two numbers is <num> <num> and sum is <num> find the smaller number"
+        },
+        "2434": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] If ratio of two numbers is 4 : 5 and sum is 90, find the smaller number.",
+            "norm": "<comp> style practice if ratio of two numbers is <num> <num> and sum is <num> find the smaller number"
+        },
+        "2338": {
+            "company": "UST",
+            "text": "[UST Style Practice] A can do a task in 4 days and B in 4 days. How long will they take together?",
+            "norm": "<comp> style practice a can do a task in <num> days and b in <num> days how long will they take together"
+        },
+        "2438": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] A can do a task in 5 days and B in 5 days. How long will they take together?",
+            "norm": "<comp> style practice a can do a task in <num> days and b in <num> days how long will they take together"
+        },
+        "2366": {
+            "company": "UST",
+            "text": "[UST Style Practice] Which data structure follows the FIFO principle?",
+            "norm": "<comp> style practice which data structure follows the fifo principle"
+        },
+        "2465": {
+            "company": "IBM",
+            "text": "[IBM Style Practice] Which data structure follows the FIFO principle?",
+            "norm": "<comp> style practice which data structure follows the fifo principle"
+        }
+    }
+}

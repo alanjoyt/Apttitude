@@ -55,8 +55,8 @@ $unlockedItems = $unlocksStmt->fetchAll();
   <!-- Evolving Mascot Avatar Showcase Card -->
   <div class="col-md-5 col-lg-4">
     <div class="card card-gamified p-4 text-center">
-      <div class="display-1 my-3" style="color: var(--highlight);">
-        <?= $mascot['emoji'] ?>
+      <div class="my-3 d-flex justify-content-center align-items-center" style="min-height: 80px; color: var(--marker-orange);">
+        <svg class="exam-icon" style="width: 72px; height: 72px;"><use href="#<?= htmlspecialchars($mascot['icon']) ?>"></use></svg>
       </div>
       <h3 class="font-serif fw-bold text-ink mb-1"><?= htmlspecialchars($mascot['name']) ?></h3>
       <div class="d-flex justify-content-center">
@@ -75,11 +75,11 @@ $unlockedItems = $unlocksStmt->fetchAll();
         </div>
         <div class="d-flex justify-content-between text-ink-muted small mb-2">
           <span>Active Streak</span>
-          <strong class="d-inline-flex align-items-center gap-1" style="color: var(--highlight);"><svg class="exam-icon text-danger" style="width:13px;height:13px;"><use href="#icon-flame"></use></svg> <?= $user['current_streak'] ?> Days</strong>
+          <strong class="d-inline-flex align-items-center gap-1" style="color: var(--highlight);"><svg class="exam-icon text-danger icon-13"><use href="#icon-flame"></use></svg> <?= $user['current_streak'] ?> Days</strong>
         </div>
         <div class="d-flex justify-content-between text-ink-muted small">
           <span>Speed Coins Wallet</span>
-          <strong class="d-inline-flex align-items-center gap-1" style="color: var(--accent);"><svg class="exam-icon" style="width:13px;height:13px;"><use href="#icon-coin"></use></svg> <?= number_format($user['coins']) ?> Coins</strong>
+          <strong class="d-inline-flex align-items-center gap-1" style="color: var(--accent);"><svg class="exam-icon icon-13"><use href="#icon-coin"></use></svg> <?= number_format($user['coins']) ?> Coins</strong>
         </div>
       </div>
     </div>
@@ -123,15 +123,15 @@ $unlockedItems = $unlocksStmt->fetchAll();
       <?php else: ?>
         <div class="d-flex flex-column gap-2">
           <?php foreach ($unlockedItems as $item): ?>
-            <div class="d-flex justify-content-between align-items-center p-3 rounded-4 border" style="background-color: var(--bg); border-color: var(--border) !important;">
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi <?= $item['icon'] ?> fs-4" style="color: var(--accent);"></i>
-                <div>
-                  <strong class="d-block text-ink font-serif"><?= htmlspecialchars($item['title']) ?></strong>
-                  <span class="text-ink-muted small"><?= htmlspecialchars($item['description']) ?></span>
+            <div class="d-flex justify-content-between align-items-start align-items-sm-center gap-3 p-3 rounded-4 border" style="background-color: var(--bg); border-color: var(--border) !important;">
+              <div class="d-flex align-items-start gap-2.5 min-w-0 flex-grow-1">
+                <i class="bi <?= $item['icon'] ?> fs-4 flex-shrink-0 mt-0.5" style="color: var(--accent);"></i>
+                <div class="min-w-0 flex-grow-1">
+                  <strong class="d-block text-ink font-serif text-break mb-1" style="font-size: clamp(0.92rem, 2.8vw, 1.05rem); line-height: 1.35; overflow-wrap: anywhere;"><?= htmlspecialchars($item['title']) ?></strong>
+                  <span class="text-ink-muted small d-block" style="line-height: 1.4; overflow-wrap: anywhere;"><?= htmlspecialchars($item['description']) ?></span>
                 </div>
               </div>
-              <span class="stamp-badge py-1 px-3">Active</span>
+              <span class="stamp-badge py-1 px-2.5 flex-shrink-0 text-nowrap align-self-start align-self-sm-center" style="white-space: nowrap !important; font-size: 0.72rem; letter-spacing: 0.05em;">ACTIVE</span>
             </div>
           <?php endforeach; ?>
         </div>

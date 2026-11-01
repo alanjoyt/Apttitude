@@ -22,8 +22,17 @@ class QuestService {
         $stmt->execute([$userId, $today]);
         $quests = $stmt->fetchAll();
 
-        // If user has missing quest rows for today, populate them
+        $cfg = GamificationEngine::getConfig();
+        $questCfg = $cfg['quests'] ?? [];
+
+        // If user has missing quest rows for today, populate them & sync config rewards
         foreach ($quests as &$q) {
+            $qType = $q['quest_type'] ?? '';
+            if (isset($questCfg[$qType])) {
+                $q['xp_reward'] = (int)$questCfg[$qType]['xp'];
+                $q['coin_reward'] = (int)$questCfg[$qType]['coins'];
+            }
+
             if ($q['progress_count'] === null) {
                 $db->prepare("
                     INSERT IGNORE INTO user_daily_quests (user_id, quest_id, progress_count, is_completed, is_claimed, assigned_date)
@@ -109,15 +118,20 @@ class QuestService {
             return ['status' => 'error', 'message' => 'Quest reward already claimed or objectives incomplete!'];
         }
 
-        // Award rewards safely once
-        $xpRes = User::addXP($userId, (int)$quest['xp_reward']);
-        WalletService::addCoins($userId, (int)$quest['coin_reward'], 'admin_grant', 'Daily Quest Completion: ' . $quest['title']);
+        // Award rewards safely once from authoritative economy config
+        $cfg = GamificationEngine::getConfig();
+        $qType = $quest['quest_type'] ?? '';
+        $xpReward = isset($cfg['quests'][$qType]) ? (int)$cfg['quests'][$qType]['xp'] : (int)$quest['xp_reward'];
+        $coinReward = isset($cfg['quests'][$qType]) ? (int)$cfg['quests'][$qType]['coins'] : (int)$quest['coin_reward'];
+
+        $xpRes = User::addXP($userId, $xpReward);
+        WalletService::addCoins($userId, $coinReward, 'admin_grant', 'Daily Quest Completion: ' . $quest['title']);
 
         return [
             'status' => 'success',
-            'message' => 'Claimed reward: +' . $quest['xp_reward'] . ' XP & +' . $quest['coin_reward'] . ' Speed Coins!',
-            'xp_earned' => (int)$quest['xp_reward'],
-            'coins_earned' => (int)$quest['coin_reward']
+            'message' => 'Claimed reward: +' . $xpReward . ' XP & +' . $coinReward . ' Speed Coins!',
+            'xp_earned' => $xpReward,
+            'coins_earned' => $coinReward
         ];
     }
 }

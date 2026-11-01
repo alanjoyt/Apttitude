@@ -18,7 +18,7 @@ if ($userId) {
     </div>
     <h1 class="font-serif fw-bold fs-2 text-ink">60-Second Aptitude Time Attack</h1>
     <p class="text-ink-muted mx-auto" style="max-width: 600px;">
-      60 Seconds on the clock! Answer as many questions as possible. Each correct answer adds **+3 Seconds** to the timer!
+      60 Seconds on the clock! Answer as many questions as possible. Each correct answer adds <strong class="text-success fw-bold">+3 Seconds</strong> to the timer!
     </p>
   </div>
 
@@ -39,7 +39,7 @@ if ($userId) {
       <!-- Top Timer & Multiplier Bar -->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <span class="badge rounded-pill px-4 py-2 fs-5 d-inline-flex align-items-center gap-1" id="taTimerDisplay" style="background-color: var(--surface); color: var(--danger); border: 1px solid var(--border);">
-          <svg class="exam-icon" style="width:18px;height:18px;"><use href="#icon-clock"></use></svg> <span id="taTimerSecs">60s</span>
+          <svg class="exam-icon icon-18"><use href="#icon-clock"></use></svg> <span id="taTimerSecs">60s</span>
         </span>
         <span class="badge rounded-pill px-3 py-2 fs-6 fw-bold" id="taComboDisplay" style="background-color: var(--surface); color: var(--highlight); border: 1px solid var(--border);">
           1x Multiplier
@@ -92,6 +92,7 @@ let taCorrect = 0;
 let taCombo = 1;
 let taMaxCombo = 1;
 let currentTaQuestion = null;
+let taSeenQuestionIds = [];
 
 function startTimeAttack() {
     document.getElementById('taStartCard').style.display = 'none';
@@ -102,9 +103,10 @@ function startTimeAttack() {
     taCorrect = 0;
     taCombo = 1;
     taMaxCombo = 1;
+    taSeenQuestionIds = [];
     
     updateTaUI();
-    loadTaQuestion();
+    loadTaQuestion(true); // true = reset server-side seen list
 
     clearInterval(taInterval);
     taInterval = setInterval(() => {
@@ -123,12 +125,18 @@ function updateTaUI() {
     document.getElementById('taComboDisplay').innerText = `${taCombo}x Multiplier`;
 }
 
-function loadTaQuestion() {
-    fetch('index.php?action=api_next_question')
+function loadTaQuestion(isReset = false) {
+    // Server tracks seen IDs — no need to pass a growing exclude list via URL
+    const resetParam = isReset ? '&reset=1' : '';
+    fetch('index.php?action=api_next_question&mode=time_attack' + resetParam)
         .then(r => r.json())
         .then(res => {
             if (res.status === 'success') {
                 currentTaQuestion = res.data;
+                // Keep client-side list too for quick duplicate guard
+                if (!taSeenQuestionIds.includes(currentTaQuestion.id)) {
+                    taSeenQuestionIds.push(currentTaQuestion.id);
+                }
                 document.getElementById('taQuestionText').innerText = currentTaQuestion.question_text;
                 
                 const opts = currentTaQuestion.options;
@@ -152,7 +160,8 @@ function submitTaAnswer(selectedOpt) {
             question_id: currentTaQuestion.id,
             selected_option: selectedOpt,
             confidence: 'sure',
-            time_taken_seconds: 5
+            time_taken_seconds: 5,
+            csrf_token: window.CSRF_TOKEN || ''
         })
     })
     .then(r => r.json())

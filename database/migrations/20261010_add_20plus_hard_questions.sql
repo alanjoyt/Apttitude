@@ -1,6 +1,6 @@
 -- Migration: Add 20+ Hard Questions to every topic/subtopic
 -- Date: 2026-10-10
--- Author: mr.ignite ~ Nexyra Solutions
+-- Author: mr.ignite ~ BOLDBYTE
 -- Total new hard questions: 73
 
 INSERT INTO `questions` (`subtopic_id`, `difficulty`, `question_text`, `option_a`, `option_b`, `option_c`, `option_d`, `correct_option`, `explanation`, `est_time_seconds`, `is_company_pyq`) VALUES (1, 'hard', 'Two trains of lengths 180 m and 220 m are running on parallel tracks. When running in the same direction, the faster train passes the slower train in 40 seconds. When running in opposite directions, they pass each other in 8 seconds. What is the speed of the faster train?', '30 m/s', '25 m/s', '35 m/s', '20 m/s', 'A', 'Total distance to cross = 180 + 220 = 400 m. Same direction relative speed (u - v) = 400 / 40 = 10 m/s. Opposite direction relative speed (u + v) = 400 / 8 = 50 m/s. Adding the equations: 2u = 60 => u = 30 m/s. Thus, the faster train runs at 30 m/s.', 90, 0);

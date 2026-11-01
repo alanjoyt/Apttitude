@@ -167,6 +167,10 @@ class Leaderboard {
         // Reset weekly period_xp to 0
         $db->exec("UPDATE leaderboard_scores SET period_xp = 0, rank_position = 0 WHERE period = 'weekly'");
 
+        // Refresh college stats aggregate cache for new week
+        require_once __DIR__ . '/../Services/CollegeService.php';
+        CollegeService::recalculateCollegeStats();
+
         // Record completion for current week
         $db->prepare("
             INSERT INTO system_settings (setting_key, setting_value, updated_at) 

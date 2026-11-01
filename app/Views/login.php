@@ -54,6 +54,9 @@
 
       <!-- Login Form -->
       <form action="index.php?action=login" method="POST">
+        <?php if (!empty($_GET['redirect'])): ?>
+          <input type="hidden" name="redirect" value="<?= htmlspecialchars($_GET['redirect'], ENT_QUOTES) ?>">
+        <?php endif; ?>
         <div class="mb-3 text-start">
           <label class="form-label text-ink-muted small fw-bold" for="loginEmail">Email Address</label>
           <div class="input-clear-wrapper">

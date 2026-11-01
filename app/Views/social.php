@@ -134,11 +134,11 @@ $allGuilds = $db->query("SELECT g.*, COUNT(gm.user_id) as member_count FROM guil
                 <span class="badge rounded-circle px-2 py-1" style="background-color: var(--highlight); color: white;"><?= substr($f['tier'], 0, 1) ?></span>
                 <div>
                   <strong class="d-block small text-ink font-serif"><?= htmlspecialchars($f['name']) ?></strong>
-                  <span class="text-ink-muted fs-8 d-inline-flex align-items-center gap-1"><svg class="exam-icon text-warning" style="width:11px;height:11px;"><use href="#icon-star"></use></svg> <?= number_format($f['total_xp']) ?> XP &bull; <svg class="exam-icon text-danger" style="width:11px;height:11px;"><use href="#icon-flame"></use></svg> <?= $f['current_streak'] ?>d streak</span>
+                  <span class="text-ink-muted fs-8 d-inline-flex align-items-center gap-1"><svg class="exam-icon text-warning icon-11"><use href="#icon-star"></use></svg> <?= number_format($f['total_xp']) ?> XP &bull; <svg class="exam-icon text-danger icon-11"><use href="#icon-flame"></use></svg> <?= $f['current_streak'] ?>d streak</span>
                 </div>
               </div>
               <a href="index.php?action=duel" class="btn btn-outline-gamified btn-sm px-3 fs-8 fw-bold d-inline-flex align-items-center gap-1">
-                <svg class="exam-icon" style="width:12px;height:12px;"><use href="#icon-swords"></use></svg> Challenge 1v1
+                <svg class="exam-icon icon-12"><use href="#icon-swords"></use></svg> Challenge 1v1
               </a>
             </div>
           <?php endforeach; ?>
@@ -207,7 +207,7 @@ function submitAddFriend() {
     fetch('index.php?action=api_add_friend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email })
+        body: JSON.stringify({ email: email, csrf_token: window.CSRF_TOKEN || '' })
     })
     .then(res => res.json())
     .then(res => {
@@ -220,7 +220,7 @@ function acceptFriend(requestId) {
     fetch('index.php?action=api_accept_friend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ request_id: requestId })
+        body: JSON.stringify({ request_id: requestId, csrf_token: window.CSRF_TOKEN || '' })
     })
     .then(res => res.json())
     .then(res => {
@@ -237,7 +237,7 @@ function submitCreateSquad() {
     fetch('index.php?action=api_create_squad', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, tag: tag, description: desc })
+        body: JSON.stringify({ name: name, tag: tag, description: desc, csrf_token: window.CSRF_TOKEN || '' })
     })
     .then(res => res.json())
     .then(res => {
@@ -250,7 +250,7 @@ function joinSquad(squadId) {
     fetch('index.php?action=api_join_squad', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ squad_id: squadId })
+        body: JSON.stringify({ squad_id: squadId, csrf_token: window.CSRF_TOKEN || '' })
     })
     .then(res => res.json())
     .then(res => {

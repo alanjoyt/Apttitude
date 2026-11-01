@@ -70,7 +70,7 @@
                 <h6 class="font-serif fw-bold text-ink mb-0">Speed Coins & Store Utility</h6>
               </div>
               <p class="small text-ink-muted mb-0">
-                Earn Speed Coins <svg class="exam-icon text-warning" style="width:14px;height:14px;"><use href="#icon-coin"></use></svg> for speed & accuracy. Spend coins in the <strong>Store</strong> to buy <strong>Streak Shields</strong>, <strong>Formula Cheat-Sheets</strong>, and <strong>Company Mock Passes</strong>!
+                Earn Speed Coins <svg class="exam-icon text-warning icon-14"><use href="#icon-coin"></use></svg> for speed & accuracy. Spend coins in the <strong>Store</strong> to buy <strong>Streak Shields</strong>, <strong>Formula Cheat-Sheets</strong>, and <strong>Company Mock Passes</strong>!
               </p>
             </div>
           </div>

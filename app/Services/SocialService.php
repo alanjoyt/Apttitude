@@ -13,7 +13,7 @@ class SocialService {
             SELECT f.id as friendship_id, u.id as user_id, u.name, u.tier, u.total_xp, u.current_streak, f.status
             FROM friendships f
             JOIN users u ON (f.friend_id = u.id AND f.user_id = ?) OR (f.user_id = u.id AND f.friend_id = ?)
-            WHERE u.id != ? AND f.status = 'accepted'
+            WHERE u.id != ? AND f.status = 'accepted' AND u.role != 'admin'
             ORDER BY u.total_xp DESC
         ");
         $stmt->execute([$userId, $userId, $userId]);

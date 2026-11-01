@@ -78,6 +78,29 @@
           </div>
         </div>
 
+        <div class="mb-3 text-start">
+          <label class="form-label text-ink-muted small fw-bold" for="regCollege">College / Institute (Optional)</label>
+          <select id="regCollege" name="college_id" class="form-select" style="background-color: var(--bg); border-color: var(--border); color: var(--ink);">
+            <option value="">-- Select Your College --</option>
+            <?php if (!empty($colleges) && is_array($colleges)): ?>
+              <?php foreach ($colleges as $c): ?>
+                <option value="<?= (int)$c['id'] ?>" <?= (isset($_POST['college_id']) && (int)$_POST['college_id'] === (int)$c['id']) ? 'selected' : '' ?>>
+                  <?= htmlspecialchars($c['name']) ?> (<?= htmlspecialchars($c['city']) ?>, <?= htmlspecialchars($c['state']) ?>)
+                </option>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </select>
+          <div class="form-check mt-2" id="showNameCheckGroup">
+            <input class="form-check-input" type="checkbox" id="showNameOnBoards" name="show_name_on_boards" value="1" <?= (!empty($_POST['show_name_on_boards'])) ? 'checked' : '' ?>>
+            <label class="form-check-label small text-ink fw-semibold" for="showNameOnBoards">
+              Show my name on the college leaderboard
+            </label>
+            <div class="form-text extra-small text-ink-muted mt-0.5" style="font-size: 0.72rem;">
+              <i class="bi bi-shield-lock-fill me-1 text-accent"></i> Privacy by default (Option B): If unchecked, your scores appear as <strong>"Anonymous Student"</strong>. You can change this anytime in Profile settings.
+            </div>
+          </div>
+        </div>
+
         <div class="mb-4 text-start">
           <label class="form-label text-ink-muted small fw-bold" for="regRef">Referral Code (Optional — Earn +25 Bonus Coins!)</label>
           <div class="input-clear-wrapper">

@@ -404,7 +404,16 @@ class FixPlanService {
         }
 
         // 3. SERVER VERIFICATION OF ATTEMPTS (Anti-tamper)
+        // FP10: Strictly exclude attempts counted in earlier completed days
+        $priorStmt = $db->prepare("SELECT MAX(completed_at) FROM fix_plan_days WHERE plan_id = ? AND status = 'completed'");
+        $priorStmt->execute([$planId]);
+        $priorCompletedAt = $priorStmt->fetchColumn();
+
         $since = $day['unlocked_at'] ?: $plan['started_at'];
+        if ($priorCompletedAt && strtotime($priorCompletedAt) > strtotime($since)) {
+            $since = $priorCompletedAt;
+        }
+
         $targetCount = (int)$day['target_count'];
         $taskType = $day['task_type'];
         $subtopicId = $day['subtopic_id'] ? (int)$day['subtopic_id'] : null;
@@ -413,12 +422,17 @@ class FixPlanService {
         $weakest = json_decode($plan['weakest_subtopics'] ?? '[]', true) ?: [];
         $weakSubtopicIds = array_filter(array_column($weakest, 'subtopic_id'));
 
+        // FP13: Minimum effort rule - discard random-click farming (< 3 seconds)
+        $minEffortClause = " AND a.time_taken_seconds >= 3 ";
+
         if ($taskType === 'targeted_practice') {
+            // FP12: Counts only new attempts after day unlocked in plan's subtopics
             if ($subtopicId) {
                 $vStmt = $db->prepare("
                     SELECT COUNT(*) FROM attempts a
                     JOIN questions q ON a.question_id = q.id
                     WHERE a.user_id = ? AND q.subtopic_id = ? AND a.mode = 'practice' AND a.attempted_at >= DATE_SUB(?, INTERVAL 2 SECOND)
+                    $minEffortClause
                 ");
                 $vStmt->execute([$userId, $subtopicId, $since]);
                 $verifiedCount = (int)$vStmt->fetchColumn();
@@ -429,37 +443,53 @@ class FixPlanService {
                     SELECT COUNT(*) FROM attempts a
                     JOIN questions q ON a.question_id = q.id
                     WHERE a.user_id = ? AND q.subtopic_id IN ($inClause) AND a.mode = 'practice' AND a.attempted_at >= DATE_SUB(?, INTERVAL 2 SECOND)
+                    $minEffortClause
                 ");
                 $vStmt->execute($params);
                 $verifiedCount = (int)$vStmt->fetchColumn();
             }
         } elseif ($taskType === 'mistake_review') {
-            // Count attempts after unlock on questions previously answered incorrectly
+            // FP12: Count attempts on that student's own wrong question IDs
             $vStmt = $db->prepare("
                 SELECT COUNT(*) FROM attempts a
                 WHERE a.user_id = ? AND a.mode = 'practice' AND a.attempted_at >= DATE_SUB(?, INTERVAL 2 SECOND)
                   AND a.question_id IN (
                       SELECT DISTINCT question_id FROM attempts WHERE user_id = ? AND is_correct = 0
                   )
+                $minEffortClause
             ");
             $vStmt->execute([$userId, $since, $userId]);
             $verifiedCount = (int)$vStmt->fetchColumn();
         } elseif ($taskType === 'speed_drill') {
-            // Count attempts with rapid answering (<= 45 seconds)
+            // Count attempts with rapid but thoughtful answering (3 to 45 seconds)
             $vStmt = $db->prepare("
                 SELECT COUNT(*) FROM attempts a
-                WHERE a.user_id = ? AND a.mode = 'practice' AND a.attempted_at >= DATE_SUB(?, INTERVAL 2 SECOND) AND a.time_taken_seconds > 0 AND a.time_taken_seconds <= 45
+                WHERE a.user_id = ? AND a.mode = 'practice' AND a.attempted_at >= DATE_SUB(?, INTERVAL 2 SECOND)
+                  AND a.time_taken_seconds >= 3 AND a.time_taken_seconds <= 45
             ");
             $vStmt->execute([$userId, $since]);
             $verifiedCount = (int)$vStmt->fetchColumn();
         } elseif ($taskType === 'retest') {
-            // 15 questions in the weak subtopics
+            // FP11: Day 7 retest excludes questions already answered in baseline mock
+            $mockStmt = $db->prepare("SELECT question_ids FROM mock_sessions WHERE id = ?");
+            $mockStmt->execute([$plan['mock_session_id']]);
+            $mockQidsRaw = $mockStmt->fetchColumn();
+            $mockQids = json_decode($mockQidsRaw, true) ?: (explode(',', $mockQidsRaw ?: ''));
+            $mockQids = array_filter(array_map('intval', (array)$mockQids));
+
+            $excludeClause = "";
+            if (!empty($mockQids)) {
+                $excludeClause = " AND a.question_id NOT IN (" . implode(',', $mockQids) . ") ";
+            }
+
             $inClause = implode(',', array_fill(0, count($weakSubtopicIds), '?'));
             $params = array_merge([$userId], $weakSubtopicIds, [$since]);
             $vStmt = $db->prepare("
                 SELECT COUNT(*), COALESCE(SUM(a.is_correct), 0) FROM attempts a
                 JOIN questions q ON a.question_id = q.id
                 WHERE a.user_id = ? AND q.subtopic_id IN ($inClause) AND a.mode != 'mock' AND a.attempted_at >= DATE_SUB(?, INTERVAL 2 SECOND)
+                $excludeClause
+                $minEffortClause
             ");
             $vStmt->execute($params);
             $row = $vStmt->fetch(PDO::FETCH_NUM);

@@ -13,13 +13,14 @@ class TechnicalController {
         }
 
         $userId = $_SESSION['user_id'] ?? null;
+        session_write_close();
         $db = Database::getConnection();
 
         // 1. Total counts per language in database
         $stmt = $db->query("
             SELECT language, COUNT(*) as total_questions 
             FROM questions 
-            WHERE language IS NOT NULL AND language != ''
+            WHERE language IS NOT NULL AND language != '' AND is_published = 1
             GROUP BY language
         ");
         $totalByLang = [];
@@ -57,6 +58,9 @@ class TechnicalController {
             'php' => ['name' => 'PHP', 'icon' => 'bi-filetype-php', 'badge' => 'Web Architecture', 'color' => '#7c3aed', 'category' => 'language'],
             'csharp' => ['name' => 'C# (.NET)', 'icon' => 'bi-microsoft', 'badge' => '.NET & Cloud', 'color' => '#4f46e5', 'category' => 'language'],
             'python' => ['name' => 'Python', 'icon' => 'bi-filetype-py', 'badge' => 'Scripting & AI', 'color' => '#16a34a', 'category' => 'language'],
+            'typescript' => ['name' => 'TypeScript', 'icon' => 'bi-filetype-tsx', 'badge' => 'Types & Modern Web', 'color' => '#3178c6', 'category' => 'language'],
+            'llm' => ['name' => 'LLM & Prompt Eng', 'icon' => 'bi-chat-square-quote-fill', 'badge' => 'GenAI & RAG', 'color' => '#8b5cf6', 'category' => 'ai'],
+            'ai' => ['name' => 'AI & Generative AI', 'icon' => 'bi-robot', 'badge' => 'Agents & Transformers', 'color' => '#06b6d4', 'category' => 'ai'],
             'sql' => ['name' => 'SQL & DBMS', 'icon' => 'bi-database-fill', 'badge' => 'Relational Data', 'color' => '#d97706', 'category' => 'language'],
             'dsa' => ['name' => 'DSA', 'icon' => 'bi-diagram-3-fill', 'badge' => 'Algorithms & Trees', 'color' => '#e11d48', 'category' => 'language'],
             'innovature' => ['name' => 'Innovature Labs PYQ', 'icon' => 'bi-building-fill-gear', 'badge' => 'Campus Drive 2025', 'color' => '#059669', 'category' => 'company']

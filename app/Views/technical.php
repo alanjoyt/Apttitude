@@ -178,9 +178,9 @@ $totalTechLanguages = (int)($techSummary['total_langs'] ?? count($countsByLang))
         </div>
 
         <!-- Big Start CTA Button -->
-        <a href="index.php?action=technical&session=1&lang=<?= urlencode($activeLang) ?>" id="startTechnicalQuestionsBtn" class="btn btn-primary-gamified btn-lg w-100 py-3 fw-bold fs-6 d-flex align-items-center justify-content-center gap-2 shadow-sm" style="letter-spacing: 0.02em;">
+        <a href="index.php?action=technical&session=1&lang=<?= urlencode($activeLang) ?>" id="startTechnicalQuestionsBtn" class="btn btn-primary-gamified btn-lg w-100 py-3 fw-bold fs-6 d-flex align-items-center justify-content-center gap-2 shadow-sm" style="letter-spacing: 0.02em; color: #ffffff !important;">
           <i class="bi bi-play-circle-fill fs-5"></i>
-          <span>Start Technical Questions</span>
+          <span style="color: #ffffff !important;">Start Technical Questions</span>
           <i class="bi bi-arrow-right ms-1"></i>
         </a>
         <div class="text-center mt-2.5">
@@ -410,7 +410,7 @@ const TechnicalEngine = {
       icon: 'bi-building-fill-gear',
       badge: 'CAMPUS DRIVE PYQ',
       count: '<?= $innoCount ?> Questions',
-      desc: 'Authentic previous year campus recruitment questions from Innovature Labs (C pointers, Java OOP, SQL, and logical code).'
+      desc: 'Practice previous year campus recruitment style questions from Innovature Labs (C pointers, Java OOP, SQL, and logical code).'
     }
   },
 
@@ -1035,7 +1035,7 @@ const TechnicalEngine = {
                     <span class="text-muted extra-small">${item.user_correct} / ${item.total_questions} (${item.progress_percent}%)</span>
                   </div>
                   <div class="progress" style="height: 6px; border-radius: 4px; background: var(--border);">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: ${item.progress_percent}%;"></div>
+                    <div class="progress-bar bg-success" role="progressbar" aria-label="Innovature Labs Practice Progress" aria-valuenow="${item.progress_percent}" aria-valuemin="0" aria-valuemax="100" style="width: ${item.progress_percent}%;"></div>
                   </div>
                 `;
               }
@@ -1050,7 +1050,7 @@ const TechnicalEngine = {
                   <span class="text-muted extra-small">${item.user_correct} / ${item.total_questions} Solved (${item.progress_percent}%)</span>
                 </div>
                 <div class="progress" style="height: 6px; border-radius: 4px; background: var(--border);">
-                  <div class="progress-bar" role="progressbar" style="width: ${item.progress_percent}%; background-color: ${item.color};"></div>
+                  <div class="progress-bar" role="progressbar" aria-label="${item.name} Mastery Progress" aria-valuenow="${item.progress_percent}" aria-valuemin="0" aria-valuemax="100" style="width: ${item.progress_percent}%; background-color: ${item.color};"></div>
                 </div>
               </div>
             `;

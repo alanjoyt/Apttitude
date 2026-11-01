@@ -89,103 +89,134 @@ class AdaptiveEngine {
             }
         }
 
-        // Base query
-        $baseSql = "SELECT q.*, s.name as subtopic_name, t.name as topic_name 
-                    FROM questions q 
-                    JOIN subtopics s ON q.subtopic_id = s.id 
-                    JOIN topics t ON s.topic_id = t.id 
-                    WHERE 1=1";
-        
+        // Filter condition matching track, subtopic, language, or general topics
+        $filterSql = "WHERE q.is_published = 1";
         $params = [];
 
         // Track and category filtering
-        if ($track === 'technical' || (!empty($language) && in_array(strtolower($language), ['c', 'cpp', 'java', 'python', 'sql', 'dsa', 'php', 'csharp', 'innovature']))) {
+        if ($track === 'technical' || (!empty($language) && in_array(strtolower($language), ['c', 'cpp', 'java', 'python', 'typescript', 'llm', 'ai', 'sql', 'dsa', 'php', 'csharp', 'innovature']))) {
             // Strictly Technical questions
             if ($language === 'innovature') {
-                $baseSql .= " AND (q.language = 'innovature' OR q.company_name LIKE '%Innovature%' OR s.topic_id = 6)";
+                $filterSql .= " AND (q.language = 'innovature' OR q.company_name LIKE '%Innovature%' OR s.topic_id = 6)";
             } else if (!empty($language) && $language !== 'all') {
-                $baseSql .= " AND q.language = ?";
+                $filterSql .= " AND q.language = ?";
                 $params[] = strtolower($language);
             } else {
                 // All technical questions: topic_id 5 (Technical Assessment) or 6 (Company PYQs) or valid technical language
-                $baseSql .= " AND (s.topic_id IN (5, 6) OR (q.language IS NOT NULL AND q.language != '' AND q.language NOT IN ('quant', 'lr')))";
+                $filterSql .= " AND (s.topic_id IN (5, 6) OR (q.language IS NOT NULL AND q.language != '' AND q.language NOT IN ('quant', 'lr')))";
             }
         } else if ($language === 'innovature') {
-            $baseSql .= " AND (q.language = 'innovature' OR q.company_name LIKE '%Innovature%' OR s.topic_id = 6)";
+            $filterSql .= " AND (q.language = 'innovature' OR q.company_name LIKE '%Innovature%' OR s.topic_id = 6)";
         } else if (!empty($language) && $language !== 'all') {
-            $baseSql .= " AND q.language = ?";
+            $filterSql .= " AND q.language = ?";
             $params[] = strtolower($language);
         } else if ($subtopicId) {
-            $baseSql .= " AND q.subtopic_id = ?";
+            $filterSql .= " AND q.subtopic_id = ?";
             $params[] = $subtopicId;
         } else {
-            // General Practice: include general questions (topics 1-4) and non-company pyqs
-            $baseSql .= " AND (q.is_company_pyq = 0) AND s.topic_id IN (1, 2, 3, 4)";
+            // General Practice & Time Attack: include all aptitude questions (topics 1-4: Quant, Reasoning, Verbal, DI)
+            $filterSql .= " AND s.topic_id IN (1, 2, 3, 4)";
         }
 
-        // Deduplicate: always select the canonical (lowest ID) record for questions sharing identical text
-        $baseSql .= " AND q.id = (SELECT MIN(q_canon.id) FROM questions q_canon WHERE q_canon.question_text = q.question_text)";
+        // Fast fetch of candidate IDs and difficulties (indexed, ultra-fast)
+        $candStmt = $db->prepare("SELECT q.id, q.difficulty FROM questions q JOIN subtopics s ON q.subtopic_id = s.id {$filterSql}");
+        $candStmt->execute($params);
+        $candidates = $candStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Avoid simple questions when user is Silver+ tier (filter out easy unless explicitly forced)
-        if (!$forcedDifficulty && in_array($userTier, ['Silver', 'Gold', 'Platinum', 'Diamond'])) {
-            $baseSql .= " AND q.difficulty != 'easy'";
+        if (empty($candidates)) {
+            return null;
         }
 
-        // Exclude recent question IDs and identical question texts buffer (Anti-repetition)
-        $excludeIds = array_filter(array_map('intval', $excludeQuestionIds));
-        $excludeSql = "";
-        if (!empty($excludeIds)) {
-            $idList = implode(',', $excludeIds);
-            $excludeSql = " AND q.id NOT IN ($idList) AND q.question_text NOT IN (SELECT q_dup.question_text FROM questions q_dup WHERE q_dup.id IN ($idList))";
-        }
-
-        // 1. Unattempted EVER by user matching target difficulty (excluding recent buffer & text duplicates)
-        $sql1 = $baseSql . $excludeSql;
-        $params1 = $params;
+        // Fast retrieval of user attempted question IDs (respects topic resets)
+        $attemptedIds = [];
         if ($userId) {
-            $sql1 .= " AND q.id NOT IN (SELECT question_id FROM attempts WHERE user_id = ?) AND q.question_text NOT IN (SELECT q_att.question_text FROM attempts a_att JOIN questions q_att ON a_att.question_id = q_att.id WHERE a_att.user_id = ?)";
-            $params1[] = $userId;
-            $params1[] = $userId;
-        }
-        $sql1 .= " AND q.difficulty = ? ORDER BY RAND() LIMIT 1";
-        $stmt = $db->prepare($sql1);
-        $stmt->execute(array_merge($params1, [$targetDifficulty]));
-        $question = $stmt->fetch();
+            try {
+                if ($subtopicId) {
+                    $rst = $db->prepare("SELECT reset_at FROM user_topic_resets WHERE user_id = ? AND subtopic_id = ? LIMIT 1");
+                    $rst->execute([$userId, $subtopicId]);
+                    $resetAt = $rst->fetchColumn();
 
-        // 2. Unattempted EVER by user matching any allowed difficulty (excluding recent buffer)
-        if (!$question && $userId) {
-            $sql2 = $baseSql . $excludeSql . " AND q.id NOT IN (SELECT question_id FROM attempts WHERE user_id = ?) AND q.question_text NOT IN (SELECT q_att.question_text FROM attempts a_att JOIN questions q_att ON a_att.question_id = q_att.id WHERE a_att.user_id = ?) ORDER BY (CASE WHEN q.difficulty = 'hard' THEN 1 WHEN q.difficulty = 'medium' THEN 2 ELSE 3 END), RAND() LIMIT 1";
-            $stmt = $db->prepare($sql2);
-            $stmt->execute(array_merge($params, [$userId, $userId]));
-            $question = $stmt->fetch();
-        }
-
-        // 3. Any question in DB matching target difficulty excluding recent buffer
-        if (!$question) {
-            $sql3 = $baseSql . $excludeSql . " AND q.difficulty = ? ORDER BY RAND() LIMIT 1";
-            $stmt = $db->prepare($sql3);
-            $stmt->execute(array_merge($params, [$targetDifficulty]));
-            $question = $stmt->fetch();
-        }
-
-        // 4. Fallback: Spaced repetition (order by least recently attempted so no question repeats immediately)
-        if (!$question) {
-            if ($userId) {
-                $sql4 = $baseSql . $excludeSql . " ORDER BY (
-                    SELECT COALESCE(MAX(a_last.attempted_at), '2000-01-01') 
-                    FROM attempts a_last 
-                    JOIN questions q_last ON a_last.question_id = q_last.id 
-                    WHERE q_last.question_text = q.question_text AND a_last.user_id = ?
-                ) ASC, RAND() LIMIT 1";
-                $stmt = $db->prepare($sql4);
-                $stmt->execute(array_merge($params, [$userId]));
-            } else {
-                $sql4 = $baseSql . $excludeSql . " ORDER BY (CASE WHEN q.difficulty = 'hard' THEN 1 WHEN q.difficulty = 'medium' THEN 2 ELSE 3 END), q.total_attempts_count ASC, RAND() LIMIT 1";
-                $stmt = $db->prepare($sql4);
-                $stmt->execute($params);
+                    if ($resetAt) {
+                        $aStmt = $db->prepare("SELECT a.question_id FROM attempts a JOIN questions q ON a.question_id = q.id WHERE a.user_id = ? AND q.subtopic_id = ? AND a.attempted_at > ?");
+                        $aStmt->execute([$userId, $subtopicId, $resetAt]);
+                    } else {
+                        $aStmt = $db->prepare("SELECT a.question_id FROM attempts a JOIN questions q ON a.question_id = q.id WHERE a.user_id = ? AND q.subtopic_id = ?");
+                        $aStmt->execute([$userId, $subtopicId]);
+                    }
+                } else {
+                    $aStmt = $db->prepare("SELECT DISTINCT question_id FROM attempts WHERE user_id = ?");
+                    $aStmt->execute([$userId]);
+                }
+                $attemptedIds = array_map('intval', $aStmt->fetchAll(PDO::FETCH_COLUMN));
+            } catch (\Throwable $e) {
+                $attemptedIds = [];
             }
-            $question = $stmt->fetch();
         }
+
+        $attemptedLookup = array_flip($attemptedIds);
+        $excludeLookup = array_flip(array_filter(array_map('intval', $excludeQuestionIds)));
+
+        $unattempted = [];
+        $unattemptedWithoutExclusion = [];
+
+        foreach ($candidates as $c) {
+            $qid = (int)$c['id'];
+            if (isset($attemptedLookup[$qid])) {
+                continue;
+            }
+            $unattemptedWithoutExclusion[] = $c;
+            if (!isset($excludeLookup[$qid])) {
+                $unattempted[] = $c;
+            }
+        }
+
+        // Prefer unattempted excluding recent session buffer; if buffer exhausted all unattempted, fallback to unattempted
+        $pool = !empty($unattempted) ? $unattempted : $unattemptedWithoutExclusion;
+
+        $chosenId = null;
+        if (!empty($pool)) {
+            // Group by difficulty
+            $diffGroups = [];
+            foreach ($pool as $item) {
+                $diffGroups[$item['difficulty']][] = (int)$item['id'];
+            }
+
+            if (!empty($diffGroups[$targetDifficulty])) {
+                $matched = $diffGroups[$targetDifficulty];
+                $chosenId = $matched[array_rand($matched)];
+            } else {
+                $order = ($targetDifficulty === 'easy') ? ['easy', 'medium', 'hard'] : ['hard', 'medium', 'easy'];
+                foreach ($order as $d) {
+                    if (!empty($diffGroups[$d])) {
+                        $matched = $diffGroups[$d];
+                        $chosenId = $matched[array_rand($matched)];
+                        break;
+                    }
+                }
+            }
+        }
+
+        // When a specific subtopic or language is selected, strictly avoid repeating completed questions!
+        if (!$chosenId && $subtopicId) {
+            return null;
+        }
+        if (!$chosenId && !empty($language) && $language !== 'all') {
+            return null;
+        }
+
+        // General random practice fallback (all topics)
+        if (!$chosenId && !empty($candidates)) {
+            $allIds = array_column($candidates, 'id');
+            $chosenId = (int)$allIds[array_rand($allIds)];
+        }
+
+        if (!$chosenId) {
+            return null;
+        }
+
+        $qStmt = $db->prepare("SELECT q.*, s.name as subtopic_name, t.name as topic_name FROM questions q JOIN subtopics s ON q.subtopic_id = s.id JOIN topics t ON s.topic_id = t.id WHERE q.id = ?");
+        $qStmt->execute([$chosenId]);
+        $question = $qStmt->fetch(PDO::FETCH_ASSOC);
 
         return $question ? self::shuffleOptions($question) : null;
     }

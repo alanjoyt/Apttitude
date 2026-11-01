@@ -90,7 +90,7 @@ class User {
         return $user;
     }
 
-    public static function register(string $name, string $email, string $password, ?string $referralCode = null): int {
+    public static function register(string $name, string $email, string $password, ?string $referralCode = null, ?int $collegeId = null, bool $showNameOnBoards = false): int {
         self::ensureAddonColumnsExist();
         $db = Database::getConnection();
 
@@ -100,12 +100,33 @@ class User {
             throw new Exception("An account with this email address already exists. Please log in.");
         }
 
+        // Validate college_id if provided (CL1: must be active college)
+        if ($collegeId !== null) {
+            $cCheck = $db->prepare("SELECT COUNT(*) FROM colleges WHERE id = ? AND status = 'active'");
+            $cCheck->execute([$collegeId]);
+            if ((int)$cCheck->fetchColumn() === 0) {
+                throw new InvalidArgumentException("Selected college is invalid or not yet approved.");
+            }
+        }
+
         $hash = password_hash($password, PASSWORD_BCRYPT);
         $userRefCode = 'APTT-' . strtoupper(substr(md5(microtime() . $email), 0, 6));
 
+        $cfg = GamificationEngine::getConfig();
+        $signupCoins = (int)($cfg['signup_bonus_coins'] ?? 25);
+        $hideName = $showNameOnBoards ? 0 : 1; // Option B: Default to 1 (hidden) unless explicitly opted in
+
         try {
-            $stmt = $db->prepare("INSERT INTO users (name, email, password_hash, plan, total_xp, coins, tier, current_streak, referral_code) VALUES (?, ?, ?, 'free', 0, 100, 'Bronze', 0, ?)");
-            $stmt->execute([$name, $email, $hash, $userRefCode]);
+            $stmt = $db->prepare("
+                INSERT INTO users (name, email, password_hash, plan, total_xp, coins, tier, current_streak, referral_code, college_id, college_changed_at, hide_name_on_boards) 
+                VALUES (?, ?, ?, 'free', 0, ?, 'Bronze', 0, ?, ?, ?, ?)
+            ");
+            $stmt->execute([
+                $name, $email, $hash, $signupCoins, $userRefCode, 
+                $collegeId, 
+                $collegeId ? date('Y-m-d H:i:s') : null,
+                $hideName
+            ]);
             $userId = (int)$db->lastInsertId();
         } catch (\PDOException $e) {
             if ($e->getCode() == 23000 || str_contains($e->getMessage(), 'Duplicate entry') || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062)) {
@@ -114,13 +135,13 @@ class User {
             throw $e;
         }
 
-        // Log 100 welcome speed coins
+        // Log welcome speed coins bonus from economy config
         $db->prepare("
             INSERT INTO coin_transactions (user_id, amount, transaction_type, reference_description)
-            VALUES (?, 100, 'admin_grant', 'Welcome Signup Speed Coins Bonus')
-        ")->execute([$userId]);
+            VALUES (?, ?, 'admin_grant', 'Welcome Signup Speed Coins Bonus')
+        ")->execute([$userId, $signupCoins]);
 
-        // Process referral code if provided (+25 Speed Coins for both referrer & new student)
+        // Process referral code if provided
         if (!empty($referralCode)) {
             require_once __DIR__ . '/../Services/ReferralService.php';
             ReferralService::processReferral($userId, $referralCode);
@@ -179,7 +200,8 @@ class User {
         if (!$user) return [];
 
         $newXP = max(0, (int)$user['total_xp'] + $xp);
-        $newTier = GamificationEngine::getTierForXP($newXP);
+        $currentTier = $user['tier'] ?? 'Bronze';
+        $newTier = GamificationEngine::getTierForXP($newXP, $currentTier);
 
         $stmt = $db->prepare("UPDATE users SET total_xp = ?, tier = ? WHERE id = ?");
         $stmt->execute([$newXP, $newTier, $userId]);
@@ -187,13 +209,15 @@ class User {
         // Invalidate in-memory user cache on write
         self::clearCache($userId);
 
-        // Update leaderboard table
-        $lbStmt = $db->prepare("
-            INSERT INTO leaderboard_scores (user_id, period, tier, period_xp)
-            VALUES (?, 'weekly', ?, ?)
-            ON DUPLICATE KEY UPDATE period_xp = GREATEST(0, period_xp + ?), tier = VALUES(tier)
-        ");
-        $lbStmt->execute([$userId, $newTier, max(0, $xp), $xp]);
+        // Update leaderboard table (exclude admins from leaderboard_scores)
+        if (($user['role'] ?? 'user') !== 'admin') {
+            $lbStmt = $db->prepare("
+                INSERT INTO leaderboard_scores (user_id, period, tier, period_xp)
+                VALUES (?, 'weekly', ?, ?)
+                ON DUPLICATE KEY UPDATE period_xp = GREATEST(0, period_xp + ?), tier = VALUES(tier)
+            ");
+            $lbStmt->execute([$userId, $newTier, max(0, $xp), $xp]);
+        }
 
         return [
             'previous_xp' => $user['total_xp'],

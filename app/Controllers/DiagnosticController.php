@@ -124,9 +124,13 @@ class DiagnosticController {
             $updateStmt->execute([$userId]);
 
             $bonusAwarded = false;
+            $cfg = GamificationEngine::getConfig();
+            $diagXP = (int)($cfg['diagnostic_completion_xp'] ?? 100);
+            $diagCoins = (int)($cfg['diagnostic_completion_coins'] ?? 15);
+
             if ($updateStmt->rowCount() > 0) {
-                User::addXP($userId, 250);
-                WalletService::addCoins($userId, 50, 'admin_grant', 'Onboarding Diagnostic Completion Bonus');
+                User::addXP($userId, $diagXP);
+                WalletService::addCoins($userId, $diagCoins, 'admin_grant', 'Onboarding Diagnostic Completion Bonus');
                 $bonusAwarded = true;
             }
         }
@@ -136,8 +140,8 @@ class DiagnosticController {
             'correct_count' => $correctCount,
             'total_questions' => $totalCount,
             'accuracy_percent' => round(($correctCount / max(1, $totalCount)) * 100),
-            'bonus_xp' => isset($bonusAwarded) && $bonusAwarded ? 250 : 0,
-            'bonus_coins' => isset($bonusAwarded) && $bonusAwarded ? 50 : 0
+            'bonus_xp' => (isset($bonusAwarded) && $bonusAwarded) ? $diagXP : 0,
+            'bonus_coins' => (isset($bonusAwarded) && $bonusAwarded) ? $diagCoins : 0
         ]);
         exit;
     }

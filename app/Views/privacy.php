@@ -57,7 +57,7 @@
 
                     <h4 class="font-serif fw-bold text-accent mt-4 mb-3">6. Contact Us</h4>
                     <p>
-                        If you have questions regarding this Privacy Policy or wish to request data deletion, contact our team directly at <a href="mailto:alanjoy103@gmail.com" class="link-tertiary-exam fw-semibold">alanjoy103@gmail.com</a> or <a href="mailto:asknexyra@gmail.com" class="link-tertiary-exam fw-semibold">asknexyra@gmail.com</a>.
+                        If you have questions regarding this Privacy Policy or wish to request data deletion, contact our team directly at <a href="mailto:alanjoy103@gmail.com" class="link-tertiary-exam fw-semibold">alanjoy103@gmail.com</a> or <a href="mailto:askboldbyte@gmail.com" class="link-tertiary-exam fw-semibold">askboldbyte@gmail.com</a>.
                     </p>
                 </div>
             </div>

@@ -95,6 +95,17 @@ CREATE TABLE IF NOT EXISTS `user_progress` (
   FOREIGN KEY (`subtopic_id`) REFERENCES `subtopics`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- 6b. User Topic Resets (Anti-Repetition Topic Restart)
+CREATE TABLE IF NOT EXISTS `user_topic_resets` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `subtopic_id` INT NOT NULL,
+  `reset_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY `uniq_user_subtopic` (`user_id`, `subtopic_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`subtopic_id`) REFERENCES `subtopics`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 -- 7. Leaderboard Scores Table
 CREATE TABLE IF NOT EXISTS `leaderboard_scores` (
   `user_id` INT NOT NULL,

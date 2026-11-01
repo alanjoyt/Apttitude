@@ -79,7 +79,7 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
           </div>
         </div>
         <div class="progress mt-3" style="height: 6px;" title="<?= $completedCount ?>/7 Days Completed">
-          <div class="progress-bar bg-accent" role="progressbar" style="width: <?= $percentProgress ?>%;" aria-valuenow="<?= $percentProgress ?>" aria-valuemin="0" aria-valuemax="100"></div>
+          <div class="progress-bar bg-accent" role="progressbar" aria-label="7-Day Fix Plan completion progress" style="width: <?= $percentProgress ?>%;" aria-valuenow="<?= $percentProgress ?>" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
       <?php endif; ?>
     </div>
@@ -420,7 +420,7 @@ $weakDeck = $dashboardData['weak_deck'] ?? [];
           <div class="display-5 mb-2 text-warning"><i class="bi bi-bullseye"></i></div>
           <h5 class="font-serif fw-bold text-ink">1. Placement Question Banks</h5>
           <p class="text-ink-muted small">
-            Practice actual company test patterns (TCS, Infosys, Wipro, Accenture, Innovature). All questions feature full step-by-step explanations and verified solution keys.
+            Practice company test patterns (TCS, Infosys, Wipro, Accenture, Innovature). All questions feature full step-by-step explanations and detailed solution keys.
           </p>
           <button type="button" class="btn btn-primary-gamified fw-bold px-4 mt-2" onclick="showTourStep(2)">
             Next: Rewards & Economy <i class="bi bi-arrow-right"></i>

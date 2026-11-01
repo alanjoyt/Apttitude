@@ -239,6 +239,16 @@ class MockTestController {
             }
         }
 
+        // Check-only query: if client requested only checking for an active session, return now without creating one
+        if (!empty($_GET['check_active'])) {
+            echo json_encode([
+                'status' => 'no_active_session',
+                'is_resumed' => false,
+                'message' => 'No active session found.'
+            ]);
+            exit;
+        }
+
         // Fetch mock configuration for this pack and mode
         $mockConfig = null;
         try {

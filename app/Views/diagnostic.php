@@ -5,7 +5,7 @@
     <div class="card card-gamified p-4">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <span class="stamp-badge d-inline-flex align-items-center gap-1">
-          <svg class="exam-icon text-warning" style="width:14px;height:14px;"><use href="#icon-zap"></use></svg> Onboarding Diagnostic Test
+          <svg class="exam-icon text-warning icon-14"><use href="#icon-zap"></use></svg> Onboarding Diagnostic Test
         </span>
         <span class="fw-bold text-ink" id="diagnosticProgress">Question 1 of 12</span>
       </div>
@@ -144,7 +144,7 @@ function submitDiag() {
     fetch('index.php?action=api_submit_diagnostic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers: diagAnswers })
+        body: JSON.stringify({ answers: diagAnswers, csrf_token: window.CSRF_TOKEN || '' })
     })
     .then(res => res.json())
     .then(res => {

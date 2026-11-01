@@ -49,6 +49,9 @@ try {
         ['name' => 'Python Programming', 'code' => 'TECH_PYTHON'],
         ['name' => 'SQL & Relational Databases', 'code' => 'TECH_SQL'],
         ['name' => 'Data Structures & Algorithms', 'code' => 'TECH_DSA'],
+        ['name' => 'TypeScript & Modern JS', 'code' => 'TECH_TYPESCRIPT'],
+        ['name' => 'Large Language Models (LLM) & RAG', 'code' => 'TECH_LLM'],
+        ['name' => 'Artificial Intelligence & Generative AI', 'code' => 'TECH_AI'],
         ['name' => 'Innovature Labs Technical & PYQ', 'code' => 'TECH_INNOVATURE']
     ];
 

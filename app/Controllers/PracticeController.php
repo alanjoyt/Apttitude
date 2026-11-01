@@ -385,13 +385,24 @@ class PracticeController {
 
         // 3. Server-Side Boss Question Evaluation (Hard question, max 2 per day)
         $isBoss = false;
+        static $hasBossCol = null;
+        if ($hasBossCol === null) {
+            try {
+                $cCheck = $db->query("SHOW COLUMNS FROM attempts LIKE 'is_boss'")->fetch();
+                $hasBossCol = !empty($cCheck);
+            } catch (\Throwable $e) { $hasBossCol = false; }
+        }
+
         if ($userId && $isCorrect && $question['difficulty'] === 'hard') {
-            $bossCheckStmt = $db->prepare("
-                SELECT COUNT(*) FROM attempts
-                WHERE user_id = ? AND is_boss = 1 AND is_correct = 1 AND DATE(attempted_at) = CURDATE()
-            ");
-            $bossCheckStmt->execute([$userId]);
-            $bossTodayCount = (int)$bossCheckStmt->fetchColumn();
+            $bossTodayCount = 0;
+            if ($hasBossCol) {
+                $bossCheckStmt = $db->prepare("
+                    SELECT COUNT(*) FROM attempts
+                    WHERE user_id = ? AND is_boss = 1 AND is_correct = 1 AND DATE(attempted_at) = CURDATE()
+                ");
+                $bossCheckStmt->execute([$userId]);
+                $bossTodayCount = (int)$bossCheckStmt->fetchColumn();
+            }
 
             $maxDailyBoss = (int)($cfg['boss']['max_daily_boss_questions'] ?? 2);
             if ($bossTodayCount < $maxDailyBoss) {
@@ -441,23 +452,41 @@ class PracticeController {
         $dailyGoalAwarded = false;
 
         if ($userId) {
-            // Save attempt to DB with is_boss tag
-            $attemptStmt = $db->prepare("
-                INSERT INTO attempts (user_id, question_id, selected_option, is_correct, confidence, time_taken_seconds, xp_earned, coins_earned, mode, is_boss)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ");
-            $attemptStmt->execute([
-                $userId,
-                $questionId,
-                $selectedOption,
-                $isCorrect ? 1 : 0,
-                $confidence,
-                $timeTaken,
-                $xpEarned,
-                $coinsEarned,
-                $mode ?: 'practice',
-                $isBoss ? 1 : 0
-            ]);
+            // Save attempt to DB (conditionally with is_boss tag if column exists)
+            if ($hasBossCol) {
+                $attemptStmt = $db->prepare("
+                    INSERT INTO attempts (user_id, question_id, selected_option, is_correct, confidence, time_taken_seconds, xp_earned, coins_earned, mode, is_boss)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ");
+                $attemptStmt->execute([
+                    $userId,
+                    $questionId,
+                    $selectedOption,
+                    $isCorrect ? 1 : 0,
+                    $confidence,
+                    $timeTaken,
+                    $xpEarned,
+                    $coinsEarned,
+                    $mode ?: 'practice',
+                    $isBoss ? 1 : 0
+                ]);
+            } else {
+                $attemptStmt = $db->prepare("
+                    INSERT INTO attempts (user_id, question_id, selected_option, is_correct, confidence, time_taken_seconds, xp_earned, coins_earned, mode)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ");
+                $attemptStmt->execute([
+                    $userId,
+                    $questionId,
+                    $selectedOption,
+                    $isCorrect ? 1 : 0,
+                    $confidence,
+                    $timeTaken,
+                    $xpEarned,
+                    $coinsEarned,
+                    $mode ?: 'practice'
+                ]);
+            }
             $attemptId = (int)$db->lastInsertId();
 
             // Record XP & Speed Coins

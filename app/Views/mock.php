@@ -70,9 +70,9 @@ $packTitle = $packTitles[$packCode] ?? 'Company Placement Pattern Mock';
     <div class="card card-gamified p-3 mb-3 mock-header-card d-flex flex-wrap justify-content-between align-items-center gap-2">
       <div class="d-flex align-items-center gap-2 gap-sm-3 min-w-0">
         <span class="badge rounded-pill px-2.5 px-sm-3 py-2 fs-6 fw-bold" style="background-color: var(--surface); color: var(--danger); border: 1px solid var(--border);">
-          <svg class="exam-icon me-1 icon-14"><use href="#icon-clock"></use></svg> <span id="timerDisplay">10:00</span>
+          <svg class="exam-icon me-1 icon-14"><use href="#icon-clock"></use></svg> <span id="timerDisplay">--:--</span>
         </span>
-        <span class="fw-bold text-ink fs-6" id="mockProgressText">Question 1 of 10</span>
+        <span class="fw-bold text-ink fs-6" id="mockProgressText">Question -- of --</span>
       </div>
 
       <div class="d-flex align-items-center gap-2">
@@ -189,12 +189,12 @@ $packTitle = $packTitles[$packCode] ?? 'Company Placement Pattern Mock';
           <span class="badge-stamp-sm mb-1 d-inline-block">OFFICIAL MARKSHEET</span>
           <div class="d-flex align-items-center gap-2 flex-wrap">
             <h1 class="font-serif fw-bold text-ink fs-2 mb-0" id="scoreSheetTitle">Mock Test Result</h1>
-            <span class="badge rounded-pill bg-primary-subtle text-primary border px-2.5 py-1 fw-bold fs-7" id="scoreModeBadge">Standard Mode</span>
-            <span class="badge rounded-pill bg-warning-subtle text-warning border px-2.5 py-1 fw-bold fs-7" id="scorePercentileBadge">Top 100%</span>
+            <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis border px-2.5 py-1 fw-bold fs-7" id="scoreModeBadge">Standard Mode</span>
+            <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis border px-2.5 py-1 fw-bold fs-7" id="scorePercentileBadge">Top 100%</span>
           </div>
           <p class="text-ink-muted small mb-0 mt-1" id="scoreSheetSubtitle"><?= htmlspecialchars($packTitle) ?></p>
         </div>
-        <div class="d-flex align-items-center gap-2 no-print">
+        <div class="d-flex align-items-center gap-2 flex-wrap no-print">
           <button type="button" class="btn btn-outline-gamified btn-sm fw-bold" id="viewModeLeaderboardBtn" onclick="showMockLeaderboardModal(currentMockMode)" title="View Mode Leaderboard">
             <svg class="exam-icon me-1 text-warning icon-14"><use href="#icon-award"></use></svg> Leaderboard
           </button>
@@ -593,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function checkActiveSessionOrShowModes() {
     // 1. Check if user already has an active mock session in progress
     try {
-        const checkRes = await fetch(`index.php?action=api_get_mock&pack=${encodeURIComponent(currentPackCode)}`);
+        const checkRes = await fetch(`index.php?action=api_get_mock&pack=${encodeURIComponent(currentPackCode)}&check_active=1`);
         const checkData = await checkRes.json();
         if (checkData.status === 'success' && checkData.is_resumed) {
             // Actively resume session
@@ -647,8 +647,9 @@ function renderModeSelectionCards(data) {
             ? '<span class="badge rounded-pill bg-primary text-white fw-bold extra-small mb-2">RECOMMENDED</span>' 
             : `<span class="badge rounded-pill bg-body-tertiary text-ink border fw-bold extra-small mb-2">${m.title.toUpperCase()}</span>`;
 
+        const targetCount = (mKey === 'quick' ? 30 : (mKey === 'standard' ? 60 : m.target_questions || m.effective_questions));
         const cappedNotice = m.is_capped 
-            ? `<div class="alert alert-info py-1 px-2 extra-small mt-2 mb-0 border-0"><i class="bi bi-info-circle me-1"></i> Pool Capped: ${m.effective_questions} questions available</div>`
+            ? `<div class="alert alert-warning py-1.5 px-2.5 small mt-2 mb-0 border-0 fw-semibold text-warning-emphasis bg-warning-subtle"><i class="bi bi-exclamation-triangle-fill me-1 text-warning"></i> Pool limited: only ${m.effective_questions} questions available (target: ${targetCount})</div>`
             : '';
 
         const negMarkingText = m.negative_marking > 0 
@@ -671,7 +672,7 @@ function renderModeSelectionCards(data) {
                     ${cappedNotice}
                 </div>
                 <div class="mt-3">
-                    <button type="button" class="btn ${isRecommend ? 'btn-primary-gamified' : 'btn-outline-gamified'} w-100 fw-bold py-2" onclick="startMockInMode('${m.mode}')">
+                    <button type="button" id="startMockBtn_${m.mode}" class="btn ${isRecommend ? 'btn-primary-gamified' : 'btn-outline-gamified'} w-100 fw-bold py-2" onclick="startMockInMode('${m.mode}')">
                         Start ${m.title} &rarr;
                     </button>
                 </div>
@@ -820,56 +821,6 @@ function setupActiveSessionData(data) {
     renderQuestion();
     renderPalette();
     startTimer();
-}
-
-            currentIndex = 0;
-            userAnswers = (data.saved_answers && typeof data.saved_answers === 'object') ? Object.assign({}, data.saved_answers) : {};
-            questionTimes = {};
-            let storedSwitches = [];
-            if (currentMockSessionId) {
-                try {
-                    storedSwitches = JSON.parse(sessionStorage.getItem('tab_switches_' + currentMockSessionId) || '[]');
-                } catch(e) {}
-            }
-            tabSwitchSkipped = Array.isArray(storedSwitches) ? storedSwitches : [];
-            testStartTime = Date.now();
-            activeQuestionStartTime = Date.now();
-
-            renderQuestion();
-            renderPalette();
-            startTimer();
-        } else {
-            if (qBox) {
-                qBox.innerHTML = `
-                    <div class="text-center py-4">
-                        <i class="bi bi-inbox fs-1 text-ink-muted mb-2 d-block"></i>
-                        <h5 class="fw-bold text-ink">No Questions Found</h5>
-                        <p class="text-ink-muted mb-3">No mock questions are currently available for this pack.</p>
-                        <a href="index.php?action=store" class="btn btn-outline-gamified fw-bold">Back to Store</a>
-                    </div>
-                `;
-            }
-        }
-    } catch (err) {
-        console.error('Failed to load mock questions:', err);
-        if (qBox) {
-            qBox.innerHTML = `
-                <div class="alert alert-danger p-3 my-2" role="alert">
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
-                        <strong class="fs-6">Unable to Load Mock Examination</strong>
-                    </div>
-                    <p class="small mb-3 text-break">${err.message}</p>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-primary-gamified btn-sm fw-bold px-3" onclick="fetchMockTest()">
-                            <i class="bi bi-arrow-clockwise me-1"></i> Retry
-                        </button>
-                        <a href="index.php?action=store" class="btn btn-primary-gamified btn-sm fw-bold"><i class="bi bi-shop me-1"></i> Visit Store</a>
-                    </div>
-                </div>
-            `;
-        }
-    }
 }
 
 function renderQuestion() {
@@ -1559,7 +1510,7 @@ function generateScorecardCanvas(score, packTitle) {
     // Footer note
     ctx.fillStyle = '#64748b';
     ctx.font = '500 17px system-ui, sans-serif';
-    ctx.fillText('Practice verified company placement papers at apttitudee.online', 80, 560);
+    ctx.fillText('Practice company placement pattern papers at apttitudee.online', 80, 560);
 
     return canvas;
 }

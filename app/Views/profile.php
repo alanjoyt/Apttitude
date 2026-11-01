@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../Services/ReferralService.php';
 require_once __DIR__ . '/../Services/ProgressService.php';
+require_once __DIR__ . '/../Services/CollegeService.php';
 
 $userId = $_SESSION['user_id'] ?? null;
 
@@ -8,6 +9,26 @@ $user = User::findById($userId);
 $mascot = GamificationEngine::getMascotForTier($user['tier']);
 $refStats = ReferralService::getReferralStats($userId);
 $progressData = ProgressService::getProgressReport($userId, 30);
+
+$activeColleges = CollegeService::getActiveColleges();
+$userCollege = null;
+if (!empty($user['college_id'])) {
+    $db = Database::getConnection();
+    $cStmt = $db->prepare("SELECT * FROM colleges WHERE id = ?");
+    $cStmt->execute([(int)$user['college_id']]);
+    $userCollege = $cStmt->fetch(PDO::FETCH_ASSOC);
+}
+$canChangeCollege = true;
+$daysRemainingToChange = 0;
+if (!empty($user['college_id']) && !empty($user['college_changed_at'])) {
+    $changedTs = strtotime($user['college_changed_at']);
+    $diffDays = floor((time() - $changedTs) / 86400);
+    if ($diffDays < 30) {
+        $canChangeCollege = false;
+        $daysRemainingToChange = (int)(30 - $diffDays);
+    }
+}
+$hideNameOnBoards = !empty($user['hide_name_on_boards']);
 
 $avatarIcon = !empty($user['avatar_icon']) ? $user['avatar_icon'] : 'bi-person-circle';
 $bio = !empty($user['bio']) ? $user['bio'] : 'Apttitudee Scholar';
@@ -28,11 +49,16 @@ $bio = !empty($user['bio']) ? $user['bio'] : 'Apttitudee Scholar';
             <p class="text-ink-muted small mb-2"><i class="bi bi-quote me-1"></i> <?= htmlspecialchars($bio) ?></p>
             <div class="d-flex gap-2 flex-wrap">
               <span class="stamp-badge py-1 px-3 fw-bold d-inline-flex align-items-center gap-1">
-                <svg class="exam-icon" style="width:14px;height:14px;"><use href="#<?= $mascot['icon'] ?? 'icon-shield' ?>"></use></svg> <?= $user['tier'] ?> Tier (<?= $mascot['name'] ?>)
+                <svg class="exam-icon icon-14"><use href="#<?= $mascot['icon'] ?? 'icon-shield' ?>"></use></svg> <?= $user['tier'] ?> Tier (<?= $mascot['name'] ?>)
               </span>
               <span class="badge rounded-pill px-3 py-1 font-weight-bold d-inline-flex align-items-center gap-1" style="background-color: var(--surface); color: var(--accent); border: 1px solid var(--border);">
-                <svg class="exam-icon" style="width:13px;height:13px;"><use href="#icon-coin"></use></svg> <?= number_format($user['coins']) ?> Speed Coins
+                <svg class="exam-icon icon-13"><use href="#icon-coin"></use></svg> <?= number_format($user['coins']) ?> Speed Coins
               </span>
+              <?php if (!empty($userCollege)): ?>
+                <span class="badge rounded-pill px-3 py-1 font-weight-bold d-inline-flex align-items-center gap-1" style="background-color: var(--surface); color: var(--accent); border: 1px solid var(--border);" id="headerCollegeBadge">
+                  <i class="bi bi-mortarboard-fill"></i> <?= htmlspecialchars($userCollege['name']) ?>
+                </span>
+              <?php endif; ?>
             </div>
           </div>
         </div>
@@ -71,16 +97,16 @@ $bio = !empty($user['bio']) ? $user['bio'] : 'Apttitudee Scholar';
       <!-- Segmented Tab Navigation for Mobile & Desktop -->
       <nav class="progress-segmented-nav mb-4" role="tablist" aria-label="Progress report sections">
         <button class="progress-nav-btn active" id="tabBtn-overview" role="tab" aria-selected="true" aria-controls="pane-overview" onclick="showProgressTab('overview')">
-          <svg class="exam-icon" style="width:14px;height:14px;"><use href="#icon-grid"></use></svg> Overview
+          <svg class="exam-icon icon-14"><use href="#icon-grid"></use></svg> Overview
         </button>
         <button class="progress-nav-btn" id="tabBtn-topics" role="tab" aria-selected="false" aria-controls="pane-topics" onclick="showProgressTab('topics')">
-          <svg class="exam-icon" style="width:14px;height:14px;"><use href="#icon-award"></use></svg> Topics
+          <svg class="exam-icon icon-14"><use href="#icon-award"></use></svg> Topics
         </button>
         <button class="progress-nav-btn" id="tabBtn-mocks" role="tab" aria-selected="false" aria-controls="pane-mocks" onclick="showProgressTab('mocks')">
-          <svg class="exam-icon" style="width:14px;height:14px;"><use href="#icon-shield"></use></svg> Mocks (<?= $progressData['mocks']['count'] ?? 0 ?>)
+          <svg class="exam-icon icon-14"><use href="#icon-shield"></use></svg> Mocks (<?= $progressData['mocks']['count'] ?? 0 ?>)
         </button>
         <button class="progress-nav-btn" id="tabBtn-time" role="tab" aria-selected="false" aria-controls="pane-time" onclick="showProgressTab('time')">
-          <svg class="exam-icon" style="width:14px;height:14px;"><use href="#icon-clock"></use></svg> Time
+          <svg class="exam-icon icon-14"><use href="#icon-clock"></use></svg> Time
         </button>
       </nav>
 
@@ -102,7 +128,7 @@ $bio = !empty($user['bio']) ? $user['bio'] : 'Apttitudee Scholar';
           </div>
           <div class="mock-stat-box">
             <dt>Days Practiced (Mo.)</dt>
-            <dd class="text-highlight" id="ovDaysMonth"><?= $progressData['overview']['active_days_this_month'] ?? 0 ?> Days</dd>
+            <dd class="text-highlight fw-bold" id="ovDaysMonth" style="color: #9a3412 !important;"><?= $progressData['overview']['active_days_this_month'] ?? 0 ?> Days</dd>
           </div>
         </dl>
 
@@ -169,7 +195,7 @@ $bio = !empty($user['bio']) ? $user['bio'] : 'Apttitudee Scholar';
           <?php else: ?>
             <!-- Friendly Empty State for Insufficient Data -->
             <div class="text-center py-4 px-3" style="background-color: var(--surface-muted-bg); border-radius: var(--radius-sm);">
-              <svg class="exam-icon text-ink-muted mb-2" style="width:32px;height:32px;"><use href="#icon-clock"></use></svg>
+              <svg class="exam-icon text-ink-muted mb-2 icon-32"><use href="#icon-clock"></use></svg>
               <h4 class="font-serif fw-bold text-ink fs-6 mb-1">Answer 10 more questions to see your trend</h4>
               <p class="text-ink-muted small mb-3">As you complete practice questions, your adaptive accuracy curve will graph here automatically.</p>
               <a href="index.php?action=practice" class="btn btn-primary-gamified btn-sm px-4 fw-bold">Start Practicing Now</a>
@@ -274,7 +300,7 @@ $bio = !empty($user['bio']) ? $user['bio'] : 'Apttitudee Scholar';
               <div class="mock-history-item d-flex justify-content-between align-items-center flex-wrap gap-2" onclick="openPastMockScorecard('<?= htmlspecialchars($mock['session_key'], ENT_QUOTES) ?>')">
                 <div class="d-flex align-items-center gap-3">
                   <div class="p-2 rounded-circle" style="background-color: var(--surface-muted-bg); border: 1px solid var(--surface-border);">
-                    <svg class="exam-icon text-accent" style="width:20px;height:20px;"><use href="#icon-shield"></use></svg>
+                    <svg class="exam-icon text-accent icon-20"><use href="#icon-shield"></use></svg>
                   </div>
                   <div>
                     <strong class="font-serif text-ink d-block"><?= htmlspecialchars($mock['title']) ?></strong>
@@ -299,7 +325,7 @@ $bio = !empty($user['bio']) ? $user['bio'] : 'Apttitudee Scholar';
           <div class="text-center py-4 px-3" style="background-color: var(--surface-muted-bg); border-radius: var(--radius-sm);">
             <svg class="exam-icon text-ink-muted mb-2" style="width:36px;height:36px;"><use href="#icon-award"></use></svg>
             <h4 class="font-serif fw-bold text-ink fs-6 mb-1">No Mock Examinations Attempted Yet</h4>
-            <p class="text-ink-muted small mb-3">Test your exam hall stamina with authentic corporate placement patterns.</p>
+            <p class="text-ink-muted small mb-3">Test your exam hall stamina with simulated corporate placement patterns.</p>
             <a href="index.php?action=mock" class="btn btn-primary-gamified btn-sm px-4 fw-bold">Take Placement Mock Test</a>
           </div>
         <?php endif; ?>
@@ -371,6 +397,80 @@ $bio = !empty($user['bio']) ? $user['bio'] : 'Apttitudee Scholar';
     </section>
   </div>
 
+  <!-- Campus & College Affiliation Card (Feature 3) -->
+  <div class="col-12" id="collegeAffiliationCard">
+    <div class="card card-gamified p-4">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h4 class="font-serif fw-bold text-ink mb-0 d-flex align-items-center gap-2">
+          <i class="bi bi-mortarboard-fill fs-3" style="color: var(--accent);"></i> Campus &amp; College Community
+        </h4>
+        <button type="button" class="btn btn-outline-gamified btn-sm fw-bold" data-bs-toggle="modal" data-bs-target="#requestCollegeModal">
+          <i class="bi bi-plus-circle me-1"></i> Request Unlisted College
+        </button>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-7">
+          <label class="form-label small fw-bold text-ink-muted" for="profileCollegeSelect">Your Enrolled College / University</label>
+          <div class="d-flex gap-2">
+            <select id="profileCollegeSelect" class="form-select" <?= !$canChangeCollege ? 'disabled' : '' ?> style="background-color: var(--bg); border-color: var(--border); color: var(--ink);">
+              <option value="">-- No College Selected --</option>
+              <?php foreach ($activeColleges as $c): ?>
+                <option value="<?= (int)$c['id'] ?>" <?= (!empty($user['college_id']) && (int)$user['college_id'] === (int)$c['id']) ? 'selected' : '' ?>>
+                  <?= htmlspecialchars($c['name']) ?> (<?= htmlspecialchars($c['city']) ?>, <?= htmlspecialchars($c['state']) ?>)
+                </option>
+              <?php endforeach; ?>
+            </select>
+            <button type="button" id="saveCollegeBtn" class="btn btn-primary-gamified px-3 fw-bold flex-shrink-0" <?= !$canChangeCollege ? 'disabled' : '' ?> onclick="submitUpdateCollege()">
+              Save
+            </button>
+          </div>
+
+          <div class="form-check mt-2" id="profileShowNameGroup">
+            <input class="form-check-input" type="checkbox" id="profileShowNameCheck" <?= !$hideNameOnBoards ? 'checked' : '' ?> onchange="document.getElementById('hideNameSwitch').checked = !this.checked; submitTogglePrivacy(!this.checked);">
+            <label class="form-check-label small text-ink fw-semibold" for="profileShowNameCheck">
+              Show my name on the college leaderboard
+            </label>
+            <div class="form-text extra-small text-ink-muted mt-0.5" style="font-size: 0.72rem;">
+              <i class="bi bi-shield-lock-fill me-1 text-accent"></i> Privacy by default (Option B): Unchecked displays your rank as <strong>"Anonymous Student"</strong>.
+            </div>
+          </div>
+
+          <?php if (!$canChangeCollege): ?>
+            <div class="alert alert-warning p-2 extra-small mt-2 mb-0 d-flex align-items-center gap-2" role="alert" id="collegeThrottleAlert">
+              <i class="bi bi-clock-history fs-6 flex-shrink-0"></i>
+              <span><strong>Change Cooldown Active:</strong> College changes are limited to once every 30 days to prevent leaderboard hopping. You can change again in <strong><?= $daysRemainingToChange ?> day<?= $daysRemainingToChange === 1 ? '' : 's' ?></strong>.</span>
+            </div>
+          <?php else: ?>
+            <small class="text-ink-muted d-block mt-1 extra-small">
+              <i class="bi bi-info-circle me-1"></i> Note: You can switch your college at most once every 30 days.
+            </small>
+          <?php endif; ?>
+          <small class="text-ink-muted d-block mt-2 extra-small border-top pt-2" style="border-color: var(--border) !important;">
+            <i class="bi bi-shield-check me-1 text-accent"></i> <strong>Consent Notice:</strong> Your display name and weekly study XP are visible to fellow students on your campus leaderboard. Toggle "Hide my name" to appear as "Anonymous Student".
+          </small>
+        </div>
+
+        <div class="col-md-5">
+          <div class="p-3 rounded-3 border h-100 d-flex flex-column justify-content-between" style="background-color: var(--bg); border-color: var(--border) !important;">
+            <div>
+              <div class="fw-bold text-ink small mb-1"><i class="bi bi-shield-shaded text-accent me-1"></i> Leaderboard Privacy</div>
+              <p class="text-ink-muted extra-small mb-2">
+                Control whether your display name appears on public college rankings and campus boards.
+              </p>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="hideNameSwitch" <?= $hideNameOnBoards ? 'checked' : '' ?> onchange="submitTogglePrivacy(this.checked)">
+              <label class="form-check-label small fw-bold text-ink" for="hideNameSwitch">
+                Hide my name (show as "Anonymous Student")
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Referral Program Card (+25 Speed Coins) -->
   <div class="col-md-6">
     <div class="card card-gamified p-4 h-100">
@@ -384,7 +484,7 @@ $bio = !empty($user['bio']) ? $user['bio'] : 'Apttitudee Scholar';
       </div>
 
       <p class="text-ink-muted small mb-4">
-        Share your unique referral code with friends! When they register, **both you and your friend earn +25 Speed Coins** instantly.
+        Share your unique referral code with friends! When they register, <strong class="text-ink">both you and your friend earn +25 Speed Coins</strong> instantly.
       </p>
 
       <div class="p-3 rounded-4 border mb-4" style="background-color: var(--bg); border-color: var(--border) !important;">
@@ -407,7 +507,7 @@ $bio = !empty($user['bio']) ? $user['bio'] : 'Apttitudee Scholar';
         </div>
         <div class="col-6">
           <div class="p-3 rounded-4 border" style="background-color: var(--bg); border-color: var(--border) !important;">
-            <div class="fs-3 font-serif fw-bold d-flex align-items-center justify-content-center gap-1" style="color: var(--highlight);"><svg class="exam-icon" style="width:20px;height:20px;"><use href="#icon-coin"></use></svg> <?= number_format($refStats['coins_earned']) ?></div>
+            <div class="fs-3 font-serif fw-bold d-flex align-items-center justify-content-center gap-1" style="color: var(--highlight);"><svg class="exam-icon icon-20"><use href="#icon-coin"></use></svg> <?= number_format($refStats['coins_earned']) ?></div>
             <div class="text-ink-muted small">Coins Earned</div>
           </div>
         </div>
@@ -501,6 +601,46 @@ $bio = !empty($user['bio']) ? $user['bio'] : 'Apttitudee Scholar';
   </div>
 </div>
 
+<!-- Modal: Request Missing College (Feature 3) -->
+<div class="modal fade" id="requestCollegeModal" tabindex="-1" aria-labelledby="requestCollegeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-ink border rounded-4" style="background-color: var(--surface); border-color: var(--border) !important;">
+      <div class="modal-header border-bottom" style="border-color: var(--border) !important;">
+        <h5 class="modal-title font-serif fw-bold" id="requestCollegeModalLabel">
+          <i class="bi bi-building-add me-2" style="color: var(--accent);"></i> Request Unlisted College
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-ink-muted small mb-3">
+          Can't find your college in the directory? Submit its official name, city, and state. Once reviewed by our team, it will become active for selection.
+        </p>
+        <div id="requestCollegeAlert" class="d-none alert mb-3 small"></div>
+        <div class="mb-3">
+          <label class="form-label small fw-bold text-ink-muted" for="reqCollegeName">College / Institute Full Name</label>
+          <input type="text" id="reqCollegeName" class="form-control" placeholder="e.g. National Institute of Technology, Trichy" required style="background-color: var(--bg); border-color: var(--border); color: var(--ink);">
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <label class="form-label small fw-bold text-ink-muted" for="reqCollegeCity">City</label>
+            <input type="text" id="reqCollegeCity" class="form-control" placeholder="e.g. Tiruchirappalli" required style="background-color: var(--bg); border-color: var(--border); color: var(--ink);">
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-bold text-ink-muted" for="reqCollegeState">State</label>
+            <input type="text" id="reqCollegeState" class="form-control" placeholder="e.g. Tamil Nadu" required style="background-color: var(--bg); border-color: var(--border); color: var(--ink);">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-top" style="border-color: var(--border) !important;">
+        <button type="button" class="btn btn-outline-gamified btn-sm" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary-gamified btn-sm fw-bold" id="submitRequestCollegeBtn" onclick="submitRequestCollege()">
+          Submit Request
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 function showProgressTab(tabName) {
     document.querySelectorAll('.progress-nav-btn').forEach(btn => {
@@ -559,7 +699,7 @@ function submitUpdateProfile() {
     fetch('index.php?action=api_update_profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, bio: bio, avatar_icon: avatar })
+        body: JSON.stringify({ name: name, bio: bio, avatar_icon: avatar, csrf_token: window.CSRF_TOKEN || '' })
     })
     .then(res => res.json())
     .then(res => {
@@ -576,7 +716,7 @@ function submitChangePassword() {
     fetch('index.php?action=api_change_password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ old_password: oldPass, new_password: newPass, confirm_password: confirmPass })
+        body: JSON.stringify({ old_password: oldPass, new_password: newPass, confirm_password: confirmPass, csrf_token: window.CSRF_TOKEN || '' })
     })
     .then(res => res.json())
     .then(res => {
@@ -591,6 +731,108 @@ function copyReferralLink() {
     const url = document.getElementById('refLinkUrl').innerText;
     navigator.clipboard.writeText(url).then(() => {
         alert('Referral link copied to clipboard! Share it with friends to earn +25 Speed Coins per referral.');
+    });
+}
+
+function submitUpdateCollege() {
+    const collegeId = document.getElementById('profileCollegeSelect').value;
+    const showName = document.getElementById('profileShowNameCheck') ? document.getElementById('profileShowNameCheck').checked : false;
+    const btn = document.getElementById('saveCollegeBtn');
+    btn.disabled = true;
+    btn.innerText = 'Saving...';
+
+    fetch('index.php?action=api_update_college', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            college_id: collegeId, 
+            show_name_on_boards: showName,
+            csrf_token: window.CSRF_TOKEN || '' 
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        btn.disabled = false;
+        btn.innerText = 'Save';
+        alert(data.message);
+        if (data.status === 'success') {
+            window.location.reload();
+        }
+    })
+    .catch(err => {
+        btn.disabled = false;
+        btn.innerText = 'Save';
+        alert('Network error updating college. Please try again.');
+    });
+}
+
+function submitTogglePrivacy(checked) {
+    const showCheck = document.getElementById('profileShowNameCheck');
+    const hideSwitch = document.getElementById('hideNameSwitch');
+    if (showCheck) showCheck.checked = !checked;
+    if (hideSwitch) hideSwitch.checked = checked;
+
+    fetch('index.php?action=api_toggle_college_privacy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hide_name_on_boards: checked ? 1 : 0, csrf_token: window.CSRF_TOKEN || '' })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status !== 'success') {
+            alert(data.message || 'Error updating privacy setting.');
+        }
+    })
+    .catch(err => console.error('Privacy toggle error:', err));
+}
+
+function submitRequestCollege() {
+    const name = document.getElementById('reqCollegeName').value.trim();
+    const city = document.getElementById('reqCollegeCity').value.trim();
+    const state = document.getElementById('reqCollegeState').value.trim();
+    const alertBox = document.getElementById('requestCollegeAlert');
+    const btn = document.getElementById('submitRequestCollegeBtn');
+
+    if (!name || !city || !state) {
+        alertBox.className = 'alert alert-danger mb-3 small';
+        alertBox.innerText = 'Please provide college name, city, and state.';
+        alertBox.classList.remove('d-none');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = 'Submitting...';
+
+    fetch('index.php?action=api_request_college', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, city: city, state: state, csrf_token: window.CSRF_TOKEN || '' })
+    })
+    .then(res => res.json())
+    .then(data => {
+        btn.disabled = false;
+        btn.innerText = 'Submit Request';
+        if (data.status === 'success') {
+            alertBox.className = 'alert alert-success mb-3 small';
+            alertBox.innerText = data.message;
+            alertBox.classList.remove('d-none');
+            setTimeout(() => {
+                const modalEl = document.getElementById('requestCollegeModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+            }, 1800);
+        } else {
+            alertBox.className = 'alert alert-danger mb-3 small';
+            alertBox.innerText = data.message || 'Error submitting college request.';
+            alertBox.classList.remove('d-none');
+        }
+    })
+    .catch(err => {
+        btn.disabled = false;
+        btn.innerText = 'Submit Request';
+        alertBox.className = 'alert alert-danger mb-3 small';
+        alertBox.innerText = 'Failed to submit request. Please try again.';
+        alertBox.classList.remove('d-none');
     });
 }
 </script>

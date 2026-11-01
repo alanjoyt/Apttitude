@@ -1,39 +1,39 @@
 {
     "project": "Apttitudee",
     "version": "2.5.0-predeploy",
-    "generated_at": "2026-11-01T14:47:01+00:00",
+    "generated_at": "2026-11-01T18:54:07+00:00",
     "environment_target": "Production LAMP / MariaDB (apttitudee.xo.je / staging: apttitudee.rf.gd)",
     "domain_target": "apttitudee.xo.je",
-    "total_files": 98,
-    "total_bytes": 2270656,
+    "total_files": 108,
+    "total_bytes": 2465996,
     "categories": {
         "root": {
             "count": 1,
             "bytes": 3120
         },
         "app": {
-            "count": 61,
-            "bytes": 1056214
+            "count": 63,
+            "bytes": 1145359
         },
         "config": {
-            "count": 4,
-            "bytes": 38983
+            "count": 3,
+            "bytes": 38385
         },
         "deploy": {
-            "count": 2,
-            "bytes": 2686
+            "count": 6,
+            "bytes": 67737
         },
         "deploy/migrations": {
-            "count": 5,
-            "bytes": 650045
+            "count": 8,
+            "bytes": 676707
         },
         "deploy/scripts": {
-            "count": 3,
-            "bytes": 4853
+            "count": 5,
+            "bytes": 15286
         },
         "public": {
             "count": 22,
-            "bytes": 514755
+            "bytes": 519402
         }
     },
     "files": [
@@ -47,6 +47,12 @@
             "path": "app/Controllers/AdminController.php",
             "size_bytes": 70790,
             "sha256": "abfb2d21ccffddc24be6c35a4eee26d33720af391044e0fa221b35aa3905559d",
+            "category": "app"
+        },
+        {
+            "path": "app/Controllers/CollegeController.php",
+            "size_bytes": 10219,
+            "sha256": "7679902e74f952ecf30cfc5766d0791e13bc9a60adcf7077790032e7384e09c5",
             "category": "app"
         },
         {
@@ -75,14 +81,14 @@
         },
         {
             "path": "app/Controllers/FixPlanController.php",
-            "size_bytes": 7447,
-            "sha256": "88be3d0ef1ac990ce0ebbf3d50fb02abe0cc028efa274c17f1bb98c9a71aea51",
+            "size_bytes": 8751,
+            "sha256": "08bbba9f4837fb0a8d64fdbb19b67bee4836da3f54359d4cc45a9e54f6c7deee",
             "category": "app"
         },
         {
             "path": "app/Controllers/MockTestController.php",
-            "size_bytes": 61942,
-            "sha256": "f5ab51f82ed64e4fe9b37dc15241ceb4286d3761441c31db3bf0c65d060014d8",
+            "size_bytes": 62325,
+            "sha256": "dc07a1818af048f78df0c3feb4eb56a4c75517ce5e08973fb70fd04a81959aa5",
             "category": "app"
         },
         {
@@ -93,8 +99,8 @@
         },
         {
             "path": "app/Controllers/ProfileController.php",
-            "size_bytes": 4701,
-            "sha256": "f89241342ab7474420c495fd319a882084037e8b5d3ec5289cd724a6b6d5054b",
+            "size_bytes": 5541,
+            "sha256": "02c1444a636b406f0995b7920f118b7143955ad3e048eefbfdfb6336178c39fe",
             "category": "app"
         },
         {
@@ -129,20 +135,26 @@
         },
         {
             "path": "app/Models/Leaderboard.php",
-            "size_bytes": 7687,
-            "sha256": "0e5d368f4eef5549ecf3880e37c483c4009567e653ec8f21eca3f553e692fcb9",
+            "size_bytes": 7867,
+            "sha256": "30aba006d926b3fcbe1297135698bfdde8a4a31011a90833bc2e32fafdf940e0",
             "category": "app"
         },
         {
             "path": "app/Models/User.php",
-            "size_bytes": 8116,
-            "sha256": "d06d4e5ae508e50f3ee055c94fadcb8386dc5d2ff395e487166b812956a21cb5",
+            "size_bytes": 8972,
+            "sha256": "813e66d1e4a2d2cd19f4db69a24ed75f9448498d774a675590503edb53e5e602",
             "category": "app"
         },
         {
             "path": "app/Services/AdaptiveEngine.php",
             "size_bytes": 12370,
             "sha256": "d63ecd1c8322190f8cce70bfbc30e2dd90069d73e265887e8ff2054d0f6d1dc4",
+            "category": "app"
+        },
+        {
+            "path": "app/Services/CollegeService.php",
+            "size_bytes": 23786,
+            "sha256": "e1d5d6668b66addb4228816775dfd96cd444eec28be810c30cc333229632ab0a",
             "category": "app"
         },
         {
@@ -171,8 +183,8 @@
         },
         {
             "path": "app/Services/FixPlanService.php",
-            "size_bytes": 23444,
-            "sha256": "d7f5fe48e78922a55eee8742bb6b254bdf104a7f407a9f1d387cd5dec9475659",
+            "size_bytes": 24902,
+            "sha256": "806b1719d156cbb7ebc4630cec7ac89a1d8c8fc8af3cc391aff1c37482b692ca",
             "category": "app"
         },
         {
@@ -231,8 +243,8 @@
         },
         {
             "path": "app/Views/admin.php",
-            "size_bytes": 138614,
-            "sha256": "8829f322bc84bf1021909cca24d98c9da56043e782f136221f3f3b5b0d39f090",
+            "size_bytes": 152966,
+            "sha256": "5d23b44405b1dd18a5ee117b92ff08f8f615ee92b3f95376dd180af56ea2ff84",
             "category": "app"
         },
         {
@@ -243,8 +255,8 @@
         },
         {
             "path": "app/Views/companies.php",
-            "size_bytes": 7426,
-            "sha256": "2e34baff890dc0220347fc8468db117d391df33f6052225fb87323edcddd422b",
+            "size_bytes": 8396,
+            "sha256": "c5e2b60322207da2937b3d7c8e998ed7b65d075155b573756d80605ffe7bcd6d",
             "category": "app"
         },
         {
@@ -291,8 +303,8 @@
         },
         {
             "path": "app/Views/dashboard.php",
-            "size_bytes": 34078,
-            "sha256": "58eb5de8eb508ec4d981a199e07e5dc7c58fbb640b89f824b8ff297566690999",
+            "size_bytes": 34119,
+            "sha256": "158fa9456273d7731c764b4b2dff799b1b17783fff1338219a5edd6730397c9c",
             "category": "app"
         },
         {
@@ -315,8 +327,8 @@
         },
         {
             "path": "app/Views/header.php",
-            "size_bytes": 45553,
-            "sha256": "5403ea5eeb01a0bae27750cd002e2c2802bdec0ec4affacbd1c45627994eaa8e",
+            "size_bytes": 45690,
+            "sha256": "4bd9d3073a458ab490c43a241019d6a602f0c22a1047330888731de85b4dfa6c",
             "category": "app"
         },
         {
@@ -327,8 +339,8 @@
         },
         {
             "path": "app/Views/leaderboard.php",
-            "size_bytes": 13121,
-            "sha256": "498c7d72b0cb1657e9dc8f669a1ce3a3f5c4563d9b04c6c6607d743973197786",
+            "size_bytes": 35047,
+            "sha256": "f336ee9ab49fca71b029a74d87c2610886e910ed747cbf9598a990c8760f8abf",
             "category": "app"
         },
         {
@@ -339,8 +351,8 @@
         },
         {
             "path": "app/Views/mock.php",
-            "size_bytes": 77835,
-            "sha256": "0ce1c22370c8c66b9cf2e343c6a9c69acf6557e5431d46c623d0339e859ca217",
+            "size_bytes": 75774,
+            "sha256": "6cec2092d0f08b53cbcd6e9617a67f319ba25d2f89ddc6b14dcc97c562d00689",
             "category": "app"
         },
         {
@@ -357,14 +369,14 @@
         },
         {
             "path": "app/Views/profile.php",
-            "size_bytes": 34333,
-            "sha256": "206cd4e504324b1867a7c0caec49843dd02718d51ec85bbaf8c6154bb0518df4",
+            "size_bytes": 47086,
+            "sha256": "91cd2c6cde75255bb09e3fa1a4028a249b37f909d68f79cbecc532fa17234fe9",
             "category": "app"
         },
         {
             "path": "app/Views/register.php",
-            "size_bytes": 6261,
-            "sha256": "0410eecc0aa236e2e12b8209a3f53aa5ddcc0073375cdcec7569070dabe9753f",
+            "size_bytes": 7947,
+            "sha256": "d24995221c8a7ca8bc313c21622ca8375c6ecfed3401acf009348dd02924a866",
             "category": "app"
         },
         {
@@ -387,8 +399,8 @@
         },
         {
             "path": "app/Views/technical.php",
-            "size_bytes": 50863,
-            "sha256": "f657377fd97637505bd8b2d93447389835ce5fcd2ee89f49ed2c03d6ad49b68d",
+            "size_bytes": 51178,
+            "sha256": "76754780bcf978b3131ece89ef12e2e5510b0a202faea8ba2ba832f7079831a5",
             "category": "app"
         },
         {
@@ -416,15 +428,9 @@
             "category": "config"
         },
         {
-            "path": "config/config.local.php",
-            "size_bytes": 330,
-            "sha256": "ad0ad786c8d3bc0c5b015f306f2687d0e2360f807ecb9a4d9bbb5061efba4e95",
-            "category": "config"
-        },
-        {
             "path": "config/db.php",
-            "size_bytes": 28457,
-            "sha256": "4ceb64a81f1fe8c5ca7cc2545f055ebe01a1dc84c95c4e6444b992eed25f3e08",
+            "size_bytes": 28189,
+            "sha256": "1d6bbfbac9abfe7cdb54872e841cdb0b12168e5e5bffed94816c1f93dd92a5fc",
             "category": "config"
         },
         {
@@ -440,15 +446,27 @@
             "category": "deploy"
         },
         {
+            "path": "deploy/DEPLOY_RUNBOOK.md",
+            "size_bytes": 4787,
+            "sha256": "7b6a38b0a56de371fabd790f73e3dfb67895c3391f89fd8149c9a2b05e8a12e3",
+            "category": "deploy"
+        },
+        {
             "path": "deploy/PRESERVE.md",
             "size_bytes": 2467,
             "sha256": "3f25b608bf9b39093e04c08faf824c43113365a004e266ae602fef44dd41c3ee",
             "category": "deploy"
         },
         {
+            "path": "deploy/PRODUCTION_EXPORT_CHECKLIST.md",
+            "size_bytes": 2992,
+            "sha256": "246f7e94bccd4b7cb455f5cad5ab56ca6a4dfcb7cd59042cadd111436da00edf",
+            "category": "deploy"
+        },
+        {
             "path": "deploy/migrations/01_schema_extensions_and_tables.sql",
-            "size_bytes": 6581,
-            "sha256": "5cf75104bd14a1e6e5b74bb0445a1ac293bb2582689f63eeb88db4d656c06503",
+            "size_bytes": 7221,
+            "sha256": "554474c8edb688c8a066a1e7df447ea68e768b326acf4cf497cce6f56accdb1c",
             "category": "deploy/migrations"
         },
         {
@@ -476,9 +494,51 @@
             "category": "deploy/migrations"
         },
         {
+            "path": "deploy/migrations/06_college_leaderboards.sql",
+            "size_bytes": 4629,
+            "sha256": "125cd3d41e8c027c25e62510a4704762ec621eecc31d7664f90907324527fb22",
+            "category": "deploy/migrations"
+        },
+        {
+            "path": "deploy/migrations/07_college_stats_and_kerala_colleges.sql",
+            "size_bytes": 4352,
+            "sha256": "15bd79dce29bc6c6690adebd140d12ae8ddd0b4d6da1b34737e22a82ee9be639",
+            "category": "deploy/migrations"
+        },
+        {
+            "path": "deploy/migrations/08_missing_app_tables_and_company_profiles.sql",
+            "size_bytes": 17041,
+            "sha256": "b4e2db259cbca0d17798bf8b01011827f8c9f659ca99f1db4c868bfc20fe9789",
+            "category": "deploy/migrations"
+        },
+        {
+            "path": "deploy/review_sample.md",
+            "size_bytes": 17825,
+            "sha256": "3fe537f7b02c6833b8708fb70865f41d78148481da0b0e9e12c3a7180effac0c",
+            "category": "deploy"
+        },
+        {
+            "path": "deploy/schema_expected.sql",
+            "size_bytes": 39447,
+            "sha256": "ad289832d3f06800f52b98b9908e61babb4f33e12ebc3df97f4620d824035047",
+            "category": "deploy"
+        },
+        {
             "path": "deploy/scripts/check_innodb_engines.sql",
             "size_bytes": 1861,
             "sha256": "1e559b44d83a4521fb12ee7686a62a03b905f2f4066f3a53726e71cc56a0a156",
+            "category": "deploy/scripts"
+        },
+        {
+            "path": "deploy/scripts/check_schema_coverage.php",
+            "size_bytes": 3745,
+            "sha256": "ad0221b7eb6a9a9074f24615fc7d3393ea80e0123acdbbb9d168b98dc2bb7894",
+            "category": "deploy/scripts"
+        },
+        {
+            "path": "deploy/scripts/diff_production_schema.php",
+            "size_bytes": 6688,
+            "sha256": "c7c4a447c7e12c86327332aca25997ff481d2e5d8f8fcd622211b3e5fe9843e2",
             "category": "deploy/scripts"
         },
         {
@@ -567,8 +627,8 @@
         },
         {
             "path": "public/index.php",
-            "size_bytes": 30341,
-            "sha256": "c429341ab30669b13a5ec998ca59f32a1f2baec9cc2523438ef29dc4765d8303",
+            "size_bytes": 34988,
+            "sha256": "24e647a5749111c66ee73f43b66b4716d25dbf62d001f47100f203b260b02ca6",
             "category": "public"
         },
         {

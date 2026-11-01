@@ -1,6 +1,6 @@
 -- Migration: Fix duplicate distractors in questions (Apttitudee)
 -- Date: 2026-10-10
--- Author: mr.ignite ~ Nexyra Solutions
+-- Author: mr.ignite ~ BOLDBYTE
 -- Description: Corrects duplicate distractors in 11 questions where option choices were identical.
 
 -- Question 174 (Ratio 3:7 sum 100, larger share = 70; option C and D were both 90)

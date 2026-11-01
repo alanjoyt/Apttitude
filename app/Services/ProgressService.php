@@ -249,6 +249,23 @@ class ProgressService {
             'INFOSYS_MOCK_PACK' => 'Infosys Placement Pack',
             'WIPRO_MOCK_PACK' => 'Wipro NLTH Challenge',
             'INNOVATURE_MOCK_PACK' => 'Innovature Labs Mock',
+            'ACCENTURE_MOCK_PACK' => 'Accenture Placement Mock',
+            'AMAZON_MOCK_PACK' => 'Amazon SDE & AWS Mock',
+            'ZOHO_MOCK_PACK' => 'Zoho Coding & Aptitude Mock',
+            'DELOITTE_MOCK_PACK' => 'Deloitte Aptitude Mock',
+            'CAPGEMINI_MOCK_PACK' => 'Capgemini Exceller Mock',
+            'COGNIZANT_MOCK_PACK' => 'Cognizant GenC Mock',
+            'TECH_MAHINDRA_MOCK_PACK' => 'Tech Mahindra Mock',
+            'IBM_MOCK_PACK' => 'IBM Cognitive Developer Mock',
+            'LTI_MINDTREE_MOCK_PACK' => 'LTI Mindtree Mock',
+            'UST_MOCK_PACK' => 'UST Global Mock',
+            'HCL_MOCK_PACK' => 'HCL Tech Careers Mock',
+            'MPHASIS_MOCK_PACK' => 'Mphasis Placement Mock',
+            'HEXAWARE_MOCK_PACK' => 'Hexaware PGET Mock',
+            'PERSISTENT_MOCK_PACK' => 'Persistent Systems Mock',
+            'VIRTUSA_MOCK_PACK' => 'Virtusa Placement Mock',
+            'ORACLE_MOCK_PACK' => 'Oracle Tech Mock',
+            'COFORGE_MOCK_PACK' => 'Coforge Tech Talent Mock',
             'GENERAL_MOCK' => 'Placement Practice Mock'
         ];
 

@@ -65,7 +65,7 @@ foreach ($nodes as $n) {
               </div>
 
               <a href="index.php?action=practice&subtopic_id=<?= $node['subtopic_id'] ?>" class="btn btn-primary-gamified btn-sm px-4 fw-bold shadow-sm d-inline-flex align-items-center justify-content-center gap-1">
-                Play Outpost <svg class="exam-icon" style="width:14px;height:14px;"><use href="#icon-swords"></use></svg>
+                Play Outpost <svg class="exam-icon icon-14"><use href="#icon-swords"></use></svg>
               </a>
             </div>
 

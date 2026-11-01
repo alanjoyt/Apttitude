@@ -62,6 +62,17 @@ WHERE NOT EXISTS (SELECT 1 FROM `system_settings` WHERE `setting_key` = 'last_we
 ALTER TABLE `duels` 
 MODIFY COLUMN `status` ENUM('waiting', 'active', 'completed', 'declined', 'cancelled') NOT NULL DEFAULT 'waiting';
 
+-- 4b. User Topic Resets Table
+CREATE TABLE IF NOT EXISTS `user_topic_resets` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `subtopic_id` INT NOT NULL,
+  `reset_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY `uniq_user_subtopic` (`user_id`, `subtopic_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`subtopic_id`) REFERENCES `subtopics`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- 5. Student Question Submissions Table & Compatibility View
 CREATE TABLE IF NOT EXISTS `student_question_submissions` (
     `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -128,6 +139,9 @@ CALL AddColIfMissing('attempts', 'mock_session_id', 'VARCHAR(64) NULL AFTER `mod
 CALL AddColIfMissing('attempts', 'pack_code', 'VARCHAR(50) NULL AFTER `mock_session_id`');
 CALL AddColIfMissing('attempts', 'skip_reason', 'VARCHAR(50) NULL AFTER `pack_code`');
 CALL AddColIfMissing('attempts', 'is_implausible_time', 'TINYINT(1) NOT NULL DEFAULT 0 AFTER `time_taken_seconds`');
+
+-- Apply columns to `duels` table
+CALL AddColIfMissing('duels', 'is_bot', 'TINYINT(1) NOT NULL DEFAULT 0');
 
 -- Apply columns to `questions` table
 CALL AddColIfMissing('questions', 'is_published', 'TINYINT(1) NOT NULL DEFAULT 1');

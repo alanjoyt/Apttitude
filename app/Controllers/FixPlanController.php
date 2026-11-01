@@ -161,9 +161,34 @@ class FixPlanController {
             $qStmt->bindValue(2, $targetCount, PDO::PARAM_INT);
             $qStmt->execute();
             $questions = $qStmt->fetchAll(PDO::FETCH_ASSOC);
+        } elseif ($taskType === 'mistake_review') {
+            // Fetch student's own previously wrong questions
+            $qStmt = $db->prepare("
+                SELECT id, question_text, option_a, option_b, option_c, option_d, code_snippet, language 
+                FROM questions 
+                WHERE id IN (SELECT DISTINCT question_id FROM attempts WHERE user_id = ? AND is_correct = 0)
+                  AND is_published = 1 
+                ORDER BY RAND() LIMIT ?
+            ");
+            $qStmt->bindValue(1, $userId, PDO::PARAM_INT);
+            $qStmt->bindValue(2, $targetCount, PDO::PARAM_INT);
+            $qStmt->execute();
+            $questions = $qStmt->fetchAll(PDO::FETCH_ASSOC);
         } elseif ($taskType === 'retest' && !empty($weakSubtopicIds)) {
+            // FP11: Exclude baseline mock question IDs
+            $mockStmt = $db->prepare("SELECT question_ids FROM mock_sessions WHERE id = ?");
+            $mockStmt->execute([$plan['mock_session_id']]);
+            $mockQidsRaw = $mockStmt->fetchColumn();
+            $mockQids = json_decode($mockQidsRaw, true) ?: (explode(',', $mockQidsRaw ?: ''));
+            $mockQids = array_filter(array_map('intval', (array)$mockQids));
+
+            $excludeSql = "";
+            if (!empty($mockQids)) {
+                $excludeSql = " AND id NOT IN (" . implode(',', $mockQids) . ") ";
+            }
+
             $inClause = implode(',', array_fill(0, count($weakSubtopicIds), '?'));
-            $qStmt = $db->prepare("SELECT id, question_text, option_a, option_b, option_c, option_d, code_snippet, language FROM questions WHERE subtopic_id IN ($inClause) AND is_published = 1 ORDER BY RAND() LIMIT ?");
+            $qStmt = $db->prepare("SELECT id, question_text, option_a, option_b, option_c, option_d, code_snippet, language FROM questions WHERE subtopic_id IN ($inClause) AND is_published = 1 {$excludeSql} ORDER BY RAND() LIMIT ?");
             $idx = 1;
             foreach ($weakSubtopicIds as $sid) {
                 $qStmt->bindValue($idx++, $sid, PDO::PARAM_INT);
@@ -172,7 +197,7 @@ class FixPlanController {
             $qStmt->execute();
             $questions = $qStmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
-            // General or mistake review fallback
+            // General fallback
             $qStmt = $db->prepare("SELECT id, question_text, option_a, option_b, option_c, option_d, code_snippet, language FROM questions WHERE is_published = 1 ORDER BY RAND() LIMIT ?");
             $qStmt->bindValue(1, $targetCount, PDO::PARAM_INT);
             $qStmt->execute();

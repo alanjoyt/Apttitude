@@ -44,6 +44,25 @@ class ProfileController {
         $stmt = $db->prepare("UPDATE users SET name = ?, bio = ?, avatar_icon = ? WHERE id = ?");
         $stmt->execute([$name, $bio, $avatarIcon, $userId]);
 
+        // Process college updates with 30-day throttle
+        require_once __DIR__ . '/../Services/CollegeService.php';
+        if (array_key_exists('college_id', $input)) {
+            $rawCol = $input['college_id'];
+            $colId = ($rawCol === '' || $rawCol === null) ? null : (int)$rawCol;
+            $colRes = CollegeService::setUserCollege($userId, $colId);
+            if (($colRes['status'] ?? '') === 'error') {
+                http_response_code($colRes['code'] ?? 400);
+                echo json_encode($colRes);
+                exit;
+            }
+        }
+
+        // Process privacy toggle (hide name on college boards)
+        if (array_key_exists('hide_name_on_boards', $input)) {
+            $hide = !empty($input['hide_name_on_boards']);
+            CollegeService::toggleBoardPrivacy($userId, $hide);
+        }
+
         $_SESSION['user_name'] = $name;
 
         echo json_encode([

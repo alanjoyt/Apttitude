@@ -1,6 +1,8 @@
 # Temporary & archive files
 *.zip
 scratch_shots/
+backups/
+database/backups/
 
 # Environment and sensitive local configs
 config/config.local.php
@@ -12,3 +14,13 @@ config/config.local.php
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Local Testing & Node (Not for production deployment)
+scratch/
+node_modules/
+package-lock.json
+package.json
+tests/
+tools/
+exports/
+*.pdf

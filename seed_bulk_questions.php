@@ -3,7 +3,7 @@ require_once __DIR__ . '/config/db.php';
 
 echo "===================================================\n";
 echo " Apttitudee - Bulk Questions & Company PYQ Seeder \n";
-echo " Developed by mr.ignite ~ Nexyra Solutions        \n";
+echo " Developed by mr.ignite ~ BOLDBYTE        \n";
 echo "===================================================\n\n";
 
 try {

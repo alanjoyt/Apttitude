@@ -1,0 +1,101 @@
+<?php
+require_once __DIR__ . '/../config/db.php';
+$db = Database::getConnection();
+
+$tccPath = __DIR__ . '/../tools/tcc/tcc/tcc.exe';
+if (!file_exists($tccPath)) {
+    die("TCC not found at $tccPath\n");
+}
+
+$comps = [
+    'Innovature', 'TCS NQT', 'Infosys', 'Wipro NLTH', 'Accenture',
+    'Cognizant', 'Capgemini', 'Deloitte', 'Tech Mahindra', 'Zoho',
+    'LTI Mindtree', 'HCL', 'Amazon', 'UST', 'IBM'
+];
+$inComps = "'" . implode("','", $comps) . "'";
+
+$rows = $db->query("
+    SELECT id, company_name, question_text, code_snippet, correct_option, option_a, option_b, option_c, option_d, is_published
+    FROM questions
+    WHERE is_published = 1 
+      AND company_name IN ($inComps) 
+      AND (language = 'c' OR language = 'innovature') 
+      AND code_snippet IS NOT NULL 
+      AND TRIM(code_snippet) != ''
+")->fetchAll(PDO::FETCH_ASSOC);
+
+echo "Found " . count($rows) . " published C / Innovature code questions across the 15 companies.\n";
+
+$passed = 0;
+$failed = 0;
+$tempFile = __DIR__ . '/../tools/temp_runner.c';
+
+foreach ($rows as $r) {
+    $code = trim($r['code_snippet']);
+    // Ensure standard headers if missing
+    if (strpos($code, '<stdio.h>') === false) {
+        $code = "#include <stdio.h>\n" . $code;
+    }
+    // If no main function, wrap in main
+    if (strpos($code, 'main(') === false && strpos($code, 'main (') === false) {
+        $code = "#include <stdio.h>\nint main() {\n" . $code . "\nreturn 0;\n}";
+    }
+
+    file_put_contents($tempFile, $code);
+
+    $cmd = escapeshellarg($tccPath) . " -run " . escapeshellarg($tempFile);
+    $descriptors = [
+        0 => ["pipe", "r"],
+        1 => ["pipe", "w"],
+        2 => ["pipe", "w"]
+    ];
+    $process = proc_open($cmd, $descriptors, $pipes);
+    $output = '';
+    $ret = -1;
+
+    if (is_resource($process)) {
+        fclose($pipes[0]);
+        // Set stream non-blocking
+        stream_set_blocking($pipes[1], false);
+        stream_set_blocking($pipes[2], false);
+        
+        $start = microtime(true);
+        while (true) {
+            $status = proc_get_status($process);
+            $output .= stream_get_contents($pipes[1]);
+            if (!$status['running']) {
+                $ret = $status['exitcode'];
+                break;
+            }
+            if (microtime(true) - $start > 2.0) {
+                // Timeout after 2 seconds
+                proc_terminate($process);
+                $ret = 124;
+                $output .= " [TIMEOUT]";
+                break;
+            }
+            usleep(10000); // 10ms
+        }
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
+    }
+    $output = trim($output);
+
+    $expectedKey = 'option_' . strtolower($r['correct_option']);
+    $expectedVal = trim($r[$expectedKey]);
+
+    // Check if output matches expected value or is substring
+    $matches = ($ret === 0 && ($output === $expectedVal || strpos($expectedVal, $output) !== false || strpos($output, $expectedVal) !== false));
+
+    if ($matches) {
+        $passed++;
+        echo "  [PASS] ID {$r['id']} ({$r['company_name']}): Output '$output' matches expected '$expectedVal'\n";
+    } else {
+        $failed++;
+        echo "  [FAIL/MISMATCH] ID {$r['id']} ({$r['company_name']}): Output '$output', expected '$expectedVal' (ret=$ret)\n";
+    }
+}
+
+@unlink($tempFile);
+echo "\nTotal: " . count($rows) . " | Executed & Verified: $passed | Mismatch/Compile Fail: $failed\n";

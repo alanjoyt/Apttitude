@@ -4,7 +4,8 @@
 
 <?php
 $isQuizSession = ($currentAction === 'practice' && (isset($_GET['session']) || isset($_GET['subtopic_id']) || (isset($_GET['mode']) && $_GET['mode'] === 'quiz')))
-              || in_array($currentAction, ['mock', 'duel', 'time_attack']);
+              || ($currentAction === 'mock' && isset($_GET['session']) && $_GET['session'] === 'active')
+              || ($currentAction === 'technical' && (isset($_GET['session']) || isset($_GET['start']) || (isset($_GET['mode']) && $_GET['mode'] === 'quiz')));
 ?>
 
 <?php if (!$isQuizSession): ?>
@@ -12,7 +13,7 @@ $isQuizSession = ($currentAction === 'practice' && (isset($_GET['session']) || i
      MOBILE STICKY BOTTOM TAB BAR (< 768px)
      5 Primary Actions: Practice, Tech, Modes, Shop, Profile
      ====================================================================== -->
-<nav class="bottom-tab-bar d-md-none" aria-label="Mobile Bottom Navigation">
+<nav class="bottom-tab-bar d-lg-none" aria-label="Mobile Bottom Navigation">
   <!-- 1. Practice -->
   <a href="index.php?action=practice" class="bottom-tab-item <?= ($currentAction === 'practice') ? 'active' : '' ?>">
     <span class="bottom-tab-icon-chip"><i class="bi bi-pen-fill"></i></span>
@@ -49,8 +50,8 @@ $isQuizSession = ($currentAction === 'practice' && (isset($_GET['session']) || i
 
 <footer class="footer mt-auto text-center text-ink-muted fs-7 <?= $isQuizSession ? 'd-none' : '' ?>">
   <div class="container">
-    <!-- MOBILE COMPACT COLOPHON STRIP (< 768px, <= 120px height) -->
-    <div class="d-md-none footer-mobile-colophon">
+    <!-- MOBILE COMPACT COLOPHON STRIP (< 992px, <= 120px height) -->
+    <div class="d-lg-none footer-mobile-colophon">
       <!-- Row 1: Four text links in ONE row: Home, Privacy, Terms, Contact (44px min touch height) -->
       <nav class="footer-colophon-nav" aria-label="Mobile Footer Links">
         <a href="index.php?action=landing" class="footer-colophon-link">Home</a>
@@ -69,12 +70,12 @@ $isQuizSession = ($currentAction === 'practice' && (isset($_GET['session']) || i
 
       <!-- Row 3: Small centered copyright line -->
       <div class="footer-colophon-copy small text-ink-muted">
-        &copy; 2026 Apttitudee &middot; by Nexyra Solutions
+        &copy; 2026 Apttitudee &middot; by BOLDBYTE
       </div>
     </div>
 
-    <!-- DESKTOP FULL FOOTER (>= 768px) -->
-    <div class="row align-items-center gy-3 d-none d-md-flex py-4">
+    <!-- DESKTOP FULL FOOTER (>= 992px) -->
+    <div class="row align-items-center gy-3 d-none d-lg-flex py-4">
       <div class="col-md-5 text-md-start">
         <div class="fw-bold text-ink mb-1">
           <i class="bi bi-book-half me-1" style="color: var(--marker-orange);"></i> Apttitudee Placement Prep
@@ -103,7 +104,7 @@ $isQuizSession = ($currentAction === 'practice' && (isset($_GET['session']) || i
 
       <div class="col-md-3 text-md-end">
         <span class="badge rounded-pill px-3 py-1.5 border" style="background-color: var(--surface-bg); color: var(--surface-text); border-color: var(--border-strong) !important; box-shadow: var(--shadow-hard-sm);">
-          <i class="bi bi-pen-fill text-warning me-1"></i> <strong>Nexyra Solutions</strong>
+          <i class="bi bi-pen-fill text-warning me-1"></i> <strong>BOLDBYTE</strong>
         </span>
         <div class="mt-1.5 small">
           <a href="https://www.instagram.com/mr.ignite/?utm_source=ig_web_button_share_sheet" target="_blank" rel="noopener noreferrer" class="text-ink fw-semibold text-decoration-none d-inline-flex align-items-center gap-1">
@@ -112,7 +113,7 @@ $isQuizSession = ($currentAction === 'practice' && (isset($_GET['session']) || i
         </div>
         <div class="small text-ink-muted mt-0.5" style="font-size: 0.75rem;">
           <a href="mailto:alanjoy103@gmail.com" class="text-ink-muted text-decoration-none">alanjoy103@gmail.com</a> &bull;
-          <a href="mailto:asknexyra@gmail.com" class="text-ink-muted text-decoration-none">asknexyra@gmail.com</a>
+          <a href="mailto:askboldbyte@gmail.com" class="text-ink-muted text-decoration-none">askboldbyte@gmail.com</a>
         </div>
         <div class="mt-1 d-flex justify-content-md-end align-items-center gap-2">
           <button type="button" class="btn btn-outline-gamified btn-sm py-0.5 px-2" style="font-size: 0.72rem;" onclick="openContactModal(event)">
@@ -128,12 +129,42 @@ $isQuizSession = ($currentAction === 'practice' && (isset($_GET['session']) || i
 <?php require_once __DIR__ . '/components/feature_guide_modal.php'; ?>
 <?php require_once __DIR__ . '/components/contact_modal.php'; ?>
 
+<!-- Back to Top Button -->
+<button type="button" id="btnBackToTop" class="btn-back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Back to top" title="Back to top">
+  <i class="bi bi-arrow-up"></i>
+</button>
+
 <!-- Bootstrap 5 JS Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Shared Quiz Shell JS Library -->
-<script src="<?= asset_url('js/quiz_shell.js') ?>"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+<!-- Shared Quiz Shell JS Library (Loaded only on quiz and assessment pages) -->
+<?php if ($isQuizSession || in_array($currentAction, ['practice', 'mock', 'technical', 'time_attack', 'duel', 'campaign', 'diagnostic'])): ?>
+<script src="<?= asset_url('js/quiz_shell.js') ?>" defer></script>
+<?php endif; ?>
 <!-- Gamified App JS with Cache Buster -->
-<script src="<?= asset_url('js/app.js') ?>"></script>
+<script src="<?= file_exists(__DIR__ . '/../../public/js/app.min.js') ? asset_url('js/app.min.js') : asset_url('js/app.js') ?>" defer></script>
+
+<!-- PWA Service Worker Registration & Scroll Listener -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').catch(function(err) {
+      console.log('SW registration skipped:', err);
+    });
+  });
+}
+
+// Back-to-top visibility toggle
+window.addEventListener('scroll', function() {
+  const btn = document.getElementById('btnBackToTop');
+  if (btn) {
+    if (window.scrollY > 350) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  }
+}, { passive: true });
+</script>
 
 </body>
 </html>

@@ -484,7 +484,8 @@ if (isset($_SESSION['user_id'])) {
           <!-- User Profile Dropdown -->
           <div class="dropdown flex-shrink-0">
             <button class="btn btn-user-profile dropdown-toggle d-flex align-items-center gap-2 py-1 px-2 px-sm-2.5" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <div class="avatar-circle flex-shrink-0">
+              <span class="visually-hidden"><?= htmlspecialchars($currentUser['name'] ?? 'Account') ?> Profile</span>
+              <div class="avatar-circle flex-shrink-0" aria-hidden="true">
                 <i class="bi <?= !empty($currentUser['avatar_icon']) ? $currentUser['avatar_icon'] : 'bi-person-circle' ?>"></i>
               </div>
               <div class="d-none d-xl-flex flex-column text-start me-1 flex-shrink-0">
