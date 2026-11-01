@@ -27,6 +27,28 @@ $packTitle = $packTitles[$packCode] ?? 'Company Placement Pattern Mock';
 ?>
 
 <div class="row justify-content-center py-2 py-md-3" id="mockMainContainer">
+  <!-- Mode Selection Container -->
+  <div class="col-lg-9 col-md-11 d-none" id="mockModeSelectContainer">
+    <div class="card card-gamified p-3 p-md-4 mb-3">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div>
+          <span class="badge-stamp-sm mb-1 d-inline-block">SELECT MOCK LENGTH</span>
+          <h1 class="h4 font-serif fw-bold text-ink mb-1"><?= htmlspecialchars($packTitle) ?></h1>
+          <p class="text-ink-muted small mb-0">Select your preferred examination length. One unlock gives access to all three formats.</p>
+        </div>
+        <button type="button" class="btn btn-outline-gamified btn-sm fw-bold" onclick="showMockLeaderboardModal('standard')">
+          <svg class="exam-icon me-1 text-warning icon-14"><use href="#icon-award"></use></svg> Leaderboards
+        </button>
+      </div>
+
+      <div class="row g-3" id="mockModesRow">
+        <div class="col-12 text-center py-4 text-ink-muted">
+          <span class="spinner-border spinner-border-sm me-2" role="status"></span> Loading test formats...
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="col-lg-9 col-md-11" id="mockActiveQuizZone">
 
     <?php if ($packCode): ?>
@@ -165,10 +187,17 @@ $packTitle = $packTitles[$packCode] ?? 'Company Placement Pattern Mock';
       <header class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <div>
           <span class="badge-stamp-sm mb-1 d-inline-block">OFFICIAL MARKSHEET</span>
-          <h1 class="font-serif fw-bold text-ink fs-2 mb-0" id="scoreSheetTitle">Mock Test Result</h1>
-          <p class="text-ink-muted small mb-0" id="scoreSheetSubtitle"><?= htmlspecialchars($packTitle) ?></p>
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <h1 class="font-serif fw-bold text-ink fs-2 mb-0" id="scoreSheetTitle">Mock Test Result</h1>
+            <span class="badge rounded-pill bg-primary-subtle text-primary border px-2.5 py-1 fw-bold fs-7" id="scoreModeBadge">Standard Mode</span>
+            <span class="badge rounded-pill bg-warning-subtle text-warning border px-2.5 py-1 fw-bold fs-7" id="scorePercentileBadge">Top 100%</span>
+          </div>
+          <p class="text-ink-muted small mb-0 mt-1" id="scoreSheetSubtitle"><?= htmlspecialchars($packTitle) ?></p>
         </div>
         <div class="d-flex align-items-center gap-2 no-print">
+          <button type="button" class="btn btn-outline-gamified btn-sm fw-bold" id="viewModeLeaderboardBtn" onclick="showMockLeaderboardModal(currentMockMode)" title="View Mode Leaderboard">
+            <svg class="exam-icon me-1 text-warning icon-14"><use href="#icon-award"></use></svg> Leaderboard
+          </button>
           <button type="button" class="btn btn-outline-gamified btn-sm fw-bold" onclick="window.print()" title="Print Marksheet">
             <svg class="exam-icon me-1 icon-14"><use href="#icon-copy"></use></svg> Print PDF
           </button>
@@ -361,6 +390,41 @@ $packTitle = $packTitles[$packCode] ?? 'Company Placement Pattern Mock';
     </div>
   </div>
 
+  <!-- Mock Mode Leaderboard Modal -->
+  <div class="modal fade" id="mockLeaderboardModal" tabindex="-1" aria-labelledby="mockLbModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content surface-card border shadow-lg rounded-4">
+        <div class="modal-header border-bottom">
+          <div class="d-flex align-items-center gap-2">
+            <svg class="exam-icon text-warning icon-20"><use href="#icon-award"></use></svg>
+            <h5 class="modal-title font-serif fw-bold text-ink mb-0" id="mockLbModalTitle">Pack Leaderboard</h5>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-3 p-md-4">
+          <!-- Mode Tabs (Quick / Standard / Full) -->
+          <ul class="nav nav-pills gap-2 mb-3" id="mockLbModeTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3 py-1.5 fw-bold" id="lbTabQuick" type="button" onclick="loadMockLeaderboardData('quick')">Quick (30Q)</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active rounded-pill px-3 py-1.5 fw-bold" id="lbTabStandard" type="button" onclick="loadMockLeaderboardData('standard')">Standard (60Q)</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3 py-1.5 fw-bold" id="lbTabFull" type="button" onclick="loadMockLeaderboardData('full')">Full-Length</button>
+            </li>
+          </ul>
+
+          <div id="mockLbContent">
+            <div class="text-center py-4 text-ink-muted">
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span> Loading rankings...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Legacy Scorecard Modal retained for backwards compatibility -->
   <div class="modal fade" id="scorecardModal" data-bs-backdrop="static" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -389,6 +453,7 @@ let serverDeadlineTs = null;
 let timerInterval = null;
 let currentScorecardData = null;
 let currentMockSessionId = null;
+let currentMockMode = 'standard';
 const currentPackCode = '<?= htmlspecialchars($packCode ?? 'GENERAL_MOCK', ENT_QUOTES) ?>';
 const currentPackTitle = '<?= htmlspecialchars($packTitle, ENT_QUOTES) ?>';
 
@@ -450,12 +515,9 @@ window.addEventListener('blur', () => {
                             (navigator.maxTouchPoints > 0) || 
                             (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
     if (isTouchOrMobile) {
-        // Touch/Mobile: Ignore lone window blur events (e.g. notification tray, incoming call banner, address bar interaction)
-        // Tab/App switching is authoritatively detected by document.visibilityState === 'hidden'
         return;
     }
 
-    // Desktop: Provide 1.5s grace period to prevent accidental skips from system dialogs
     if (blurGraceTimeout) clearTimeout(blurGraceTimeout);
     blurGraceTimeout = setTimeout(() => {
         if (!document.hasFocus()) {
@@ -485,6 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const viewParam = urlParams.get('view');
     const sessionParam = urlParams.get('session');
+    const modeParam = urlParams.get('mode');
 
     if (viewParam === 'scorecard' && sessionParam) {
         fetch(`index.php?action=api_get_mock_scorecard&session_id=${encodeURIComponent(sessionParam)}&date=${encodeURIComponent(sessionParam)}`)
@@ -494,12 +557,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentScorecardData = data;
                     displayExamHallScorecard(data);
                 } else {
-                    fetchMockTest();
+                    checkActiveSessionOrShowModes();
                 }
             })
-            .catch(() => fetchMockTest());
+            .catch(() => checkActiveSessionOrShowModes());
+    } else if (modeParam) {
+        currentMockMode = modeParam;
+        fetchMockTest(modeParam);
     } else {
-        fetchMockTest();
+        checkActiveSessionOrShowModes();
     }
 
     document.getElementById('nextMockBtn')?.addEventListener('click', handleNextOrSubmit);
@@ -518,6 +584,104 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('shareResultBtn')?.addEventListener('click', shareMockResult);
 });
+
+async function checkActiveSessionOrShowModes() {
+    // 1. Check if user already has an active mock session in progress
+    try {
+        const checkRes = await fetch(`index.php?action=api_get_mock&pack=${encodeURIComponent(currentPackCode)}`);
+        const checkData = await checkRes.json();
+        if (checkData.status === 'success' && checkData.is_resumed) {
+            // Actively resume session
+            currentMockMode = checkData.mode || 'standard';
+            setupActiveSessionData(checkData);
+            return;
+        }
+    } catch (e) {
+        // Continue to show mode options
+    }
+
+    // 2. Fetch mode definitions and display mode picker
+    const quizZone = document.getElementById('mockActiveQuizZone');
+    const modeSelectContainer = document.getElementById('mockModeSelectContainer');
+    const modesRow = document.getElementById('mockModesRow');
+
+    if (quizZone) quizZone.classList.add('d-none');
+    if (modeSelectContainer) modeSelectContainer.classList.remove('d-none');
+
+    try {
+        const res = await fetch(`index.php?action=api_get_mock_modes&pack=${encodeURIComponent(currentPackCode)}`);
+        const data = await res.json();
+        if (data.status === 'success' && data.modes) {
+            renderModeSelectionCards(data);
+        } else {
+            if (modesRow) modesRow.innerHTML = '<div class="col-12 alert alert-warning">Unable to load test formats.</div>';
+        }
+    } catch (err) {
+        if (modesRow) modesRow.innerHTML = `<div class="col-12 alert alert-danger">${err.message}</div>`;
+    }
+}
+
+function renderModeSelectionCards(data) {
+    const modesRow = document.getElementById('mockModesRow');
+    if (!modesRow) return;
+    modesRow.innerHTML = '';
+
+    const modes = data.modes;
+    const modeKeys = ['quick', 'standard', 'full'];
+
+    modeKeys.forEach(mKey => {
+        const m = modes[mKey];
+        if (!m) return;
+
+        const col = document.createElement('div');
+        col.className = 'col-md-4';
+
+        const isRecommend = (mKey === 'standard');
+        const borderClass = isRecommend ? 'border-primary shadow-sm' : 'border';
+        const badgeMarkup = isRecommend 
+            ? '<span class="badge rounded-pill bg-primary text-white fw-bold extra-small mb-2">RECOMMENDED</span>' 
+            : `<span class="badge rounded-pill bg-body-tertiary text-ink border fw-bold extra-small mb-2">${m.title.toUpperCase()}</span>`;
+
+        const cappedNotice = m.is_capped 
+            ? `<div class="alert alert-info py-1 px-2 extra-small mt-2 mb-0 border-0"><i class="bi bi-info-circle me-1"></i> Pool Capped: ${m.effective_questions} questions available</div>`
+            : '';
+
+        const negMarkingText = m.negative_marking > 0 
+            ? `-${Number(m.negative_marking).toFixed(2)} for incorrect` 
+            : 'No negative marking';
+
+        col.innerHTML = `
+            <div class="card h-100 card-gamified p-3 p-sm-4 d-flex flex-column justify-content-between ${borderClass}" style="border-width: 1.5px;">
+                <div>
+                    ${badgeMarkup}
+                    <h2 class="h5 font-serif fw-bold text-ink mb-1">${m.title}</h2>
+                    <div class="display-6 fw-bold font-mono text-ink my-2">
+                        ${m.effective_questions} <span class="fs-6 fw-normal text-ink-muted">Questions</span>
+                    </div>
+                    <ul class="list-unstyled small text-ink-muted mb-3 d-flex flex-column gap-1.5">
+                        <li><i class="bi bi-clock-fill text-accent me-1.5"></i> <strong>${m.duration_minutes} Minutes</strong> total duration</li>
+                        <li><i class="bi bi-shield-shaded text-accent me-1.5"></i> ${negMarkingText}</li>
+                        <li><i class="bi bi-layers-fill text-accent me-1.5"></i> Balanced syllabus section blueprint</li>
+                    </ul>
+                    ${cappedNotice}
+                </div>
+                <div class="mt-3">
+                    <button type="button" class="btn ${isRecommend ? 'btn-primary-gamified' : 'btn-outline-gamified'} w-100 fw-bold py-2" onclick="startMockInMode('${m.mode}')">
+                        Start ${m.title} &rarr;
+                    </button>
+                </div>
+            </div>
+        `;
+        modesRow.appendChild(col);
+    });
+}
+
+function startMockInMode(mode) {
+    currentMockMode = mode;
+    const modeSelectContainer = document.getElementById('mockModeSelectContainer');
+    if (modeSelectContainer) modeSelectContainer.classList.add('d-none');
+    fetchMockTest(mode);
+}
 
 function handleNextOrSubmit() {
     recordActiveQuestionTime();
@@ -543,9 +707,17 @@ function handleDirectOrConfirmSubmit() {
     }
 }
 
-async function fetchMockTest() {
+async function fetchMockTest(modeParam) {
     const qBox = document.getElementById('mockQuestionText');
-    const url = 'index.php?action=api_get_mock<?= $packCode ? '&pack=' . urlencode($packCode) : '' ?>';
+    const mode = modeParam || currentMockMode || 'standard';
+    currentMockMode = mode;
+
+    const modeSelectContainer = document.getElementById('mockModeSelectContainer');
+    const quizZone = document.getElementById('mockActiveQuizZone');
+    if (modeSelectContainer) modeSelectContainer.classList.add('d-none');
+    if (quizZone) quizZone.classList.remove('d-none');
+
+    const url = `index.php?action=api_get_mock&pack=${encodeURIComponent(currentPackCode)}&mode=${encodeURIComponent(mode)}`;
     
     if (qBox) {
         qBox.innerHTML = '<div class="text-center py-4 text-ink-muted"><span class="spinner-border spinner-border-sm me-2" role="status"></span> Loading exam questions...</div>';
@@ -567,23 +739,83 @@ async function fetchMockTest() {
         }
 
         if (data.questions && data.questions.length > 0) {
-            mockQuestions = data.questions;
-            currentMockSessionId = data.session_id || null;
-            const totalSec = (data.duration_seconds || (data.questions.length * 60));
-            timerSeconds = (data.remaining_seconds !== undefined && data.remaining_seconds !== null)
-                ? parseInt(data.remaining_seconds, 10)
-                : totalSec;
-
-            if (data.deadline) {
-                const deadlineMs = new Date(data.deadline.replace(' ', 'T')).getTime();
-                if (!isNaN(deadlineMs)) {
-                    serverDeadlineTs = deadlineMs;
-                } else {
-                    serverDeadlineTs = Date.now() + (timerSeconds * 1000);
-                }
-            } else {
-                serverDeadlineTs = Date.now() + (timerSeconds * 1000);
+            setupActiveSessionData(data);
+        } else {
+            if (qBox) {
+                qBox.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox fs-1 text-ink-muted mb-2 d-block"></i>
+                        <h5 class="fw-bold text-ink">No Questions Found</h5>
+                        <p class="text-ink-muted mb-3">No mock questions are currently available for this pack.</p>
+                        <a href="index.php?action=store" class="btn btn-outline-gamified fw-bold">Back to Store</a>
+                    </div>
+                `;
             }
+        }
+    } catch (err) {
+        console.error('Failed to load mock questions:', err);
+        if (qBox) {
+            qBox.innerHTML = `
+                <div class="alert alert-danger p-3 my-2" role="alert">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                        <strong class="fs-6">Unable to Load Mock Examination</strong>
+                    </div>
+                    <p class="small mb-3 text-break">${err.message}</p>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-primary-gamified btn-sm fw-bold px-3" onclick="fetchMockTest('${mode}')">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Retry
+                        </button>
+                        <a href="index.php?action=store" class="btn btn-primary-gamified btn-sm fw-bold"><i class="bi bi-shop me-1"></i> Visit Store</a>
+                    </div>
+                </div>
+            `;
+        }
+    }
+}
+
+function setupActiveSessionData(data) {
+    const modeSelectContainer = document.getElementById('mockModeSelectContainer');
+    const quizZone = document.getElementById('mockActiveQuizZone');
+    if (modeSelectContainer) modeSelectContainer.classList.add('d-none');
+    if (quizZone) quizZone.classList.remove('d-none');
+
+    mockQuestions = data.questions;
+    currentMockSessionId = data.session_id || null;
+    currentMockMode = data.mode || currentMockMode || 'standard';
+    const totalSec = (data.duration_seconds || (data.questions.length * 60));
+    timerSeconds = (data.remaining_seconds !== undefined && data.remaining_seconds !== null)
+        ? parseInt(data.remaining_seconds, 10)
+        : totalSec;
+
+    if (data.deadline) {
+        const deadlineMs = new Date(data.deadline.replace(' ', 'T')).getTime();
+        if (!isNaN(deadlineMs)) {
+            serverDeadlineTs = deadlineMs;
+        } else {
+            serverDeadlineTs = Date.now() + (timerSeconds * 1000);
+        }
+    } else {
+        serverDeadlineTs = Date.now() + (timerSeconds * 1000);
+    }
+
+    currentIndex = 0;
+    userAnswers = (data.saved_answers && typeof data.saved_answers === 'object') ? Object.assign({}, data.saved_answers) : {};
+    questionTimes = {};
+    let storedSwitches = [];
+    if (currentMockSessionId) {
+        try {
+            storedSwitches = JSON.parse(sessionStorage.getItem('tab_switches_' + currentMockSessionId) || '[]');
+        } catch(e) {}
+    }
+    tabSwitchSkipped = Array.isArray(storedSwitches) ? storedSwitches : [];
+    testStartTime = Date.now();
+    activeQuestionStartTime = Date.now();
+
+    renderQuestion();
+    renderPalette();
+    startTimer();
+}
 
             currentIndex = 0;
             userAnswers = (data.saved_answers && typeof data.saved_answers === 'object') ? Object.assign({}, data.saved_answers) : {};
@@ -793,6 +1025,7 @@ function submitMockTest() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             session_id: currentMockSessionId,
+            mode: currentMockMode,
             question_ids: questionIds,
             answers: userAnswers,
             tab_switch_skipped: tabSwitchSkipped,
@@ -851,6 +1084,27 @@ function displayExamHallScorecard(data) {
     formulaEl.innerText = data.score.formula || '+1 per correct, -0.25 per wrong';
     pctEl.innerText = `${data.score.percentage}%`;
     bandBadge.innerText = data.score.band;
+
+    // Update Mode & Percentile Badges
+    const modeBadge = document.getElementById('scoreModeBadge');
+    if (modeBadge) {
+        const modeTitle = (data.mode ? data.mode.charAt(0).toUpperCase() + data.mode.slice(1) : 'Standard') + ' Mode';
+        modeBadge.innerText = modeTitle;
+    }
+    const pctBadge = document.getElementById('scorePercentileBadge');
+    if (pctBadge) {
+        if (data.percentile !== undefined && data.percentile !== null) {
+            const topPct = Math.max(1, Math.round(100 - data.percentile));
+            pctBadge.innerText = `Top ${topPct}% (${data.percentile}% Percentile)`;
+        } else {
+            pctBadge.innerText = 'Leaderboard Ranked';
+        }
+    }
+
+    const retakeBtn = document.getElementById('retakeMockBtn');
+    if (retakeBtn) {
+        retakeBtn.href = `index.php?action=mock&pack=${encodeURIComponent(currentPackCode)}&mode=${encodeURIComponent(data.mode || currentMockMode)}`;
+    }
 
     if (data.score.band === 'Distinction' || data.score.band === 'First Class') {
         bandBadge.style.backgroundColor = 'var(--success-bg)';
@@ -1249,5 +1503,108 @@ async function shareMockResult() {
             alert(shareText);
         });
     }
+}
+
+/**
+ * Load Mock Leaderboard for a specific mode
+ */
+async function loadMockLeaderboardData(mode) {
+    const content = document.getElementById('mockLbContent');
+    const tabs = {
+        'quick': document.getElementById('lbTabQuick'),
+        'standard': document.getElementById('lbTabStandard'),
+        'full': document.getElementById('lbTabFull')
+    };
+
+    Object.keys(tabs).forEach(m => {
+        if (tabs[m]) {
+            if (m === mode) tabs[m].classList.add('active');
+            else tabs[m].classList.remove('active');
+        }
+    });
+
+    if (content) {
+        content.innerHTML = '<div class="text-center py-4 text-ink-muted"><span class="spinner-border spinner-border-sm me-2" role="status"></span> Loading rankings...</div>';
+    }
+
+    try {
+        const res = await fetch(`index.php?action=api_get_mock_leaderboard&pack=${encodeURIComponent(currentPackCode)}&mode=${encodeURIComponent(mode)}`);
+        const data = await res.json();
+        if (data.status === 'success' && content) {
+            if (!data.leaderboard || data.leaderboard.length === 0) {
+                content.innerHTML = `
+                    <div class="text-center py-4 text-ink-muted">
+                        <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                        <p class="mb-0">No completed attempts recorded in <strong>${mode.toUpperCase()}</strong> mode yet. Be the first!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" style="border-color: var(--border);">
+                        <thead>
+                            <tr class="text-ink-muted small">
+                                <th style="width: 60px;">Rank</th>
+                                <th>Cadet</th>
+                                <th>Marks</th>
+                                <th>Accuracy</th>
+                                <th>Pacing</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            data.leaderboard.forEach(r => {
+                const rankBadge = r.rank === 1 ? '<span class="badge rounded-pill bg-warning text-dark fw-bold">#1 👑</span>'
+                    : r.rank === 2 ? '<span class="badge rounded-pill bg-secondary text-white fw-bold">#2</span>'
+                    : r.rank === 3 ? '<span class="badge rounded-pill bg-danger-subtle text-danger fw-bold">#3</span>'
+                    : `<span class="fw-bold text-ink-muted">#${r.rank}</span>`;
+
+                const timeMins = Math.floor(r.total_time_seconds / 60);
+                const timeSecs = r.total_time_seconds % 60;
+                const timeFormatted = `${timeMins}m ${timeSecs < 10 ? '0' : ''}${timeSecs}s`;
+                const dateStr = (r.completed_at || '').split(' ')[0] || '--';
+
+                html += `
+                    <tr>
+                        <td>${rankBadge}</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi ${r.avatar_icon} text-primary fs-5"></i>
+                                <span class="fw-bold text-ink">${r.user_name}</span>
+                            </div>
+                        </td>
+                        <td class="font-mono fw-bold text-ink">${Number(r.score_marks).toFixed(2)} / ${Number(r.total_marks).toFixed(2)}</td>
+                        <td class="text-accent fw-bold">${Number(r.accuracy_percent).toFixed(1)}%</td>
+                        <td class="small text-ink-muted font-mono">${timeFormatted}</td>
+                        <td class="small text-ink-muted">${dateStr}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            content.innerHTML = html;
+        }
+    } catch (err) {
+        if (content) {
+            content.innerHTML = `<div class="alert alert-danger py-2 px-3 small">${err.message}</div>`;
+        }
+    }
+}
+
+function showMockLeaderboardModal(mode) {
+    const modalEl = document.getElementById('mockLeaderboardModal');
+    if (!modalEl) return;
+    const targetMode = mode || currentMockMode || 'standard';
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.show();
+    loadMockLeaderboardData(targetMode);
 }
 </script>

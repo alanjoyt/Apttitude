@@ -1574,6 +1574,212 @@ class AdminController {
         echo json_encode(['status' => 'success', 'logs' => $logs]);
         exit;
     }
+
+    /**
+     * Get Mock Blueprints & Lengths Configuration
+     */
+    public static function getMockConfigsJSON(): void {
+        header('Content-Type: application/json');
+        self::checkAdminAuth();
+
+        $db = Database::getConnection();
+        $unlockableId = isset($_GET['unlockable_id']) ? (int)$_GET['unlockable_id'] : 0;
+
+        $query = "
+            SELECT mc.*, u.code as pack_code, u.title as pack_title
+            FROM mock_configs mc
+            JOIN unlockables u ON mc.unlockable_id = u.id
+        ";
+        $params = [];
+        if ($unlockableId > 0) {
+            $query .= " WHERE mc.unlockable_id = ?";
+            $params[] = $unlockableId;
+        }
+        $query .= " ORDER BY u.id ASC, FIELD(mc.mode, 'quick', 'standard', 'full')";
+
+        $stmt = $db->prepare($query);
+        $stmt->execute($params);
+        $configs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($configs as &$cfg) {
+            $cfg['blueprint_data'] = json_decode($cfg['blueprint'], true);
+        }
+        unset($cfg);
+
+        // Also fetch list of available topic codes for blueprint builder
+        $topics = $db->query("SELECT id, name, code FROM topics ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
+        $packs = $db->query("SELECT id, code, title FROM unlockables WHERE item_type = 'company_mock' OR code LIKE '%MOCK%' ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
+
+        echo json_encode([
+            'status' => 'success',
+            'configs' => $configs,
+            'topics' => $topics,
+            'packs' => $packs
+        ]);
+        exit;
+    }
+
+    /**
+     * Save Mock Blueprint & Length Configuration with Rigorous Validation (ML9)
+     */
+    public static function saveMockConfigJSON(): void {
+        header('Content-Type: application/json');
+        self::checkAdminAuth();
+
+        $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        self::verifyAdminCsrf($input);
+
+        $unlockableId = (int)($input['unlockable_id'] ?? 0);
+        $mode = strtolower(trim($input['mode'] ?? ''));
+
+        if ($unlockableId <= 0 && !empty($input['config_id'])) {
+            $dbTemp = Database::getConnection();
+            $cfgStmt = $dbTemp->prepare("SELECT unlockable_id, mode FROM mock_configs WHERE id = ?");
+            $cfgStmt->execute([(int)$input['config_id']]);
+            $cfgRow = $cfgStmt->fetch(PDO::FETCH_ASSOC);
+            if ($cfgRow) {
+                $unlockableId = (int)$cfgRow['unlockable_id'];
+                if (empty($mode)) $mode = $cfgRow['mode'];
+            }
+        }
+        $questionCount = (int)($input['question_count'] ?? 0);
+        $durationMinutes = !empty($input['duration_minutes']) ? (int)$input['duration_minutes'] : null;
+        $negativeMarking = isset($input['negative_marking']) ? (float)$input['negative_marking'] : 0.25;
+        $blueprintRaw = $input['blueprint'] ?? null;
+
+        if ($unlockableId <= 0) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Valid company pack unlockable ID is required']);
+            exit;
+        }
+
+        if (!in_array($mode, ['quick', 'standard', 'full'], true)) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Invalid mode. Mode must be quick, standard, or full']);
+            exit;
+        }
+
+        if ($questionCount <= 0) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Question count must be greater than zero']);
+            exit;
+        }
+
+        if ($negativeMarking < 0.0) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Negative marking penalty cannot be negative']);
+            exit;
+        }
+
+        // Validate blueprint structure
+        $blueprintData = is_array($blueprintRaw) ? $blueprintRaw : json_decode((string)$blueprintRaw, true);
+        if (!is_array($blueprintData) || empty($blueprintData['sections']) || !is_array($blueprintData['sections'])) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Blueprint must be a valid JSON object containing a non-empty "sections" array']);
+            exit;
+        }
+
+        $db = Database::getConnection();
+
+        // Check unlockable exists
+        $uStmt = $db->prepare("SELECT id, code, title FROM unlockables WHERE id = ?");
+        $uStmt->execute([$unlockableId]);
+        $pack = $uStmt->fetch(PDO::FETCH_ASSOC);
+        if (!$pack) {
+            http_response_code(404);
+            echo json_encode(['status' => 'error', 'message' => 'Company pack not found']);
+            exit;
+        }
+
+        // Fetch valid topic codes from database
+        $validTopicCodes = $db->query("SELECT code FROM topics")->fetchAll(PDO::FETCH_COLUMN);
+
+        $totalSectionCount = 0;
+        foreach ($blueprintData['sections'] as $idx => $sec) {
+            if (empty($sec['section_name'])) {
+                http_response_code(400);
+                echo json_encode(['status' => 'error', 'message' => "Section #" . ($idx + 1) . " requires a non-empty section_name"]);
+                exit;
+            }
+
+            $topicCode = strtoupper(trim($sec['topic_code'] ?? ''));
+            if (!in_array($topicCode, $validTopicCodes, true)) {
+                http_response_code(400);
+                echo json_encode(['status' => 'error', 'message' => "Invalid section topic_code '{$topicCode}' in section #" . ($idx + 1) . ". Section topic must exist in topics table"]);
+                exit;
+            }
+
+            $secCount = (int)($sec['count'] ?? 0);
+            if ($secCount <= 0) {
+                http_response_code(400);
+                echo json_encode(['status' => 'error', 'message' => "Section '{$sec['section_name']}' question count must be greater than zero"]);
+                exit;
+            }
+
+            $totalSectionCount += $secCount;
+
+            // Validate difficulty mix
+            if (isset($sec['difficulty_mix']) && is_array($sec['difficulty_mix'])) {
+                $e = (int)($sec['difficulty_mix']['easy'] ?? 0);
+                $m = (int)($sec['difficulty_mix']['medium'] ?? 0);
+                $h = (int)($sec['difficulty_mix']['hard'] ?? 0);
+                if (($e + $m + $h) !== $secCount) {
+                    http_response_code(400);
+                    echo json_encode(['status' => 'error', 'message' => "Section '{$sec['section_name']}' difficulty mix (easy: $e + med: $m + hard: $h = " . ($e + $m + $h) . ") must add up exactly to section count ($secCount)"]);
+                    exit;
+                }
+            }
+        }
+
+        // Validate that section counts add up to total question count
+        if ($totalSectionCount !== $questionCount) {
+            http_response_code(400);
+            echo json_encode([
+                'status' => 'error',
+                'message' => "Blueprint section counts ({$totalSectionCount}) do not add up to total question count ({$questionCount})"
+            ]);
+            exit;
+        }
+
+        $blueprintJson = json_encode($blueprintData, JSON_UNESCAPED_SLASHES);
+
+        $stmt = $db->prepare("
+            INSERT INTO mock_configs 
+            (unlockable_id, mode, question_count, duration_minutes, blueprint, negative_marking, active)
+            VALUES (?, ?, ?, ?, ?, ?, 1)
+            ON DUPLICATE KEY UPDATE 
+                question_count = VALUES(question_count),
+                duration_minutes = VALUES(duration_minutes),
+                blueprint = VALUES(blueprint),
+                negative_marking = VALUES(negative_marking),
+                active = VALUES(active)
+        ");
+        $stmt->execute([
+            $unlockableId,
+            $mode,
+            $questionCount,
+            $durationMinutes,
+            $blueprintJson,
+            $negativeMarking
+        ]);
+
+        $adminId = (int)($_SESSION['user_id'] ?? 0);
+        self::logAdminAction($adminId, 'update_mock_blueprint', 'mock_configs', $unlockableId, "Updated mock blueprint for {$pack['title']} mode: {$mode}, count: {$questionCount}");
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => "Mock blueprint and lengths updated successfully for {$pack['title']} ({$mode} mode).",
+            'config' => [
+                'unlockable_id' => $unlockableId,
+                'pack_code' => $pack['code'],
+                'mode' => $mode,
+                'question_count' => $questionCount,
+                'duration_minutes' => $durationMinutes,
+                'negative_marking' => $negativeMarking
+            ]
+        ]);
+        exit;
+    }
 }
 
 

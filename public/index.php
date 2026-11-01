@@ -213,6 +213,14 @@ switch ($action) {
         AdminController::markQuestionReviewedJSON();
         break;
 
+    case 'api_admin_get_mock_configs':
+        AdminController::getMockConfigsJSON();
+        break;
+
+    case 'api_admin_save_mock_config':
+        AdminController::saveMockConfigJSON();
+        break;
+
 
     case 'api_create_squad':
         CsrfService::verify();
@@ -295,6 +303,14 @@ switch ($action) {
 
     case 'api_get_mock_scorecard':
         MockTestController::getMockScorecardJSON();
+        break;
+
+    case 'api_get_mock_leaderboard':
+        MockTestController::getMockLeaderboardJSON();
+        break;
+
+    case 'api_get_mock_modes':
+        MockTestController::getMockModesInfoJSON();
         break;
 
     case 'api_profile_progress':

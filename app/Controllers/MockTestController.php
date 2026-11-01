@@ -152,15 +152,31 @@ class MockTestController {
         ];
         $tagFilter = $tagMap[$packCode] ?? '';
 
+        $mode = strtolower(trim($_GET['mode'] ?? 'standard'));
+        if (!in_array($mode, ['quick', 'standard', 'full'], true)) {
+            $mode = 'standard';
+        }
+
         // Check for active session to resume after refresh or crash
         if ($userId && self::$hasMockSessionsTable) {
             $actStmt = $db->prepare("
                 SELECT * FROM mock_sessions 
-                WHERE user_id = ? AND pack_code = ? AND status = 'active'
+                WHERE user_id = ? AND pack_code = ? AND mode = ? AND status = 'active'
                 ORDER BY started_at DESC LIMIT 1
             ");
-            $actStmt->execute([$userId, $packCode ?: 'GENERAL_MOCK']);
+            $actStmt->execute([$userId, $packCode ?: 'GENERAL_MOCK', $mode]);
             $existingSess = $actStmt->fetch(PDO::FETCH_ASSOC);
+
+            // Backward compatibility: match active session without mode constraint
+            if (!$existingSess) {
+                $actStmtOld = $db->prepare("
+                    SELECT * FROM mock_sessions 
+                    WHERE user_id = ? AND pack_code = ? AND status = 'active'
+                    ORDER BY started_at DESC LIMIT 1
+                ");
+                $actStmtOld->execute([$userId, $packCode ?: 'GENERAL_MOCK']);
+                $existingSess = $actStmtOld->fetch(PDO::FETCH_ASSOC);
+            }
 
             if ($existingSess) {
                 $remSec = strtotime($existingSess['deadline']) - time();
@@ -205,6 +221,9 @@ class MockTestController {
                         echo json_encode([
                             'status' => 'success',
                             'session_id' => $existingSess['id'],
+                            'mode' => $existingSess['mode'] ?? $mode,
+                            'total_questions' => (int)($existingSess['total_questions'] ?? count($resumedQuestions)),
+                            'question_count' => (int)($existingSess['question_count'] ?? count($resumedQuestions)),
                             'duration_seconds' => (int)$existingSess['duration_seconds'],
                             'remaining_seconds' => (int)$remSec,
                             'started_at' => $existingSess['started_at'],
@@ -220,54 +239,183 @@ class MockTestController {
             }
         }
 
+        // Fetch mock configuration for this pack and mode
+        $mockConfig = null;
+        try {
+            $cfgStmt = $db->prepare("
+                SELECT mc.* FROM mock_configs mc
+                JOIN unlockables u ON mc.unlockable_id = u.id
+                WHERE (u.code = ? OR mc.unlockable_id = ?) AND mc.mode = ? AND mc.active = 1
+                LIMIT 1
+            ");
+            $cfgStmt->execute([$packCode, $unlockableId ?? 0, $mode]);
+            $mockConfig = $cfgStmt->fetch(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            $mockConfig = null;
+        }
+
+        $isTCS = ($packCode === 'TCS_MOCK_PACK');
+        $targetCount = $mockConfig ? (int)$mockConfig['question_count'] : ($mode === 'quick' ? 30 : ($mode === 'full' ? 80 : 60));
+        $durationOverride = ($mockConfig && !empty($mockConfig['duration_minutes'])) ? (int)$mockConfig['duration_minutes'] : null;
+        $negMarking = $mockConfig ? (float)$mockConfig['negative_marking'] : ($isTCS ? 0.00 : 0.25);
+        $blueprintJson = $mockConfig['blueprint'] ?? null;
+
+        // Fetch candidate questions from database
+        $poolQuestions = [];
         if ($tagFilter) {
             $stmt = $db->prepare("
-                SELECT q.id, q.question_text, q.code_snippet, q.language, q.option_a, q.option_b, q.option_c, q.option_d, q.correct_option, q.est_time_seconds,
-                       q.source_tag, q.company_name, s.name as subtopic_name, t.name as topic_name
+                SELECT q.id, q.subtopic_id, q.difficulty, q.question_text, q.code_snippet, q.language,
+                       q.option_a, q.option_b, q.option_c, q.option_d, q.correct_option, q.explanation,
+                       q.est_time_seconds, q.source_tag, q.company_name,
+                       s.name as subtopic_name, s.code as subtopic_code,
+                       t.id as topic_id, t.name as topic_name, t.code as topic_code
                 FROM questions q
                 JOIN subtopics s ON q.subtopic_id = s.id
                 JOIN topics t ON s.topic_id = t.id
                 WHERE (q.source_tag LIKE ? OR q.company_name LIKE ?)
                   AND q.is_published = 1
-                ORDER BY RAND() LIMIT 10
             ");
             $stmt->execute(['%' . $tagFilter . '%', '%' . $tagFilter . '%']);
-            $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } else {
-            $questions = [];
+            $poolQuestions = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
 
-        // Fallback if not enough tagged questions
-        if (count($questions) < 5) {
+        // Deduplicate pool questions (strictly unique by id and normalized text)
+        $poolById = [];
+        $seenTexts = [];
+        foreach ($poolQuestions as $q) {
+            $norm = trim(mb_strtolower($q['question_text']));
+            if (!isset($seenTexts[$norm]) && !isset($poolById[$q['id']])) {
+                $seenTexts[$norm] = true;
+                $poolById[$q['id']] = $q;
+            }
+        }
+        $poolSize = count($poolById);
+
+        // Fallback for general practice or small pool
+        if ($poolSize < 5) {
             $stmt = $db->query("
-                SELECT q.id, q.question_text, q.code_snippet, q.language, q.option_a, q.option_b, q.option_c, q.option_d, q.correct_option, q.est_time_seconds,
-                       s.name as subtopic_name, t.name as topic_name
+                SELECT q.id, q.subtopic_id, q.difficulty, q.question_text, q.code_snippet, q.language,
+                       q.option_a, q.option_b, q.option_c, q.option_d, q.correct_option, q.explanation,
+                       q.est_time_seconds, q.source_tag, q.company_name,
+                       s.name as subtopic_name, s.code as subtopic_code,
+                       t.id as topic_id, t.name as topic_name, t.code as topic_code
                 FROM questions q
                 JOIN subtopics s ON q.subtopic_id = s.id
                 JOIN topics t ON s.topic_id = t.id
                 WHERE q.is_published = 1
-                ORDER BY RAND() LIMIT 10
             ");
-            $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            while ($q = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $norm = trim(mb_strtolower($q['question_text']));
+                if (!isset($seenTexts[$norm]) && !isset($poolById[$q['id']])) {
+                    $seenTexts[$norm] = true;
+                    $poolById[$q['id']] = $q;
+                }
+            }
+            $poolSize = count($poolById);
         }
 
-        // Guarantee 10 strictly distinct questions by question_text and id
-        $distinctQuestions = [];
-        $seenTexts = [];
-        foreach ($questions as $q) {
-            $norm = trim(mb_strtolower($q['question_text']));
-            if (!isset($seenTexts[$norm])) {
-                $seenTexts[$norm] = true;
-                $distinctQuestions[] = $q;
+        // Capping Rule: If pool is smaller than requested, cap at pool size; show real length, never pad with repeats
+        $isCapped = false;
+        $effectiveCount = $targetCount;
+        if ($poolSize < $targetCount) {
+            $effectiveCount = $poolSize;
+            $isCapped = true;
+        }
+
+        // Blueprint-based Sampling
+        $selectedQuestions = [];
+        $selectedIds = [];
+        $bp = !empty($blueprintJson) ? json_decode($blueprintJson, true) : null;
+        $bpSections = $bp['sections'] ?? [];
+
+        if (!empty($bpSections) && $poolSize > 0) {
+            // Group pool by section (topic_code)
+            $poolBySection = [];
+            foreach ($poolById as $q) {
+                $secKey = $q['topic_code'] ?? 'OTHER';
+                $poolBySection[$secKey][] = $q;
+                if ($secKey === 'LR') {
+                    $poolBySection['LOGICAL'][] = $q;
+                } elseif ($secKey === 'LOGICAL') {
+                    $poolBySection['LR'][] = $q;
+                }
+            }
+
+            $sumBpCounts = array_sum(array_column($bpSections, 'count'));
+            $scale = ($sumBpCounts > 0 && $effectiveCount < $sumBpCounts) ? ($effectiveCount / $sumBpCounts) : 1.0;
+
+            foreach ($bpSections as $sec) {
+                $secKey = $sec['topic_code'] ?? 'OTHER';
+                $secCount = ($scale < 1.0) ? (int)round($sec['count'] * $scale) : (int)$sec['count'];
+                if ($secCount <= 0 && $effectiveCount > count($selectedQuestions)) {
+                    $secCount = 1;
+                }
+
+                $candidates = $poolBySection[$secKey] ?? [];
+                $availableCandidates = array_values(array_filter($candidates, fn($cq) => !isset($selectedIds[$cq['id']])));
+
+                $diffMix = $sec['difficulty_mix'] ?? ['easy' => 0, 'medium' => 0, 'hard' => 0];
+                $byDiff = ['easy' => [], 'medium' => [], 'hard' => []];
+                foreach ($availableCandidates as $ac) {
+                    $d = strtolower($ac['difficulty'] ?? 'medium');
+                    if (!isset($byDiff[$d])) $d = 'medium';
+                    $byDiff[$d][] = $ac;
+                }
+                foreach ($byDiff as $d => &$dList) {
+                    shuffle($dList);
+                }
+                unset($dList);
+
+                $secPicked = [];
+                // Sample matching difficulty mix
+                foreach (['easy', 'medium', 'hard'] as $d) {
+                    $needed = isset($diffMix[$d]) ? (int)round($diffMix[$d] * ($scale < 1.0 ? $scale : 1.0)) : 0;
+                    while ($needed > 0 && !empty($byDiff[$d]) && count($secPicked) < $secCount) {
+                        $chosen = array_pop($byDiff[$d]);
+                        if (!isset($selectedIds[$chosen['id']])) {
+                            $secPicked[] = $chosen;
+                            $selectedIds[$chosen['id']] = true;
+                            $needed--;
+                        }
+                    }
+                }
+
+                // Backfill shortfall within section
+                foreach (['medium', 'easy', 'hard'] as $d) {
+                    while (!empty($byDiff[$d]) && count($secPicked) < $secCount) {
+                        $chosen = array_pop($byDiff[$d]);
+                        if (!isset($selectedIds[$chosen['id']])) {
+                            $secPicked[] = $chosen;
+                            $selectedIds[$chosen['id']] = true;
+                        }
+                    }
+                }
+
+                foreach ($secPicked as $pQ) {
+                    $selectedQuestions[] = $pQ;
+                }
             }
         }
-        $questions = array_slice($distinctQuestions, 0, 10);
+
+        // Backfill remaining from pool to reach effectiveCount without repeats
+        if (count($selectedQuestions) < $effectiveCount) {
+            $remainingCandidates = array_values(array_filter($poolById, fn($q) => !isset($selectedIds[$q['id']])));
+            shuffle($remainingCandidates);
+            while (count($selectedQuestions) < $effectiveCount && !empty($remainingCandidates)) {
+                $chosen = array_pop($remainingCandidates);
+                $selectedQuestions[] = $chosen;
+                $selectedIds[$chosen['id']] = true;
+            }
+        }
+
+        $selectedQuestions = array_slice($selectedQuestions, 0, $effectiveCount);
+        shuffle($selectedQuestions);
 
         $sessionId = 'mock_' . bin2hex(random_bytes(8));
         $_SESSION['mock_test_mappings'][$sessionId] = [];
 
         $shuffledQuestions = [];
-        foreach ($questions as $q) {
+        foreach ($selectedQuestions as $q) {
             $parsed = QuestionParser::parse($q['question_text']);
             $rawOpts = [
                 'A' => $q['option_a'],
@@ -300,7 +448,9 @@ class MockTestController {
             $shuffledQuestions[] = [
                 'id' => (int)$q['id'],
                 'topic_name' => $q['topic_name'],
+                'topic_code' => $q['topic_code'] ?? null,
                 'subtopic_name' => $q['subtopic_name'],
+                'difficulty' => $q['difficulty'] ?? 'medium',
                 'question_text' => $parsed['full_text'],
                 'raw_question_text' => $q['question_text'],
                 'source_tag' => $parsed['source_tag'] ?? $q['source_tag'] ?? null,
@@ -310,9 +460,15 @@ class MockTestController {
             ];
         }
 
-        $totalQuestions = count($shuffledQuestions);
-        // Total time rule: Total time in minutes = number of questions (N questions = N minutes)
-        $durationSeconds = max(60, $totalQuestions * 60);
+        $actualCount = count($shuffledQuestions);
+        // Time Rule: Total minutes = number of questions (duration_seconds = count * 60)
+        // Allow optional per-pack duration_override_minutes for Full-length, off by default
+        if ($mode === 'full' && $durationOverride && $durationOverride > 0) {
+            $durationSeconds = $durationOverride * 60;
+        } else {
+            $durationSeconds = max(60, $actualCount * 60);
+        }
+
         $startedAt = date('Y-m-d H:i:s');
         $deadline = date('Y-m-d H:i:s', time() + $durationSeconds);
         $qIdsList = implode(',', array_column($shuffledQuestions, 'id'));
@@ -322,14 +478,16 @@ class MockTestController {
             try {
                 $db->prepare("
                     INSERT INTO mock_sessions 
-                    (id, user_id, pack_code, pack_title, total_questions, duration_seconds, started_at, deadline, status, question_ids)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?)
+                    (id, user_id, pack_code, pack_title, mode, total_questions, question_count, duration_seconds, started_at, deadline, status, question_ids)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?)
                 ")->execute([
                     $sessionId,
                     $userId,
                     $packCode ?: 'GENERAL_MOCK',
                     $packTitle ?? 'Placement Practice Mock',
-                    $totalQuestions,
+                    $mode,
+                    $actualCount,
+                    $actualCount,
                     $durationSeconds,
                     $startedAt,
                     $deadline,
@@ -343,8 +501,15 @@ class MockTestController {
         echo json_encode([
             'status' => 'success',
             'session_id' => $sessionId,
+            'mode' => $mode,
+            'total_questions' => $actualCount,
+            'question_count' => $actualCount,
+            'requested_count' => $targetCount,
+            'pool_size' => $poolSize,
+            'is_capped' => $isCapped,
             'duration_seconds' => $durationSeconds,
             'remaining_seconds' => $durationSeconds,
+            'negative_marking' => $negMarking,
             'started_at' => $startedAt,
             'deadline' => $deadline,
             'is_resumed' => false,
@@ -581,8 +746,33 @@ class MockTestController {
             }
         }
 
-        // Negative Marking Formula: +1 for correct, -0.25 for wrong, 0 for skipped
-        $rawScore = ($correctCount * 1.0) - ($wrongCount * 0.25);
+        $mode = $mockSession['mode'] ?? (isset($input['mode']) ? strtolower(trim((string)$input['mode'])) : 'standard');
+        if (!in_array($mode, ['quick', 'standard', 'full'], true)) {
+            $mode = 'standard';
+        }
+
+        // Fetch pack negative marking setting
+        $isTCS = ($packCode === 'TCS_MOCK_PACK');
+        $negPenalty = $isTCS ? 0.00 : 0.25;
+        try {
+            $cfgStmt = $db->prepare("
+                SELECT mc.negative_marking 
+                FROM mock_configs mc
+                JOIN unlockables u ON mc.unlockable_id = u.id
+                WHERE (u.code = ? OR mc.unlockable_id = ?) AND mc.mode = ?
+                LIMIT 1
+            ");
+            $cfgStmt->execute([$packCode, $unlockableId ?? 0, $mode]);
+            $configuredNeg = $cfgStmt->fetchColumn();
+            if ($configuredNeg !== false) {
+                $negPenalty = (float)$configuredNeg;
+            }
+        } catch (\Throwable $e) {
+            $negPenalty = $isTCS ? 0.00 : 0.25;
+        }
+
+        // Negative Marking Formula: +1 for correct, -$negPenalty for wrong, 0 for skipped
+        $rawScore = ($correctCount * 1.0) - ($wrongCount * $negPenalty);
         $scoreMarks = round(max(-2.5, $rawScore), 2); // Cap minimum loss gracefully
         $totalMarks = round($totalQuestions * 1.0, 2);
         $attemptedCount = $correctCount + $wrongCount;
@@ -631,7 +821,7 @@ class MockTestController {
         // Section Breakdown Calculations
         $sections = [];
         foreach ($sectionMap as $sName => $sData) {
-            $secMarks = round(($sData['correct'] * 1.0) - ($sData['wrong'] * 0.25), 2);
+            $secMarks = round(($sData['correct'] * 1.0) - ($sData['wrong'] * $negPenalty), 2);
             $secAcc = $sData['total'] > 0 ? round(($sData['correct'] / $sData['total']) * 100, 1) : 0;
             $secAvgTime = $sData['total'] > 0 ? round($sData['time_seconds'] / $sData['total'], 1) : 0;
             $sections[] = [
@@ -695,6 +885,8 @@ class MockTestController {
                     $db->prepare("
                         UPDATE mock_sessions 
                         SET status = 'completed',
+                            mode = ?,
+                            question_count = ?,
                             correct_count = ?,
                             wrong_count = ?,
                             skipped_count = ?,
@@ -707,6 +899,8 @@ class MockTestController {
                             completed_at = NOW()
                         WHERE id = ?
                     ")->execute([
+                        $mode,
+                        $totalQuestions,
                         $correctCount,
                         $wrongCount,
                         $skippedCount,
@@ -721,13 +915,15 @@ class MockTestController {
                 } else {
                     $db->prepare("
                         INSERT INTO mock_sessions 
-                        (id, user_id, pack_code, pack_title, total_questions, duration_seconds, started_at, deadline, status, correct_count, wrong_count, skipped_count, score_marks, total_marks, accuracy_percent, total_time_seconds, tab_switch_count, user_answers, completed_at)
-                        VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), 'completed', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                        (id, user_id, pack_code, pack_title, mode, total_questions, question_count, duration_seconds, started_at, deadline, status, correct_count, wrong_count, skipped_count, score_marks, total_marks, accuracy_percent, total_time_seconds, tab_switch_count, user_answers, completed_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 'completed', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
                     ")->execute([
                         $clientSessionId,
                         $userId,
                         $packCode,
                         $packTitle,
+                        $mode,
+                        $totalQuestions,
                         $totalQuestions,
                         $timeAllowed,
                         $correctCount,
@@ -746,6 +942,31 @@ class MockTestController {
             }
         }
 
+        // Calculate percentile separated strictly by mode (ML8)
+        $percentile = 100.0;
+        if (self::$hasMockSessionsTable) {
+            try {
+                $pctStmt = $db->prepare("
+                    SELECT 
+                        COUNT(*) as total_attempts,
+                        SUM(CASE WHEN score_marks < ? THEN 1 ELSE 0 END) as lower_scores
+                    FROM mock_sessions
+                    WHERE pack_code = ? AND mode = ? AND status = 'completed' AND id != ?
+                ");
+                $pctStmt->execute([$scoreMarks, $packCode, $mode, $clientSessionId]);
+                $pctData = $pctStmt->fetch(PDO::FETCH_ASSOC);
+                $totalOther = (int)($pctData['total_attempts'] ?? 0);
+                $lowerScores = (int)($pctData['lower_scores'] ?? 0);
+                if ($totalOther > 0) {
+                    $percentile = round(($lowerScores / $totalOther) * 100, 1);
+                } else {
+                    $percentile = 100.0;
+                }
+            } catch (\Throwable $e) {
+                $percentile = 100.0;
+            }
+        }
+
         // XP Awards from centralized economy config
         $cfg = GamificationEngine::getConfig();
         $mockBase = (int)($cfg['mock_test']['base_xp'] ?? 50);
@@ -757,17 +978,24 @@ class MockTestController {
             $xpResult = User::addXP($userId, $mockXP);
         }
 
+        $formulaStr = ($negPenalty > 0)
+            ? "+1 per correct, -" . number_format($negPenalty, 2) . " per wrong"
+            : "+1 per correct, no penalty for wrong";
+
         echo json_encode([
             'status' => 'success',
             'session_id' => $clientSessionId,
             'pack_code' => $packCode,
             'pack_title' => $packTitle,
+            'mode' => $mode,
+            'percentile' => $percentile,
+            'negative_marking' => $negPenalty,
             'score' => [
                 'marks' => $scoreMarks,
                 'total_marks' => $totalMarks,
                 'percentage' => $scorePercent,
                 'accuracy' => $accuracyPercent,
-                'formula' => '+1 per correct, -0.25 per wrong',
+                'formula' => $formulaStr,
                 'band' => $band,
                 'qualifies_confetti' => ($scorePercent >= 60)
             ],
@@ -984,6 +1212,176 @@ class MockTestController {
             'bubbles' => $timingRecords,
             'sections' => $sections,
             'detailed_results' => $detailedResults
+        ]);
+        exit;
+    }
+
+    /**
+     * Retrieve per-mode leaderboard for a company mock pack
+     */
+    public static function getMockLeaderboardJSON(): void {
+        header('Content-Type: application/json');
+        $packCode = trim($_GET['pack'] ?? 'TCS_MOCK_PACK');
+        $mode = strtolower(trim($_GET['mode'] ?? 'standard'));
+        if (!in_array($mode, ['quick', 'standard', 'full'], true)) {
+            $mode = 'standard';
+        }
+
+        $db = Database::getConnection();
+        self::checkSchemaCapabilities($db);
+
+        $hasHideCol = false;
+        try {
+            $cCheck = $db->query("SHOW COLUMNS FROM users LIKE 'hide_name_on_boards'")->fetch();
+            $hasHideCol = !empty($cCheck);
+        } catch (\Throwable $e) {}
+
+        $hideColSelect = $hasHideCol ? "COALESCE(u.hide_name_on_boards, 0) as hide_name" : "0 as hide_name";
+
+        $stmt = $db->prepare("
+            SELECT ms.id as session_id, ms.user_id, ms.score_marks, ms.total_marks, ms.accuracy_percent,
+                   ms.total_time_seconds, ms.completed_at, ms.mode,
+                   u.name as user_name, u.avatar_icon,
+                   $hideColSelect
+            FROM mock_sessions ms
+            LEFT JOIN users u ON ms.user_id = u.id
+            WHERE ms.pack_code = ? AND ms.mode = ? AND ms.status = 'completed'
+            ORDER BY ms.score_marks DESC, ms.total_time_seconds ASC, ms.completed_at ASC
+            LIMIT 50
+        ");
+        $stmt->execute([$packCode, $mode]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $leaderboard = [];
+        $rank = 1;
+        foreach ($rows as $r) {
+            $displayName = !empty($r['hide_name']) ? 'Anonymous Cadet' : ($r['user_name'] ?: 'Cadet');
+            $leaderboard[] = [
+                'rank' => $rank++,
+                'session_id' => $r['session_id'],
+                'user_name' => htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8'),
+                'avatar_icon' => $r['avatar_icon'] ?: 'bi-person-circle',
+                'score_marks' => (float)$r['score_marks'],
+                'total_marks' => (float)$r['total_marks'],
+                'accuracy_percent' => (float)$r['accuracy_percent'],
+                'total_time_seconds' => (int)$r['total_time_seconds'],
+                'completed_at' => $r['completed_at'],
+                'mode' => $r['mode']
+            ];
+        }
+
+        echo json_encode([
+            'status' => 'success',
+            'pack_code' => $packCode,
+            'mode' => $mode,
+            'total_entries' => count($leaderboard),
+            'leaderboard' => $leaderboard
+        ]);
+        exit;
+    }
+
+    /**
+     * Retrieve mode info, available pool size, capping status and duration for UI
+     */
+    public static function getMockModesInfoJSON(): void {
+        header('Content-Type: application/json');
+        $packCode = trim($_GET['pack'] ?? 'TCS_MOCK_PACK');
+        $db = Database::getConnection();
+
+        $uStmt = $db->prepare("SELECT id, code, title FROM unlockables WHERE code = ? LIMIT 1");
+        $uStmt->execute([$packCode]);
+        $unlockable = $uStmt->fetch(PDO::FETCH_ASSOC);
+        $unlockableId = $unlockable ? (int)$unlockable['id'] : 0;
+
+        $tagMap = [
+            'TCS_MOCK_PACK' => 'TCS',
+            'INFOSYS_MOCK_PACK' => 'Infosys',
+            'WIPRO_MOCK_PACK' => 'Wipro',
+            'ACCENTURE_MOCK_PACK' => 'Accenture',
+            'INNOVATURE_MOCK_PACK' => 'Innovature',
+            'AMAZON_MOCK_PACK' => 'Amazon',
+            'ZOHO_MOCK_PACK' => 'Zoho',
+            'DELOITTE_MOCK_PACK' => 'Deloitte',
+            'CAPGEMINI_MOCK_PACK' => 'Capgemini',
+            'COGNIZANT_MOCK_PACK' => 'Cognizant',
+            'TECH_MAHINDRA_MOCK_PACK' => 'Tech Mahindra',
+            'IBM_MOCK_PACK' => 'IBM',
+            'LTI_MINDTREE_MOCK_PACK' => 'LTI Mindtree',
+            'UST_MOCK_PACK' => 'UST',
+            'HCL_MOCK_PACK' => 'HCL',
+            'MPHASIS_MOCK_PACK' => 'Mphasis',
+            'HEXAWARE_MOCK_PACK' => 'Hexaware',
+            'PERSISTENT_MOCK_PACK' => 'Persistent',
+            'VIRTUSA_MOCK_PACK' => 'Virtusa',
+            'ORACLE_MOCK_PACK' => 'Oracle',
+            'COFORGE_MOCK_PACK' => 'Coforge',
+        ];
+        $tagFilter = $tagMap[$packCode] ?? '';
+
+        $poolSize = 0;
+        if ($tagFilter) {
+            $poolStmt = $db->prepare("
+                SELECT COUNT(DISTINCT q.id) 
+                FROM questions q
+                WHERE (q.source_tag LIKE ? OR q.company_name LIKE ?) AND q.is_published = 1
+            ");
+            $poolStmt->execute(["%$tagFilter%", "%$tagFilter%"]);
+            $poolSize = (int)$poolStmt->fetchColumn();
+        }
+
+        $configs = [];
+        if ($unlockableId) {
+            $cfgStmt = $db->prepare("
+                SELECT mode, question_count, duration_minutes, negative_marking, blueprint 
+                FROM mock_configs 
+                WHERE unlockable_id = ? AND active = 1
+            ");
+            $cfgStmt->execute([$unlockableId]);
+            $configs = $cfgStmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        $configsByMode = [];
+        foreach ($configs as $c) {
+            $configsByMode[$c['mode']] = $c;
+        }
+
+        $modes = ['quick', 'standard', 'full'];
+        $modesInfo = [];
+        $isTCS = ($packCode === 'TCS_MOCK_PACK');
+
+        foreach ($modes as $m) {
+            $cfg = $configsByMode[$m] ?? null;
+            $reqCount = $cfg ? (int)$cfg['question_count'] : ($m === 'quick' ? 30 : ($m === 'full' ? 80 : 60));
+            $negMarking = $cfg ? (float)$cfg['negative_marking'] : ($isTCS ? 0.00 : 0.25);
+            $durationOverride = ($cfg && !empty($cfg['duration_minutes'])) ? (int)$cfg['duration_minutes'] : null;
+
+            $effectiveCount = ($poolSize > 0 && $poolSize < $reqCount) ? $poolSize : $reqCount;
+            $isCapped = ($poolSize > 0 && $poolSize < $reqCount);
+            $durationMinutes = ($m === 'full' && $durationOverride) ? $durationOverride : $effectiveCount;
+
+            $modesInfo[$m] = [
+                'mode' => $m,
+                'title' => match($m) {
+                    'quick' => 'Quick Mode',
+                    'standard' => 'Standard Mode',
+                    'full' => 'Full-Length Mode'
+                },
+                'requested_questions' => $reqCount,
+                'effective_questions' => $effectiveCount,
+                'is_capped' => $isCapped,
+                'pool_size' => $poolSize,
+                'duration_minutes' => $durationMinutes,
+                'duration_seconds' => $durationMinutes * 60,
+                'negative_marking' => $negMarking
+            ];
+        }
+
+        echo json_encode([
+            'status' => 'success',
+            'pack_code' => $packCode,
+            'pack_title' => $unlockable['title'] ?? 'Company Mock Pack',
+            'pool_size' => $poolSize,
+            'modes' => $modesInfo
         ]);
         exit;
     }
