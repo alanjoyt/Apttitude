@@ -1,11 +1,11 @@
 {
     "project": "Apttitudee",
     "version": "2.5.0-predeploy",
-    "generated_at": "2026-11-02T16:33:32+00:00",
+    "generated_at": "2026-11-02T16:52:18+00:00",
     "environment_target": "Production LAMP / MariaDB (apttitudee.xo.je / staging: apttitudee.rf.gd)",
     "domain_target": "apttitudee.xo.je",
-    "total_files": 110,
-    "total_bytes": 2482203,
+    "total_files": 111,
+    "total_bytes": 2488216,
     "categories": {
         "root": {
             "count": 1,
@@ -13,27 +13,27 @@
         },
         "app": {
             "count": 63,
-            "bytes": 1149644
+            "bytes": 1153018
         },
         "config": {
             "count": 3,
-            "bytes": 38746
+            "bytes": 38822
         },
         "deploy": {
             "count": 6,
-            "bytes": 68381
+            "bytes": 68465
         },
         "deploy/migrations": {
             "count": 9,
-            "bytes": 676521
+            "bytes": 676659
         },
         "deploy/scripts": {
-            "count": 5,
-            "bytes": 15286
+            "count": 6,
+            "bytes": 17354
         },
         "public": {
             "count": 23,
-            "bytes": 530505
+            "bytes": 530778
         }
     },
     "files": [
@@ -87,8 +87,8 @@
         },
         {
             "path": "app/Controllers/MockTestController.php",
-            "size_bytes": 64125,
-            "sha256": "5c54effecafaac92fb6450748c51df9b8e260b2fef4a56569854c9998290e51e",
+            "size_bytes": 65581,
+            "sha256": "8883818ba513b443d8a74a25e42310bda781f704decf52a73f871acef25caf0f",
             "category": "app"
         },
         {
@@ -321,8 +321,8 @@
         },
         {
             "path": "app/Views/footer.php",
-            "size_bytes": 9180,
-            "sha256": "83078b9a5ce13f4b021a8043a8f888f40836d4e3199661d318e02e3391560b68",
+            "size_bytes": 9356,
+            "sha256": "376a645bc1998de6f1ff38e87e21885d332ae3400158f05486ff79082bb5e2b0",
             "category": "app"
         },
         {
@@ -351,8 +351,8 @@
         },
         {
             "path": "app/Views/mock.php",
-            "size_bytes": 78031,
-            "sha256": "98b39468b9b041d7239fb1441230155aeddd43e7bf185f76f156d828c3c0c306",
+            "size_bytes": 79773,
+            "sha256": "70b387c887419a2ccfa762fad5025b33e4a2e5cdc258979c59f06618059d96a7",
             "category": "app"
         },
         {
@@ -423,8 +423,8 @@
         },
         {
             "path": "config/app.php",
-            "size_bytes": 2801,
-            "sha256": "ed99c9ad670165169a3a86d0883375c967c43d93d89aef83bf0ce8831f6332a0",
+            "size_bytes": 2877,
+            "sha256": "f98a0485896704c64fec850efa1273c6dcd5f81133e938c0105c8413be0a315f",
             "category": "config"
         },
         {
@@ -447,8 +447,8 @@
         },
         {
             "path": "deploy/DEPLOY_RUNBOOK.md",
-            "size_bytes": 5431,
-            "sha256": "52e8b5d1f6875dc341d567dcf6504145c91f6f05466ec3e8df5501b21eb9ca82",
+            "size_bytes": 5515,
+            "sha256": "45eabeb8ccd353e53f733441e91d2a1b81271c46d8436fd792e7918baf8d258c",
             "category": "deploy"
         },
         {
@@ -507,14 +507,14 @@
         },
         {
             "path": "deploy/migrations/08_missing_app_tables_and_company_profiles.sql",
-            "size_bytes": 16398,
-            "sha256": "6fdd2bb74642f3ccc7424907daa0b657c65a5d225f3c2df31d974025c9cc70b7",
+            "size_bytes": 16528,
+            "sha256": "498b2542ca039fc0ee292052cedae0d3a8e1acdbcaa4da38b95547bda1ec5f85",
             "category": "deploy/migrations"
         },
         {
             "path": "deploy/migrations/09_anti_inspect_devtools_tracking.sql",
-            "size_bytes": 457,
-            "sha256": "f8dd41ad4a3786add13536d3d180fd5155bf91e7f4a1667f04b1be7f8981dd81",
+            "size_bytes": 465,
+            "sha256": "ba2910da5c8e8791bdc9ea647eeb41a1ab7f0316902ac761401afcbdc3fcf42d",
             "category": "deploy/migrations"
         },
         {
@@ -528,6 +528,12 @@
             "size_bytes": 39447,
             "sha256": "ad289832d3f06800f52b98b9908e61babb4f33e12ebc3df97f4620d824035047",
             "category": "deploy"
+        },
+        {
+            "path": "deploy/scripts/build_deployment_zip.php",
+            "size_bytes": 2068,
+            "sha256": "89a555586e41e65dae49827ab6cd701c495618c3b022e76a8e9c684d719a1acd",
+            "category": "deploy/scripts"
         },
         {
             "path": "deploy/scripts/check_innodb_engines.sql",
@@ -639,8 +645,8 @@
         },
         {
             "path": "public/js/anti_inspect.js",
-            "size_bytes": 11103,
-            "sha256": "f2ceecd1a5a21be21beb2088a6041d18f5af55c904cf1f091b53f7272b8f99fb",
+            "size_bytes": 11376,
+            "sha256": "5f4d3e0c011e066b9886ed995c6fc7ed36115882428e56709b211cd6ca81030f",
             "category": "public"
         },
         {
