@@ -140,6 +140,10 @@ $isQuizSession = ($currentAction === 'practice' && (isset($_GET['session']) || i
 <?php if ($isQuizSession || in_array($currentAction, ['practice', 'mock', 'technical', 'time_attack', 'duel', 'campaign', 'diagnostic'])): ?>
 <script src="<?= asset_url('js/quiz_shell.js') ?>" defer></script>
 <?php endif; ?>
+<!-- Anti-Inspect Exam Integrity Guard -->
+<script>window.ANTI_INSPECT_SCOPE = '<?= defined('ANTI_INSPECT_SCOPE') ? ANTI_INSPECT_SCOPE : 'exam' ?>';</script>
+<script src="<?= asset_url('js/anti_inspect.js') ?>" defer></script>
+
 <!-- Gamified App JS with Cache Buster -->
 <script src="<?= file_exists(__DIR__ . '/../../public/js/app.min.js') ? asset_url('js/app.min.js') : asset_url('js/app.js') ?>" defer></script>
 

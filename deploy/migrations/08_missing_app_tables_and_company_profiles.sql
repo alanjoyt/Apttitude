@@ -68,10 +68,6 @@ CREATE TABLE IF NOT EXISTS `coupons` (
   KEY `idx_coupon_active` (`is_active`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT IGNORE INTO `coupons` (`id`, `code`, `discount_type`, `discount_value`, `max_discount`, `min_price`, `applicable_items`, `starts_at`, `expires_at`, `total_limit`, `per_user_limit`, `allowed_users`, `is_active`, `times_used`, `created_by`, `created_at`, `updated_at`) VALUES
-('56', 'DIST', 'percent', '80', NULL, '0', 'company_mock', '2026-10-20 00:00:00', '2026-10-31 23:27:00', '60', '1', NULL, '1', '0', '9', '2026-10-22 23:27:57', '2026-10-22 23:40:51'),
-('57', 'DIST80', 'percent', '61', NULL, '0', 'all', '2026-10-20 00:00:00', '2026-10-31 23:34:00', NULL, '1', NULL, '1', '1', '9', '2026-10-22 23:35:05', '2026-10-23 00:06:41');
-
 -- 3. Coupon Redemptions (referenced in CouponService)
 CREATE TABLE IF NOT EXISTS `coupon_redemptions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

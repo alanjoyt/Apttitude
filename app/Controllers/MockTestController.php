@@ -9,6 +9,7 @@ class MockTestController {
     private static ?bool $hasMockSessionIdCol = null;
     private static ?bool $hasPackCodeCol = null;
     private static ?bool $hasSkipReasonCol = null;
+    private static ?bool $hasDevtoolsCountCol = null;
     private static ?bool $hasMockSessionsTable = null;
 
     /**
@@ -39,6 +40,15 @@ class MockTestController {
                 self::$hasSkipReasonCol = !empty($cols);
             } catch (\Throwable $e) {
                 self::$hasSkipReasonCol = false;
+            }
+        }
+
+        if (self::$hasDevtoolsCountCol === null) {
+            try {
+                $cols = $db->query("SHOW COLUMNS FROM `mock_sessions` LIKE 'devtools_count'")->fetchAll();
+                self::$hasDevtoolsCountCol = !empty($cols);
+            } catch (\Throwable $e) {
+                self::$hasDevtoolsCountCol = false;
             }
         }
 
@@ -595,6 +605,13 @@ class MockTestController {
         $tabSwitchSkipped = array_map('intval', $tabSwitchSkipped);
         $tabSwitchCount = count($tabSwitchSkipped);
 
+        $devtoolsSkipped = $input['devtools_skipped'] ?? [];
+        if (!is_array($devtoolsSkipped)) {
+            $devtoolsSkipped = [];
+        }
+        $devtoolsSkipped = array_map('intval', $devtoolsSkipped);
+        $devtoolsCount = count($devtoolsSkipped);
+
         $inClause = implode(',', array_fill(0, count($questionIds), '?'));
         
         $stmt = $db->prepare("
@@ -649,8 +666,15 @@ class MockTestController {
             $expectedCorrect = $sessionMockMap[$qId]['correct_option'] ?? strtoupper(trim($q['correct_option'] ?: 'A'));
 
             $isTabSwitched = in_array($qId, $tabSwitchSkipped, true) || (($input['skip_reasons'][$qId] ?? '') === 'tab_switch');
+            $isDevtools = in_array($qId, $devtoolsSkipped, true) || (($input['skip_reasons'][$qId] ?? '') === 'devtools');
 
-            if ($isTabSwitched) {
+            if ($isDevtools) {
+                $status = 'skipped';
+                $skipReason = 'devtools';
+                $isCorrect = false;
+                $userAns = null;
+                $skippedCount++;
+            } elseif ($isTabSwitched) {
                 $status = 'skipped';
                 $skipReason = 'tab_switch';
                 $isCorrect = false;
@@ -680,7 +704,9 @@ class MockTestController {
                 }
             } else {
                 $skippedCount++;
-                if (in_array($qId, $tabSwitchSkipped, true) || (($input['skip_reasons'][$qId] ?? '') === 'tab_switch')) {
+                if ($isDevtools) {
+                    $skipReason = 'devtools';
+                } elseif ($isTabSwitched) {
                     $skipReason = 'tab_switch';
                 } else {
                     $skipReason = 'unanswered';
@@ -725,6 +751,7 @@ class MockTestController {
                 'correct_option' => $expectedCorrect,
                 'is_correct' => $isCorrect,
                 'status' => $status,
+                'skip_reason' => $skipReason,
                 'time_seconds' => $timeTaken,
                 'has_time' => ($timeTaken > 0),
                 'explanation' => $q['explanation'] ?? 'No detailed solution provided.'
@@ -897,6 +924,25 @@ class MockTestController {
         if ($userId && self::$hasMockSessionsTable) {
             try {
                 if ($mockSession) {
+                    $setDevtools = self::$hasDevtoolsCountCol ? ", devtools_count = ?" : "";
+                    $updateParams = [
+                        $mode,
+                        $totalQuestions,
+                        $correctCount,
+                        $wrongCount,
+                        $skippedCount,
+                        $scoreMarks,
+                        $totalMarks,
+                        $accuracyPercent,
+                        $totalTimeTaken,
+                        $tabSwitchCount
+                    ];
+                    if (self::$hasDevtoolsCountCol) {
+                        $updateParams[] = $devtoolsCount;
+                    }
+                    $updateParams[] = json_encode($answers);
+                    $updateParams[] = $clientSessionId;
+
                     $db->prepare("
                         UPDATE mock_sessions 
                         SET status = 'completed',
@@ -909,30 +955,16 @@ class MockTestController {
                             total_marks = ?,
                             accuracy_percent = ?,
                             total_time_seconds = ?,
-                            tab_switch_count = ?,
+                            tab_switch_count = ?
+                            $setDevtools,
                             user_answers = ?,
                             completed_at = NOW()
                         WHERE id = ?
-                    ")->execute([
-                        $mode,
-                        $totalQuestions,
-                        $correctCount,
-                        $wrongCount,
-                        $skippedCount,
-                        $scoreMarks,
-                        $totalMarks,
-                        $accuracyPercent,
-                        $totalTimeTaken,
-                        $tabSwitchCount,
-                        json_encode($answers),
-                        $clientSessionId
-                    ]);
+                    ")->execute($updateParams);
                 } else {
-                    $db->prepare("
-                        INSERT INTO mock_sessions 
-                        (id, user_id, pack_code, pack_title, mode, total_questions, question_count, duration_seconds, started_at, deadline, status, correct_count, wrong_count, skipped_count, score_marks, total_marks, accuracy_percent, total_time_seconds, tab_switch_count, user_answers, completed_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 'completed', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-                    ")->execute([
+                    $devtoolsCol = self::$hasDevtoolsCountCol ? ", devtools_count" : "";
+                    $devtoolsVal = self::$hasDevtoolsCountCol ? ", ?" : "";
+                    $insertParams = [
                         $clientSessionId,
                         $userId,
                         $packCode,
@@ -948,9 +980,18 @@ class MockTestController {
                         $totalMarks,
                         $accuracyPercent,
                         $totalTimeTaken,
-                        $tabSwitchCount,
-                        json_encode($answers)
-                    ]);
+                        $tabSwitchCount
+                    ];
+                    if (self::$hasDevtoolsCountCol) {
+                        $insertParams[] = $devtoolsCount;
+                    }
+                    $insertParams[] = json_encode($answers);
+
+                    $db->prepare("
+                        INSERT INTO mock_sessions 
+                        (id, user_id, pack_code, pack_title, mode, total_questions, question_count, duration_seconds, started_at, deadline, status, correct_count, wrong_count, skipped_count, score_marks, total_marks, accuracy_percent, total_time_seconds, tab_switch_count $devtoolsCol, user_answers, completed_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 'completed', ?, ?, ?, ?, ?, ?, ?, ? $devtoolsVal, ?, NOW())
+                    ")->execute($insertParams);
                 }
             } catch (\Throwable $e) {
                 error_log("Failed to insert/update mock_sessions record: " . $e->getMessage());

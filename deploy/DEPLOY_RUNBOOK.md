@@ -27,6 +27,14 @@
 
 ## Phase 2: Database Migration Sequence (phpMyAdmin)
 
+> [!IMPORTANT]
+> **Production Structure Verification Pre-Flight:**
+> Before running any migrations on production or staging, the operator MUST export the live production structure from phpMyAdmin (following [`deploy/PRODUCTION_EXPORT_CHECKLIST.md`](PRODUCTION_EXPORT_CHECKLIST.md)) and execute:
+> ```bash
+> php deploy/scripts/diff_production_schema.php <path_to_production_schema_export.sql>
+> ```
+> All `CREATE TABLE IF NOT EXISTS` and `ALTER TABLE` migrations (01 through 08) MUST be verified against the production export prior to execution to confirm column names, datatypes, and existing constraints align with zero clashing definitions.
+
 Execute the following migrations in `deploy/migrations/` **strictly in ascending order**:
 
 | Step | Migration File | Description | Idempotent |

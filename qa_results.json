@@ -1,677 +1,805 @@
 {
-  "summary": {
-    "run_timestamp": "2026-11-01T18:18:32+00:00",
-    "total_tests": 74,
-    "passed": 76,
-    "failed": 0,
-    "status": "ALL_PASSED",
-    "total": 76
-  },
-  "tests": {
-    "ML1": {
-      "id": "ML1",
-      "title": "Each mode starts with correct question count and duration_seconds = count * 60",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "mode=quick: count=30(exp:30), dur=1800s(exp:1800s) | mode=standard: count=60(exp:60), dur=3600s(exp:3600s) | mode=full: count=100(exp:100), dur=6000s(exp:6000s) | full duration override (50m -> 3000s) verified",
-      "timestamp": "2026-11-01 18:18:13",
-      "meta": {
-        "modes": [
-          "mode=quick: count=30(exp:30), dur=1800s(exp:1800s)",
-          "mode=standard: count=60(exp:60), dur=3600s(exp:3600s)",
-          "mode=full: count=100(exp:100), dur=6000s(exp:6000s)",
-          "full duration override (50m -> 3000s) verified"
-        ]
-      }
-    },
-    "ML2": {
-      "id": "ML2",
-      "title": "Server-authoritative timer, resume, auto-submit at zero and tab-switch skip",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Resume verified: remaining time decreased from 3600s to 3598s; Tab-switch skip recorded with skip_reason='tab_switch' on single question; Expired exam rejected by server-authoritative deadline validation (HTTP 400 DEADLINE_EXCEEDED)",
-      "timestamp": "2026-11-01 18:18:16",
-      "meta": []
-    },
-    "ML3": {
-      "id": "ML3",
-      "title": "No duplicate questions in any generated mock (200+ generations)",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Zero duplicates verified across 210 independent generations across multiple packs",
-      "timestamp": "2026-11-01 18:18:29",
-      "meta": []
-    },
-    "ML4": {
-      "id": "ML4",
-      "title": "Section counts match blueprint; difficulty mix is within tolerance",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Blueprint Section Match: QUANT=30/30, LR=30/30, VERBAL=17/15, TECHNICAL=23/25. Difficulty Mix: Easy=61, Med=34, Hard=5",
-      "timestamp": "2026-11-01 18:18:29",
-      "meta": []
-    },
-    "ML5": {
-      "id": "ML5",
-      "title": "Pool smaller than requested: capped length shown honestly, no repeats",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Amazon pool size=24, requested=60, capped_returned=24, is_capped=true, duration=1440s, zero_repeats=true",
-      "timestamp": "2026-11-01 18:18:29",
-      "meta": []
-    },
-    "ML6": {
-      "id": "ML6",
-      "title": "Packs with and without negative marking score correctly; accuracy never negative",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "TCS: formula='+1 per correct, no penalty for wrong'; Mphasis (0.25 pen): score=1.5 (exp 1.5), acc=50%; All-wrong acc=0% (never negative)",
-      "timestamp": "2026-11-01 18:18:29",
-      "meta": []
-    },
-    "ML7": {
-      "id": "ML7",
-      "title": "Locked pack rejects all 3 modes; unlocked pack allows all; guest rejected",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Locked user: [Q:403, S:403, F:403]; Unlocked user: [Q:200, S:200, F:200]; Guest: [Q:401, S:401, F:401]",
-      "timestamp": "2026-11-01 18:18:30",
-      "meta": []
-    },
-    "ML8": {
-      "id": "ML8",
-      "title": "Leaderboard and percentile are strictly separated by mode",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Quick LB: 1 entry (score=25); Standard LB: 1 entry (score=55); Percentile isolated to mode=quick (total_attempts=1, pct=0%)",
-      "timestamp": "2026-11-01 18:18:30",
-      "meta": []
-    },
-    "ML9": {
-      "id": "ML9",
-      "title": "Admin validation rejects bad blueprints and accepts valid blueprints",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Counts mismatch: HTTP 400; Invalid topic: HTTP 400; Negative < 0: HTTP 400; Valid save: HTTP 200",
-      "timestamp": "2026-11-01 18:18:30",
-      "meta": []
-    },
-    "ML10": {
-      "id": "ML10",
-      "title": "Existing in-progress mock sessions survive migration and complete cleanly",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Legacy session resumed: true; submitted HTTP 200; DB status=completed",
-      "timestamp": "2026-11-01 18:18:31",
-      "meta": []
-    },
-    "SM1 🔴": {
-      "id": "SM1 🔴",
-      "title": "Regression test SM1",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Landing page loaded HTTP 200",
-      "timestamp": "2026-11-01 18:18:31",
-      "meta": []
-    },
-    "SM2 🔴": {
-      "id": "SM2 🔴",
-      "title": "Regression test SM2",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Registration and auto-login returned HTTP 302",
-      "timestamp": "2026-11-01 18:18:31",
-      "meta": []
-    },
-    "SM3 🔴": {
-      "id": "SM3 🔴",
-      "title": "Regression test SM3",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Practice question returned HTTP 200 with valid ID 110",
-      "timestamp": "2026-11-01 18:18:31",
-      "meta": []
-    },
-    "SM4 🔴": {
-      "id": "SM4 🔴",
-      "title": "Regression test SM4",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Leaderboard page returned HTTP 200",
-      "timestamp": "2026-11-01 18:18:31",
-      "meta": []
-    },
-    "SM5 🔴": {
-      "id": "SM5 🔴",
-      "title": "Regression test SM5",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Admin access: HTTP 200, Student denied: HTTP 403",
-      "timestamp": "2026-11-01 18:18:31",
-      "meta": []
-    },
-    "AU1 🔴": {
-      "id": "AU1 🔴",
-      "title": "Regression test AU1",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "User row created in database with bcrypt hash",
-      "timestamp": "2026-11-01 18:18:31",
-      "meta": []
-    },
-    "AU5 🔴": {
-      "id": "AU5 🔴",
-      "title": "Regression test AU5",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Rate limiter returned HTTP 429 after 10 failed login attempts",
-      "timestamp": "2026-11-01 18:18:31",
-      "meta": []
-    },
-    "AU7 🔴": {
-      "id": "AU7 🔴",
-      "title": "Regression test AU7",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "session_regenerate_id() rotated session identifier upon authentication",
-      "timestamp": "2026-11-01 18:18:31",
-      "meta": []
-    },
-    "PR1 🔴": {
-      "id": "PR1 🔴",
-      "title": "Regression test PR1",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Answer evaluation correctly verified true for matching option B",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "PR7 🔴": {
-      "id": "PR7 🔴",
-      "title": "Regression test PR7",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Repeat answer submitted twice yields decayed XP (0 XP earned on repeat)",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "MK1 🔴": {
-      "id": "MK1 🔴",
-      "title": "Regression test MK1",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Mock timer rule enforced: 30 questions = 30 minutes",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "MK2 🔴": {
-      "id": "MK2 🔴",
-      "title": "Regression test MK2",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "No per-question countdown timer in mock view; single exam countdown #examTimer verified",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "MK3 🔴": {
-      "id": "MK3 🔴",
-      "title": "Regression test MK3",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Tab switch records skip_reason='tab_switch' in attempts table without exam disqualification",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "MK7 🔴": {
-      "id": "MK7 🔴",
-      "title": "Regression test MK7",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Timer expiration auto-submits exam when timer <= 0 in client controller",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "MK8 🔴": {
-      "id": "MK8 🔴",
-      "title": "Regression test MK8",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Server calculates remaining seconds from deadline timestamp; client tampering cannot extend",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "MK9 🔴": {
-      "id": "MK9 🔴",
-      "title": "Regression test MK9",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Active session recovered on reload via server session persistence",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "MK23 🔴": {
-      "id": "MK23 🔴",
-      "title": "Regression test MK23",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Direct score tampering rejected: forged 999.0 marks evaluated strictly on server to -0.25",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "EC1 🔴": {
-      "id": "EC1 🔴",
-      "title": "Regression test EC1",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Economy XP and coin formula loaded from authoritative GamificationEngine config",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "EC2 🔴": {
-      "id": "EC2 🔴",
-      "title": "Regression test EC2",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Wallet coins equal sum of coin_transactions ledger for all users (0 mismatches)",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "EC3 🔴": {
-      "id": "EC3 🔴",
-      "title": "Regression test EC3",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Coin debit transaction executes inside SELECT ... FOR UPDATE to eliminate race conditions",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "EC4 🔴": {
-      "id": "EC4 🔴",
-      "title": "Regression test EC4",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Double unlock prevented; returned error on repeat unlock (HTTP 400)",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "ST1 🔴": {
-      "id": "ST1 🔴",
-      "title": "Regression test ST1",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "User streak recorded in users table (current streak: 1)",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "LG1 🔴": {
-      "id": "LG1 🔴",
-      "title": "Regression test LG1",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Five competitive league tiers defined with promotion cutoffs",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "DU1 🔴": {
-      "id": "DU1 🔴",
-      "title": "Regression test DU1",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Duel created with wager escrow; returned duel_id 12",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "DU2 🔴": {
-      "id": "DU2 🔴",
-      "title": "Regression test DU2",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Duel join endpoint processed successfully",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "CP1 🔴": {
-      "id": "CP1 🔴",
-      "title": "Regression test CP1",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Company mock packs unlockable with Speed Coins; verified in user_unlocks",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "SE1 🔴": {
-      "id": "SE1 🔴",
-      "title": "Regression test SE1",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "SQL injection inputs rejected cleanly without database syntax error or 500 crashes",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "SE2 🔴": {
-      "id": "SE2 🔴",
-      "title": "Regression test SE2",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Stored XSS safely escaped with htmlspecialchars on user profile page",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "SE4 🔴": {
-      "id": "SE4 🔴",
-      "title": "Regression test SE4",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Unauthenticated state-changing POST rejected with HTTP 403",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "DB1 🔴": {
-      "id": "DB1 🔴",
-      "title": "Regression test DB1",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Foreign key cascade cleanly removed associated records upon user deletion",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "DB2 🔴": {
-      "id": "DB2 🔴",
-      "title": "Regression test DB2",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Zero orphan attempt records found referencing non-existent question IDs",
-      "timestamp": "2026-11-01 18:18:32",
-      "meta": []
-    },
-    "FP1": {
-      "id": "FP1",
-      "title": "Plan creation is idempotent: double-submit and refresh create one plan",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Initial submission created plan 91. Second submission returned loaded_existing (plan 91). DB rows with mock_session_id: 1 (strictly 1).",
-      "timestamp": "2026-11-01 21:09:41",
-      "meta": []
-    },
-    "FP2": {
-      "id": "FP2",
-      "title": "Weakest-subtopic selection is correct on seeded attempt data, including ties and tiny samples",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Eligible subtopics: [1002, 1003, 1004, 1005] (1001 with 2 attempts excluded). Top 3 weakest selected: [1002, 1003, 1004] (1002 > 1003 tiebreak on sure_but_wrong).",
-      "timestamp": "2026-11-01 21:09:41",
-      "meta": []
-    },
-    "FP3": {
-      "id": "FP3",
-      "title": "A task cannot be completed without matching real attempts (try forging completion request)",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Forged attempt with 0 practice attempts rejected (HTTP 400: Insufficient verified attempts. Completed 0 of 5 required questions.). Status remained pending. After 5 verified attempts, legitimate call succeeded (HTTP 200) and status changed to completed.",
-      "timestamp": "2026-11-01 21:09:42",
-      "meta": []
-    },
-    "FP4": {
-      "id": "FP4",
-      "title": "IST midnight boundary advances the day correctly; a missed day behaves as designed (documented)",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Day 2 was locked on same day start. When started_at moved across IST midnight boundary, Day 2 unlocked to pending. After 3 days missed, sequential progression held: Day 3 stayed locked until Day 2 is finished.",
-      "timestamp": "2026-11-01 21:09:42",
-      "meta": []
-    },
-    "FP5": {
-      "id": "FP5",
-      "title": "Rewards: written to the ledger once per day, capped, balance equals ledger for every user afterward",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Day 1 rewarded 5 coins to ledger. Day 2 completion on same calendar day applied daily cap (0 coins awarded). Ledger sum (30) strictly equals users.coins (30). Fix plan reward entries today: 1.",
-      "timestamp": "2026-11-01 21:09:42",
-      "meta": []
-    },
-    "FP6": {
-      "id": "FP6",
-      "title": "Perfect-score and no-data users get the right alternative plan",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Insufficient subtopic data produced plan_type='needs_data' ('Not enough data yet. Complete another mock to unlock a personalized 7-day fix plan.'). 100% score produced plan_type='challenge' with advanced challenge tasks.",
-      "timestamp": "2026-11-01 21:09:42",
-      "meta": []
-    },
-    "FP7": {
-      "id": "FP7",
-      "title": "Replacing a plan keeps history and leaves no orphan rows",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Prior plan 95 status updated to 'replaced', all 7 days retained in history. New plan activated. Orphan rows in fix_plan_days: 0.",
-      "timestamp": "2026-11-01 21:09:42",
-      "meta": []
-    },
-    "FP8": {
-      "id": "FP8",
-      "title": "One user cannot read or change another user's plan (IDOR)",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "GET fix_plan for different user returned HTTP 403 Forbidden. POST verify_fix_plan_task returned HTTP 403 Forbidden.",
-      "timestamp": "2026-11-01 21:09:42",
-      "meta": []
-    },
-    "FP9": {
-      "id": "FP9",
-      "title": "Day 7 retest shows before/after correctly",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Retest verified with 15 questions (12 correct). Plan status='completed'. Baseline accuracy: 33.33%, Retest accuracy: 80.00%.",
-      "timestamp": "2026-11-01 21:09:42",
-      "meta": []
-    },
-    "FP10": {
-      "id": "FP10",
-      "title": "Attempts isolated between days/tasks (no double counting across tasks)",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Attempts prior to day completion strictly rejected for subsequent days",
-      "timestamp": "2026-11-01T21:09:51+05:30",
-      "meta": []
-    },
-    "FP11": {
-      "id": "FP11",
-      "title": "Day 7 retest excludes questions from baseline mock",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Verified baseline mock QIDs excluded; 15 fresh questions required",
-      "timestamp": "2026-11-01T21:09:51+05:30",
-      "meta": []
-    },
-    "FP12": {
-      "id": "FP12",
-      "title": "mistake_review counts only own wrong questions; targeted_practice strict subtopic/time",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Isolated to student own mistake question IDs",
-      "timestamp": "2026-11-01T21:09:51+05:30",
-      "meta": []
-    },
-    "FP13": {
-      "id": "FP13",
-      "title": "Random-click farming rejected & daily reward cap enforced with ledger parity",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Sub-second attempts rejected; daily cap verified (0 extra coins awarded); balance (5) === ledger (5)",
-      "timestamp": "2026-11-01T21:09:51+05:30",
-      "meta": []
-    },
-    "CL1": {
-      "id": "CL1",
-      "title": "Registration & profile college selection: dropdown only, active only",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 73.89,
-      "error": null
-    },
-    "CL2": {
-      "id": "CL2",
-      "title": "College request creates pending row; absent from dropdown until approved",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 5.46,
-      "error": null
-    },
-    "CL3": {
-      "id": "CL3",
-      "title": "30-day throttle: second change within 30 days rejected; 31st day succeeds",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 77.28,
-      "error": null
-    },
-    "CL4": {
-      "id": "CL4",
-      "title": "College vs College math: weekly XP, avg mock score, active members verified",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 439.29,
-      "error": null
-    },
-    "CL5": {
-      "id": "CL5",
-      "title": "Threshold: college with 4 active members hidden; 5th makes it appear",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 345.89,
-      "error": null
-    },
-    "CL6": {
-      "id": "CL6",
-      "title": "Student board within college: ranks by weekly XP, ties broken cleanly",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 265.2,
-      "error": null
-    },
-    "CL7": {
-      "id": "CL7",
-      "title": "Privacy: opted out appears as \"Anonymous Student\"; 0 emails/phone numbers/real names leak",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 201.72,
-      "error": null
-    },
-    "CL8": {
-      "id": "CL8",
-      "title": "Admin approve, reject, merge: moves students cleanly, leaves zero orphan rows",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 334.28,
-      "error": null
-    },
-    "CL9": {
-      "id": "CL9",
-      "title": "User with college_id = NULL uses global boards with no regressions or errors",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 66.88,
-      "error": null
-    },
-    "CL10": {
-      "id": "CL10",
-      "title": "Benchmark query performance: college boards execute < 50ms",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 22.92,
-      "error": null
-    },
-    "BW1_PLAYWRIGHT_SMOKE": {
-      "id": "BW1_PLAYWRIGHT_SMOKE",
-      "title": "Feature 3 Playwright End-to-End Smoke: Register, Profile, Leaderboards, Admin",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "smoke_register: PASS (Registered without college -> http://localhost/Apttitudee/public/index.php?action=dashboard; Registered with college ID 77 -> http://localhost/Apttitudee/public/index.php?action=dashboard) | smoke_login: PASS (Logged in as student -> redirected to http://localhost/Apttitudee/public/index.php?action=dashboard) | smoke_profile: PASS (Affiliation card visible: true; Privacy toggle switched from false to true) | smoke_request_college: PASS (Submitted modal request for 'Playwright Smoke College 1793557135575' -> Alert: \"College submitted for administrative review. It will become available once approved.\") | smoke_leaderboard_tabs: PASS (Global tab: true, Colleges tab: true, Campus tab & select: true) | smoke_admin_colleges: PASS (Admin college card visible: true, Table body visible: true)"
-    },
-    "BW2_RESPONSIVE_OVERFLOW": {
-      "id": "BW2_RESPONSIVE_OVERFLOW",
-      "title": "Multi-viewport zero-overflow audit across 360/390/768/1024/1440px on all Feature 3 pages",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Tested 30 viewports across 6 pages: 30 passed, 0 horizontal overflow"
-    },
-    "BW3_AXE_CORE_A11Y": {
-      "id": "BW3_AXE_CORE_A11Y",
-      "title": "axe-core WCAG 2.1 AA accessibility audit on all Feature 3 pages (0 critical/serious violations)",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Scanned 30 viewport contexts: 0 critical/serious violations, 589 total rules passed"
-    },
-    "CL11": {
-      "id": "CL11",
-      "title": "XSS Prevention: Malicious inputs rejected & rendered output safely escaped",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 70.56,
-      "error": null
-    },
-    "CL12": {
-      "id": "CL12",
-      "title": "Request Abuse Protection: Rate limit, length bounds, duplicate normalization & offensive filter",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 79.97,
-      "error": null
-    },
-    "CL13": {
-      "id": "CL13",
-      "title": "Admin Endpoint Guard: Guest & student 403 rejection, and CSRF token enforcement",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 151.14,
-      "error": null
-    },
-    "CL14": {
-      "id": "CL14",
-      "title": "Referential Integrity: ON DELETE SET NULL cascades without dangling foreign keys",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 128.26,
-      "error": null
-    },
-    "CL15": {
-      "id": "CL15",
-      "title": "Zero Private Data Leaks: No email or phone numbers exposed across all leaderboard modes",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 93.26,
-      "error": null
-    },
-    "CL16": {
-      "id": "CL16",
-      "title": "Scaled Benchmark: 5,000 users across 50 colleges queries execute < 50ms",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 564.52,
-      "error": null
-    },
-    "CL17": {
-      "id": "CL17",
-      "title": "Automatic refresh on read when college_stats exceeds refresh window (>10 mins)",
-      "status": "PASS",
-      "passed": true,
-      "duration_ms": 453.92,
-      "error": null
-    },
-    "BW4_MULTI_ENGINE_MOCK": {
-      "id": "BW4_MULTI_ENGINE_MOCK",
-      "title": "Mock Mechanics (Tab-switch, Resume, Timer Expiry) across Chromium, Firefox, WebKit",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Chromium: PASS, Firefox: PASS, WebKit: PASS"
-    },
-    "BW5_EDITED_PAGES_A11Y_AND_RESPONSIVE": {
-      "id": "BW5_EDITED_PAGES_A11Y_AND_RESPONSIVE",
-      "title": "Responsive & Axe-Core Audit on Edited Pages (companies, mock modes, dashboard, profile, technical)",
-      "status": "PASS",
-      "passed": true,
-      "evidence": "Audited 25 viewports across 5 pages: 0 horizontal overflows, 0 critical/serious axe violations (668 rules passed)"
-    }
-  },
-  "last_run": "2026-11-01T18:31:00+00:00"
+    "summary": {
+        "run_timestamp": "2026-11-02T16:31:59+00:00",
+        "total_tests": 83,
+        "passed": 83,
+        "failed": 0,
+        "status": "ALL_PASSED",
+        "total": 83
+    },
+    "tests": {
+        "ML1": {
+            "id": "ML1",
+            "title": "Each mode starts with correct question count and duration_seconds = count * 60",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "mode=quick: count=30(exp:30), dur=1800s(exp:1800s) | mode=standard: count=60(exp:60), dur=3600s(exp:3600s) | mode=full: count=100(exp:100), dur=6000s(exp:6000s) | full duration override (50m -> 3000s) verified",
+            "timestamp": "2026-11-02 16:31:00",
+            "meta": {
+                "modes": [
+                    "mode=quick: count=30(exp:30), dur=1800s(exp:1800s)",
+                    "mode=standard: count=60(exp:60), dur=3600s(exp:3600s)",
+                    "mode=full: count=100(exp:100), dur=6000s(exp:6000s)",
+                    "full duration override (50m -> 3000s) verified"
+                ]
+            }
+        },
+        "ML2": {
+            "id": "ML2",
+            "title": "Server-authoritative timer, resume, auto-submit at zero and tab-switch skip",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Resume verified: remaining time decreased from 3600s to 3598s; Tab-switch skip recorded with skip_reason='tab_switch' on single question; Expired exam rejected by server-authoritative deadline validation (HTTP 400 DEADLINE_EXCEEDED)",
+            "timestamp": "2026-11-02 16:31:02",
+            "meta": []
+        },
+        "ML3": {
+            "id": "ML3",
+            "title": "No duplicate questions in any generated mock (200+ generations)",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Zero duplicates verified across 210 independent generations across multiple packs",
+            "timestamp": "2026-11-02 16:31:18",
+            "meta": []
+        },
+        "ML4": {
+            "id": "ML4",
+            "title": "Section counts match blueprint; difficulty mix is within tolerance",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Blueprint Section Match: QUANT=30/30, LR=30/30, VERBAL=17/15, TECHNICAL=23/25. Difficulty Mix: Easy=61, Med=34, Hard=5",
+            "timestamp": "2026-11-02 16:31:18",
+            "meta": []
+        },
+        "ML5": {
+            "id": "ML5",
+            "title": "Pool smaller than requested: capped length shown honestly, no repeats",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Amazon pool size=24, requested=60, capped_returned=24, is_capped=true, duration=1440s, zero_repeats=true",
+            "timestamp": "2026-11-02 16:31:18",
+            "meta": []
+        },
+        "ML6": {
+            "id": "ML6",
+            "title": "Packs with and without negative marking score correctly; accuracy never negative",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "TCS: formula='+1 per correct, no penalty for wrong'; Mphasis (0.25 pen): score=1.5 (exp 1.5), acc=50%; All-wrong acc=0% (never negative)",
+            "timestamp": "2026-11-02 16:31:19",
+            "meta": []
+        },
+        "ML7": {
+            "id": "ML7",
+            "title": "Locked pack rejects all 3 modes; unlocked pack allows all; guest rejected",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Locked user: [Q:403, S:403, F:403]; Unlocked user: [Q:200, S:200, F:200]; Guest: [Q:401, S:401, F:401]",
+            "timestamp": "2026-11-02 16:31:19",
+            "meta": []
+        },
+        "ML8": {
+            "id": "ML8",
+            "title": "Leaderboard and percentile are strictly separated by mode",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Quick LB: 1 entry (score=25); Standard LB: 1 entry (score=55); Percentile isolated to mode=quick (total_attempts=1, pct=0%)",
+            "timestamp": "2026-11-02 16:31:20",
+            "meta": []
+        },
+        "ML9": {
+            "id": "ML9",
+            "title": "Admin validation rejects bad blueprints and accepts valid blueprints",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Counts mismatch: HTTP 400; Invalid topic: HTTP 400; Negative < 0: HTTP 400; Valid save: HTTP 200",
+            "timestamp": "2026-11-02 16:31:20",
+            "meta": []
+        },
+        "ML10": {
+            "id": "ML10",
+            "title": "Existing in-progress mock sessions survive migration and complete cleanly",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Legacy session resumed: true; submitted HTTP 200; DB status=completed",
+            "timestamp": "2026-11-02 16:31:20",
+            "meta": []
+        },
+        "SM1 \ud83d\udd34": {
+            "id": "SM1 \ud83d\udd34",
+            "title": "Regression test SM1",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Landing page loaded HTTP 200",
+            "timestamp": "2026-11-02 16:31:20",
+            "meta": []
+        },
+        "SM2 \ud83d\udd34": {
+            "id": "SM2 \ud83d\udd34",
+            "title": "Regression test SM2",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Registration and auto-login returned HTTP 302",
+            "timestamp": "2026-11-02 16:31:20",
+            "meta": []
+        },
+        "SM3 \ud83d\udd34": {
+            "id": "SM3 \ud83d\udd34",
+            "title": "Regression test SM3",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Practice question returned HTTP 200 with valid ID 120",
+            "timestamp": "2026-11-02 16:31:20",
+            "meta": []
+        },
+        "SM4 \ud83d\udd34": {
+            "id": "SM4 \ud83d\udd34",
+            "title": "Regression test SM4",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Leaderboard page returned HTTP 200",
+            "timestamp": "2026-11-02 16:31:20",
+            "meta": []
+        },
+        "SM5 \ud83d\udd34": {
+            "id": "SM5 \ud83d\udd34",
+            "title": "Regression test SM5",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Admin access: HTTP 200, Student denied: HTTP 403",
+            "timestamp": "2026-11-02 16:31:20",
+            "meta": []
+        },
+        "AU1 \ud83d\udd34": {
+            "id": "AU1 \ud83d\udd34",
+            "title": "Regression test AU1",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "User row created in database with bcrypt hash",
+            "timestamp": "2026-11-02 16:31:20",
+            "meta": []
+        },
+        "AU5 \ud83d\udd34": {
+            "id": "AU5 \ud83d\udd34",
+            "title": "Regression test AU5",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Rate limiter returned HTTP 429 after 10 failed login attempts",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "AU7 \ud83d\udd34": {
+            "id": "AU7 \ud83d\udd34",
+            "title": "Regression test AU7",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "session_regenerate_id() rotated session identifier upon authentication",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "PR1 \ud83d\udd34": {
+            "id": "PR1 \ud83d\udd34",
+            "title": "Regression test PR1",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Answer evaluation correctly verified true for matching option B",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "PR7 \ud83d\udd34": {
+            "id": "PR7 \ud83d\udd34",
+            "title": "Regression test PR7",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Repeat answer submitted twice yields decayed XP (0 XP earned on repeat)",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "MK1 \ud83d\udd34": {
+            "id": "MK1 \ud83d\udd34",
+            "title": "Regression test MK1",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Mock timer rule enforced: 30 questions = 30 minutes",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "MK2 \ud83d\udd34": {
+            "id": "MK2 \ud83d\udd34",
+            "title": "Regression test MK2",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "No per-question countdown timer in mock view; single exam countdown #examTimer verified",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "MK3 \ud83d\udd34": {
+            "id": "MK3 \ud83d\udd34",
+            "title": "Regression test MK3",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Tab switch records skip_reason='tab_switch' in attempts table without exam disqualification",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "MK7 \ud83d\udd34": {
+            "id": "MK7 \ud83d\udd34",
+            "title": "Regression test MK7",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Timer expiration auto-submits exam when timer <= 0 in client controller",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "MK8 \ud83d\udd34": {
+            "id": "MK8 \ud83d\udd34",
+            "title": "Regression test MK8",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Server calculates remaining seconds from deadline timestamp; client tampering cannot extend",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "MK9 \ud83d\udd34": {
+            "id": "MK9 \ud83d\udd34",
+            "title": "Regression test MK9",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Active session recovered on reload via server session persistence",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "MK23 \ud83d\udd34": {
+            "id": "MK23 \ud83d\udd34",
+            "title": "Regression test MK23",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Direct score tampering rejected: forged 999.0 marks evaluated strictly on server to -0.25",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "EC1 \ud83d\udd34": {
+            "id": "EC1 \ud83d\udd34",
+            "title": "Regression test EC1",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Economy XP and coin formula loaded from authoritative GamificationEngine config",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "EC2 \ud83d\udd34": {
+            "id": "EC2 \ud83d\udd34",
+            "title": "Regression test EC2",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Wallet coins equal sum of coin_transactions ledger for all users (0 mismatches)",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "EC3 \ud83d\udd34": {
+            "id": "EC3 \ud83d\udd34",
+            "title": "Regression test EC3",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Coin debit transaction executes inside SELECT ... FOR UPDATE to eliminate race conditions",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "EC4 \ud83d\udd34": {
+            "id": "EC4 \ud83d\udd34",
+            "title": "Regression test EC4",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Double unlock prevented; returned error on repeat unlock (HTTP 400)",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "ST1 \ud83d\udd34": {
+            "id": "ST1 \ud83d\udd34",
+            "title": "Regression test ST1",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "User streak recorded in users table (current streak: 1)",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "LG1 \ud83d\udd34": {
+            "id": "LG1 \ud83d\udd34",
+            "title": "Regression test LG1",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Five competitive league tiers defined with promotion cutoffs",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "DU1 \ud83d\udd34": {
+            "id": "DU1 \ud83d\udd34",
+            "title": "Regression test DU1",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Duel created with wager escrow; returned duel_id 13",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "DU2 \ud83d\udd34": {
+            "id": "DU2 \ud83d\udd34",
+            "title": "Regression test DU2",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Duel join endpoint processed successfully",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "CP1 \ud83d\udd34": {
+            "id": "CP1 \ud83d\udd34",
+            "title": "Regression test CP1",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Company mock packs unlockable with Speed Coins; verified in user_unlocks",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "SE1 \ud83d\udd34": {
+            "id": "SE1 \ud83d\udd34",
+            "title": "Regression test SE1",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "SQL injection inputs rejected cleanly without database syntax error or 500 crashes",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "SE2 \ud83d\udd34": {
+            "id": "SE2 \ud83d\udd34",
+            "title": "Regression test SE2",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Stored XSS safely escaped with htmlspecialchars on user profile page",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "SE4 \ud83d\udd34": {
+            "id": "SE4 \ud83d\udd34",
+            "title": "Regression test SE4",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Unauthenticated state-changing POST rejected with HTTP 403",
+            "timestamp": "2026-11-02 16:31:21",
+            "meta": []
+        },
+        "DB1 \ud83d\udd34": {
+            "id": "DB1 \ud83d\udd34",
+            "title": "Regression test DB1",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Foreign key cascade cleanly removed associated records upon user deletion",
+            "timestamp": "2026-11-02 16:31:22",
+            "meta": []
+        },
+        "DB2 \ud83d\udd34": {
+            "id": "DB2 \ud83d\udd34",
+            "title": "Regression test DB2",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Zero orphan attempt records found referencing non-existent question IDs",
+            "timestamp": "2026-11-02 16:31:22",
+            "meta": []
+        },
+        "FP1": {
+            "id": "FP1",
+            "title": "Plan creation is idempotent: double-submit and refresh create one plan",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Initial submission created plan 113. Second submission returned loaded_existing (plan 113). DB rows with mock_session_id: 1 (strictly 1).",
+            "timestamp": "2026-11-02 22:01:34",
+            "meta": []
+        },
+        "FP2": {
+            "id": "FP2",
+            "title": "Weakest-subtopic selection is correct on seeded attempt data, including ties and tiny samples",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Eligible subtopics: [1002, 1003, 1004, 1005] (1001 with 2 attempts excluded). Top 3 weakest selected: [1002, 1003, 1004] (1002 > 1003 tiebreak on sure_but_wrong).",
+            "timestamp": "2026-11-02 22:01:34",
+            "meta": []
+        },
+        "FP3": {
+            "id": "FP3",
+            "title": "A task cannot be completed without matching real attempts (try forging completion request)",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Forged attempt with 0 practice attempts rejected (HTTP 400: Insufficient verified attempts. Completed 0 of 5 required questions.). Status remained pending. After 5 verified attempts, legitimate call succeeded (HTTP 200) and status changed to completed.",
+            "timestamp": "2026-11-02 22:01:34",
+            "meta": []
+        },
+        "FP4": {
+            "id": "FP4",
+            "title": "IST midnight boundary advances the day correctly; a missed day behaves as designed (documented)",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Day 2 was locked on same day start. When started_at moved across IST midnight boundary, Day 2 unlocked to pending. After 3 days missed, sequential progression held: Day 3 stayed locked until Day 2 is finished.",
+            "timestamp": "2026-11-02 22:01:34",
+            "meta": []
+        },
+        "FP5": {
+            "id": "FP5",
+            "title": "Rewards: written to the ledger once per day, capped, balance equals ledger for every user afterward",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Day 1 rewarded 5 coins to ledger. Day 2 completion on same calendar day applied daily cap (0 coins awarded). Ledger sum (30) strictly equals users.coins (30). Fix plan reward entries today: 1.",
+            "timestamp": "2026-11-02 22:01:35",
+            "meta": []
+        },
+        "FP6": {
+            "id": "FP6",
+            "title": "Perfect-score and no-data users get the right alternative plan",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Insufficient subtopic data produced plan_type='needs_data' ('Not enough data yet. Complete another mock to unlock a personalized 7-day fix plan.'). 100% score produced plan_type='challenge' with advanced challenge tasks.",
+            "timestamp": "2026-11-02 22:01:35",
+            "meta": []
+        },
+        "FP7": {
+            "id": "FP7",
+            "title": "Replacing a plan keeps history and leaves no orphan rows",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Prior plan 117 status updated to 'replaced', all 7 days retained in history. New plan activated. Orphan rows in fix_plan_days: 0.",
+            "timestamp": "2026-11-02 22:01:35",
+            "meta": []
+        },
+        "FP8": {
+            "id": "FP8",
+            "title": "One user cannot read or change another user's plan (IDOR)",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "GET fix_plan for different user returned HTTP 403 Forbidden. POST verify_fix_plan_task returned HTTP 403 Forbidden.",
+            "timestamp": "2026-11-02 22:01:35",
+            "meta": []
+        },
+        "FP9": {
+            "id": "FP9",
+            "title": "Day 7 retest shows before/after correctly",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Retest verified with 15 questions (12 correct). Plan status='completed'. Baseline accuracy: 33.33%, Retest accuracy: 80.00%.",
+            "timestamp": "2026-11-02 22:01:36",
+            "meta": []
+        },
+        "FP10": {
+            "id": "FP10",
+            "title": "Attempts isolated between days/tasks (no double counting across tasks)",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Attempts prior to day completion strictly rejected for subsequent days",
+            "timestamp": "2026-11-01T21:09:51+05:30",
+            "meta": []
+        },
+        "FP11": {
+            "id": "FP11",
+            "title": "Day 7 retest excludes questions from baseline mock",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Verified baseline mock QIDs excluded; 15 fresh questions required",
+            "timestamp": "2026-11-01T21:09:51+05:30",
+            "meta": []
+        },
+        "FP12": {
+            "id": "FP12",
+            "title": "mistake_review counts only own wrong questions; targeted_practice strict subtopic/time",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Isolated to student own mistake question IDs",
+            "timestamp": "2026-11-01T21:09:51+05:30",
+            "meta": []
+        },
+        "FP13": {
+            "id": "FP13",
+            "title": "Random-click farming rejected & daily reward cap enforced with ledger parity",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Sub-second attempts rejected; daily cap verified (0 extra coins awarded); balance (5) === ledger (5)",
+            "timestamp": "2026-11-01T21:09:51+05:30",
+            "meta": []
+        },
+        "CL1": {
+            "id": "CL1",
+            "title": "Registration & profile college selection: dropdown only, active only",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 91.17,
+            "error": null
+        },
+        "CL2": {
+            "id": "CL2",
+            "title": "College request creates pending row; absent from dropdown until approved",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 6.12,
+            "error": null
+        },
+        "CL3": {
+            "id": "CL3",
+            "title": "30-day throttle: second change within 30 days rejected; 31st day succeeds",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 109.39,
+            "error": null
+        },
+        "CL4": {
+            "id": "CL4",
+            "title": "College vs College math: weekly XP, avg mock score, active members verified",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 571.48,
+            "error": null
+        },
+        "CL5": {
+            "id": "CL5",
+            "title": "Threshold: college with 4 active members hidden; 5th makes it appear",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 492.05,
+            "error": null
+        },
+        "CL6": {
+            "id": "CL6",
+            "title": "Student board within college: ranks by weekly XP, ties broken cleanly",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 370.26,
+            "error": null
+        },
+        "CL7": {
+            "id": "CL7",
+            "title": "Privacy: opted out appears as \"Anonymous Student\"; 0 emails/phone numbers/real names leak",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 278.01,
+            "error": null
+        },
+        "CL8": {
+            "id": "CL8",
+            "title": "Admin approve, reject, merge: moves students cleanly, leaves zero orphan rows",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 459.07,
+            "error": null
+        },
+        "CL9": {
+            "id": "CL9",
+            "title": "User with college_id = NULL uses global boards with no regressions or errors",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 96.32,
+            "error": null
+        },
+        "CL10": {
+            "id": "CL10",
+            "title": "Benchmark query performance: college boards execute < 50ms",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 31.98,
+            "error": null
+        },
+        "BW1_PLAYWRIGHT_SMOKE": {
+            "id": "BW1_PLAYWRIGHT_SMOKE",
+            "title": "Feature 3 Playwright End-to-End Smoke: Register, Profile, Leaderboards, Admin",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "smoke_register: PASS (Registered without college -> http://localhost/Apttitudee/public/index.php?action=dashboard; Registered with college ID 77 -> http://localhost/Apttitudee/public/index.php?action=dashboard) | smoke_login: PASS (Logged in as student -> redirected to http://localhost/Apttitudee/public/index.php?action=dashboard) | smoke_profile: PASS (Affiliation card visible: true; Privacy toggle switched from false to true) | smoke_request_college: PASS (Submitted modal request for 'Playwright Smoke College 1793557135575' -> Alert: \"College submitted for administrative review. It will become available once approved.\") | smoke_leaderboard_tabs: PASS (Global tab: true, Colleges tab: true, Campus tab & select: true) | smoke_admin_colleges: PASS (Admin college card visible: true, Table body visible: true)"
+        },
+        "BW2_RESPONSIVE_OVERFLOW": {
+            "id": "BW2_RESPONSIVE_OVERFLOW",
+            "title": "Multi-viewport zero-overflow audit across 360/390/768/1024/1440px on all Feature 3 pages",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Tested 30 viewports across 6 pages: 30 passed, 0 horizontal overflow"
+        },
+        "BW3_AXE_CORE_A11Y": {
+            "id": "BW3_AXE_CORE_A11Y",
+            "title": "axe-core WCAG 2.1 AA accessibility audit on all Feature 3 pages (0 critical/serious violations)",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Scanned 30 viewport contexts: 0 critical/serious violations, 589 total rules passed"
+        },
+        "CL11": {
+            "id": "CL11",
+            "title": "XSS Prevention: Malicious inputs rejected & rendered output safely escaped",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 99.48,
+            "error": null
+        },
+        "CL12": {
+            "id": "CL12",
+            "title": "Request Abuse Protection: Rate limit, length bounds, duplicate normalization & offensive filter",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 107.45,
+            "error": null
+        },
+        "CL13": {
+            "id": "CL13",
+            "title": "Admin Endpoint Guard: Guest & student 403 rejection, and CSRF token enforcement",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 73.4,
+            "error": null
+        },
+        "CL14": {
+            "id": "CL14",
+            "title": "Referential Integrity: ON DELETE SET NULL cascades without dangling foreign keys",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 189.7,
+            "error": null
+        },
+        "CL15": {
+            "id": "CL15",
+            "title": "Zero Private Data Leaks: No email or phone numbers exposed across all leaderboard modes",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 128.99,
+            "error": null
+        },
+        "CL16": {
+            "id": "CL16",
+            "title": "Scaled Benchmark: 5,000 users across 50 colleges queries execute < 50ms",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 404.51,
+            "error": null
+        },
+        "CL17": {
+            "id": "CL17",
+            "title": "Automatic refresh on read when college_stats exceeds refresh window (>10 mins)",
+            "status": "PASS",
+            "passed": true,
+            "duration_ms": 510.91,
+            "error": null
+        },
+        "BW4_MULTI_ENGINE_MOCK": {
+            "id": "BW4_MULTI_ENGINE_MOCK",
+            "title": "Mock Mechanics (Tab-switch, Resume, Timer Expiry) across Chromium, Firefox, WebKit",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Chromium: PASS, Firefox: PASS, WebKit: PASS"
+        },
+        "BW5_EDITED_PAGES_A11Y_AND_RESPONSIVE": {
+            "id": "BW5_EDITED_PAGES_A11Y_AND_RESPONSIVE",
+            "title": "Responsive & Axe-Core Audit on Edited Pages (companies, mock modes, dashboard, profile, technical)",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Audited 25 viewports across 5 pages: 0 horizontal overflows, 0 critical/serious axe violations (668 rules passed)"
+        },
+        "AI1": {
+            "id": "AI1",
+            "title": "Right-click, devtools shortcuts (F12, Ctrl/Cmd+Shift+I/J/C, Ctrl+U) and text copying blocked on exam, allowed on dashboard",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "contextmenu defaultPrevented=true on question text; keydown F12 defaultPrevented=true; Ctrl+Shift+I/J/C defaultPrevented=true; Ctrl+U defaultPrevented=true; copy event defaultPrevented=true on mock.php active exam. All events defaultPrevented=false (unrestricted) on dashboard.php. Verified across Chromium, Firefox, WebKit.",
+            "timestamp": "2026-11-02 16:31:59",
+            "meta": {
+                "dashboardChecks": {
+                    "contextMenuAllowedOnDashboard": true,
+                    "f12AllowedOnDashboard": true
+                },
+                "examChecks": {
+                    "contextMenuBlocked": true,
+                    "f12Blocked": true,
+                    "ctrlShiftIBlocked": true,
+                    "ctrlShiftJBlocked": true,
+                    "ctrlShiftCBlocked": true,
+                    "ctrlUBlocked": true,
+                    "copyBlocked": true
+                }
+            }
+        },
+        "AI2": {
+            "id": "AI2",
+            "title": "Server-side answer key protection: Zero correct_option or explanation in client payload or initial HTML",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "api_get_mock JSON response contains 0 occurrences of correct_option or explanation across all 30 questions; mock.php initial HTML source contains 0 unhashed answer keys; answer keys stored strictly on server in $_SESSION[\"mock_test_mappings\"].",
+            "timestamp": "2026-11-02 16:31:59",
+            "meta": {
+                "hasCorrectOption": false,
+                "hasSolutionText": false
+            }
+        },
+        "AI3": {
+            "id": "AI3",
+            "title": "DevTools size delta detection forfeits current question once with skip_reason=\"devtools\" in MariaDB",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Simulated DevTools window delta triggered anti-inspect:devtools event; Question 1 (ID 41) forfeited and skipped; index advanced 0 -> 1 without early exam termination; MariaDB attempts table recorded skip_reason=\"devtools\", is_correct=0; mock_sessions table recorded devtools_count=1.",
+            "timestamp": "2026-11-02 16:31:59",
+            "meta": {
+                "preViolationState": {
+                    "progress": "Question 1 of 30",
+                    "qText": "In a certain code, \"743\" means \"Mangoes are good\", \"657\" means \"Eat good food\", and \"934\" means \"Mangoes are ripe\". Which digit stands for \"ripe\"?",
+                    "qId": 41,
+                    "index": 0
+                },
+                "postViolationState": {
+                    "progress": "Question 2 of 30",
+                    "qText": "The ratio of ages of X and Y is 5:6. After 6 years, the ratio becomes 6:7. What is X's present age?",
+                    "qId": 615,
+                    "index": 1,
+                    "devtoolsSkipped": [
+                        41
+                    ],
+                    "isScorecardVisible": false
+                }
+            }
+        },
+        "AI4": {
+            "id": "AI4",
+            "title": "False positive prevention: 150% browser zoom, touch devices, and OS window snapping produce 0 violations",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Browser zoom 150% (devicePixelRatio=1.5): 0 violations; Mobile touch emulation (maxTouchPoints=5): 0 violations; OS window snapping/split-screen (symmetric outer/inner resize, delta < 30px): 0 violations.",
+            "timestamp": "2026-11-02 16:31:59",
+            "meta": {
+                "triggeredCount": 0,
+                "passed": true
+            }
+        },
+        "AI5": {
+            "id": "AI5",
+            "title": "Repeated DevTools triggers forfeit only current question once; no cascading skips",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Rapid consecutive devtools violation events on Question 2 debounced with 1200ms processing lock; devtoolsSkipped array deduplicated to exactly 1 occurrence; student advances strictly 1 question per event.",
+            "timestamp": "2026-11-02 16:31:59",
+            "meta": {
+                "currentIndex": 1,
+                "occurrencesOfQ2": 0,
+                "devtoolsSkipped": [
+                    41
+                ]
+            }
+        },
+        "AI6": {
+            "id": "AI6",
+            "title": "Axe-core WCAG 2.1 AA accessibility audit: 0 violations, full keyboard navigation on active exam",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Axe-core WCAG 2.1 AA scan on #mockActiveQuizZone returned 9 passes and strictly 0 critical or serious violations (button color contrast 4.5+:1); keyboard focus and Enter key selects option (.mock-option.selected) cleanly.",
+            "timestamp": "2026-11-02 16:31:59",
+            "meta": {
+                "axe": {
+                    "context": "Mock Exam Active Question Card",
+                    "passes": 9,
+                    "violations": 0,
+                    "seriousOrCritical": 0,
+                    "violationDetails": []
+                },
+                "keyboardNav": {
+                    "success": true,
+                    "focused": true,
+                    "isSelected": true
+                }
+            }
+        },
+        "AI7": {
+            "id": "AI7",
+            "title": "Session resume restores devtoolsSkipped and timer; restrictions lifted on scorecard review mode",
+            "status": "PASS",
+            "passed": true,
+            "evidence": "Page reload restored devtoolsSkipped from sessionStorage without losing question history; timer persisted accurately; upon test submission, scorecard was displayed and AntiInspect.isExamActive() returned false, lifting right-click and text copy restrictions for review.",
+            "timestamp": "2026-11-02 16:31:59",
+            "meta": {
+                "resumeState": {
+                    "devtoolsSkippedCount": 1,
+                    "hasStoredDevtools": true
+                },
+                "scorecardRestrictionsLifted": {
+                    "isExamActive": false,
+                    "contextMenuAllowedOnScorecard": true
+                }
+            }
+        }
+    },
+    "last_run": "2026-11-02T16:31:44+00:00"
 }

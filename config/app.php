@@ -32,6 +32,13 @@ if (!defined('MOCK_ONE_UNLOCK_ALL_LENGTHS')) {
     define('MOCK_ONE_UNLOCK_ALL_LENGTHS', true);
 }
 
+// Anti-Inspect Exam Integrity Scope: 'exam' (default) or 'site'
+// 'exam': restricts right-click, devtools shortcuts, text copying strictly to active exam surfaces (mock, duel, practice)
+// 'site': extends deterrent across all application pages
+if (!defined('ANTI_INSPECT_SCOPE')) {
+    define('ANTI_INSPECT_SCOPE', getenv('ANTI_INSPECT_SCOPE') ?: 'exam');
+}
+
 if (!defined('APP_BASE_URL')) {
     $envBase = getenv('APP_BASE_URL');
     if ($envBase) {

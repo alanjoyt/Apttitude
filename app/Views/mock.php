@@ -60,7 +60,7 @@ $packTitle = $packTitles[$packCode] ?? 'Company Placement Pattern Mock';
             <span class="small" style="color: var(--ink-muted);">Curated company-pattern timed placement examination.</span>
           </div>
         </div>
-        <a href="index.php?action=store" class="btn btn-primary-gamified btn-sm fw-bold">
+        <a href="index.php?action=store" class="btn btn-outline-gamified btn-sm fw-bold">
           <i class="bi bi-shop me-1"></i> Store
         </a>
       </div>
@@ -467,6 +467,63 @@ const currentPackTitle = '<?= htmlspecialchars($packTitle, ENT_QUOTES) ?>';
 let tabSwitchSkipped = [];
 let isTabSwitchProcessing = false;
 
+// DevTools Activity Rules (Feature 4 - AI3):
+// DevTools open forfeits and skips current question only (reason: devtools).
+// Elapsed exam timer is NOT paused. Zero extra penalties, no auto-submit of full exam.
+let devtoolsSkipped = [];
+let isDevtoolsProcessing = false;
+
+function handleDevToolsViolation() {
+    if (isDevtoolsProcessing) return;
+    const scoreSheet = document.getElementById('mockScoreSheetContainer');
+    if (!mockQuestions || !mockQuestions.length || (scoreSheet && !scoreSheet.classList.contains('d-none'))) {
+        return;
+    }
+
+    isDevtoolsProcessing = true;
+    setTimeout(() => { isDevtoolsProcessing = false; }, 1200);
+
+    const currentQ = mockQuestions[currentIndex];
+    if (currentQ) {
+        if (!devtoolsSkipped.includes(currentQ.id)) {
+            devtoolsSkipped.push(currentQ.id);
+        }
+        if (currentMockSessionId) {
+            try {
+                sessionStorage.setItem('devtools_' + currentMockSessionId, JSON.stringify(devtoolsSkipped));
+            } catch(e) {}
+        }
+        delete userAnswers[currentQ.id];
+    }
+
+    recordActiveQuestionTime();
+
+    // Momentary visual blur to prevent reading question
+    const questionCard = document.getElementById('mockQuestionCard') || document.getElementById('mockActiveQuizZone');
+    if (questionCard) {
+        questionCard.classList.add('exam-blurred');
+        setTimeout(() => { questionCard.classList.remove('exam-blurred'); }, 600);
+    }
+
+    if (window.showToast) {
+        showToast('DevTools activity detected! Current question forfeited per exam rules.', 'warning');
+    } else {
+        alert('DevTools activity detected! Current question forfeited per exam rules.');
+    }
+
+    if (currentIndex < mockQuestions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+        renderPalette();
+    } else {
+        submitMockTest();
+    }
+}
+
+window.addEventListener('anti-inspect:devtools', () => {
+    handleDevToolsViolation();
+});
+
 function handleTabSwitchViolation() {
     if (isTabSwitchProcessing) return;
     const scoreSheet = document.getElementById('mockScoreSheetContainer');
@@ -809,12 +866,15 @@ function setupActiveSessionData(data) {
     userAnswers = (data.saved_answers && typeof data.saved_answers === 'object') ? Object.assign({}, data.saved_answers) : {};
     questionTimes = {};
     let storedSwitches = [];
+    let storedDevtools = [];
     if (currentMockSessionId) {
         try {
             storedSwitches = JSON.parse(sessionStorage.getItem('tab_switches_' + currentMockSessionId) || '[]');
+            storedDevtools = JSON.parse(sessionStorage.getItem('devtools_' + currentMockSessionId) || '[]');
         } catch(e) {}
     }
     tabSwitchSkipped = Array.isArray(storedSwitches) ? storedSwitches : [];
+    devtoolsSkipped = Array.isArray(storedDevtools) ? storedDevtools : [];
     testStartTime = Date.now();
     activeQuestionStartTime = Date.now();
 
@@ -887,9 +947,9 @@ function renderQuestion() {
         }
 
         btn.onclick = () => {
-            if (tabSwitchSkipped.includes(q.id)) {
+            if (tabSwitchSkipped.includes(q.id) || devtoolsSkipped.includes(q.id)) {
                 if (window.showToast) {
-                    showToast('This question was forfeited due to tab switch violation.', 'warning');
+                    showToast('This question was forfeited per exam integrity rules.', 'warning');
                 }
                 return;
             }
@@ -985,6 +1045,7 @@ function submitMockTest() {
             question_ids: questionIds,
             answers: userAnswers,
             tab_switch_skipped: tabSwitchSkipped,
+            devtools_skipped: devtoolsSkipped,
             question_times: questionTimes,
             total_time_seconds: totalDurationSeconds,
             pack_code: currentPackCode,
