@@ -1,11 +1,11 @@
 {
     "project": "Apttitudee",
     "version": "2.5.0-predeploy",
-    "generated_at": "2026-11-02T16:52:18+00:00",
+    "generated_at": "2026-11-02T17:00:00+00:00",
     "environment_target": "Production LAMP / MariaDB (apttitudee.xo.je / staging: apttitudee.rf.gd)",
     "domain_target": "apttitudee.xo.je",
-    "total_files": 111,
-    "total_bytes": 2488216,
+    "total_files": 112,
+    "total_bytes": 2573961,
     "categories": {
         "root": {
             "count": 1,
@@ -24,8 +24,8 @@
             "bytes": 68465
         },
         "deploy/migrations": {
-            "count": 9,
-            "bytes": 676659
+            "count": 10,
+            "bytes": 762404
         },
         "deploy/scripts": {
             "count": 6,
@@ -515,6 +515,12 @@
             "path": "deploy/migrations/09_anti_inspect_devtools_tracking.sql",
             "size_bytes": 465,
             "sha256": "ba2910da5c8e8791bdc9ea647eeb41a1ab7f0316902ac761401afcbdc3fcf42d",
+            "category": "deploy/migrations"
+        },
+        {
+            "path": "deploy/migrations/batch_1_consolidated_migration.sql",
+            "size_bytes": 85745,
+            "sha256": "83be236aac0ecd86444c8814128b69acbe70e93acec62a8da54561025601f7b0",
             "category": "deploy/migrations"
         },
         {
