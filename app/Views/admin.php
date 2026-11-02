@@ -144,7 +144,7 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
 
       <!-- Users Table -->
       <div class="table-responsive rounded-3 border" style="border-color: var(--border) !important;">
-        <table class="table table-hover mb-0 align-middle">
+        <table class="table table-hover mb-0 align-middle" style="min-width: 980px;">
           <thead>
             <tr style="background-color: var(--surface); border-bottom: 1px solid var(--border);">
               <th class="font-serif text-ink">User</th>
@@ -608,46 +608,46 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
       </div>
 
       <div class="table-responsive rounded-3 border" style="border-color: var(--border) !important;">
-        <table class="table table-hover mb-0 align-middle">
+        <table class="table table-hover mb-0 align-middle" style="min-width: 980px;">
           <thead>
             <tr style="background-color: var(--surface); border-bottom: 1px solid var(--border);">
-              <th class="ps-3 font-serif text-ink" style="width: 60px;">ID</th>
-              <th class="font-serif text-ink">Code</th>
-              <th class="font-serif text-ink">College Name</th>
-              <th class="font-serif text-ink">City &amp; State</th>
-              <th class="font-serif text-ink text-center">Status</th>
-              <th class="font-serif text-ink text-center">Students</th>
-              <th class="pe-3 text-end font-serif text-ink" style="min-width: 170px;">Actions</th>
+              <th class="ps-3 font-serif text-ink" style="width: 50px; white-space: nowrap;">ID</th>
+              <th class="font-serif text-ink" style="width: 170px; white-space: nowrap;">Code</th>
+              <th class="font-serif text-ink" style="min-width: 220px;">College Name</th>
+              <th class="font-serif text-ink" style="width: 160px; white-space: nowrap;">City &amp; State</th>
+              <th class="font-serif text-ink text-center" style="width: 140px; white-space: nowrap;">Status</th>
+              <th class="font-serif text-ink text-center" style="width: 95px; white-space: nowrap;">Students</th>
+              <th class="pe-3 text-end font-serif text-ink" style="width: 220px; white-space: nowrap;">Actions</th>
             </tr>
           </thead>
           <tbody id="collegesTableBody">
             <?php foreach ($adminColleges as $col): ?>
               <tr data-status="<?= htmlspecialchars($col['status']) ?>">
                 <td class="ps-3 text-ink-muted small">#<?= (int)$col['id'] ?></td>
-                <td><code><?= htmlspecialchars($col['code']) ?></code></td>
+                <td><code class="text-break" style="word-break: break-all; font-size: 0.8rem; display: inline-block; max-width: 160px;"><?= htmlspecialchars($col['code']) ?></code></td>
                 <td class="fw-semibold text-ink"><?= htmlspecialchars($col['name']) ?></td>
-                <td class="text-ink-muted small"><?= htmlspecialchars($col['city']) ?>, <?= htmlspecialchars($col['state']) ?></td>
+                <td class="text-ink-muted small" style="white-space: nowrap;"><?= htmlspecialchars($col['city']) ?>, <?= htmlspecialchars($col['state']) ?></td>
                 <td class="text-center">
                   <?php if ($col['status'] === 'active'): ?>
-                    <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">Active</span>
+                    <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle text-nowrap">Active</span>
                   <?php elseif ($col['status'] === 'pending'): ?>
-                    <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Pending Review</span>
+                    <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle text-nowrap">Pending Review</span>
                   <?php else: ?>
-                    <span class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle">Rejected</span>
+                    <span class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle text-nowrap">Rejected</span>
                   <?php endif; ?>
                 </td>
-                <td class="text-center fw-bold text-ink"><?= (int)($col['student_count'] ?? 0) ?></td>
+                <td class="text-center fw-bold text-ink" style="white-space: nowrap;"><?= (int)($col['student_count'] ?? 0) ?></td>
                 <td class="pe-3 text-end">
-                  <div class="d-inline-flex gap-1">
+                  <div class="d-inline-flex gap-1 flex-nowrap justify-content-end">
                     <?php if ($col['status'] === 'pending'): ?>
-                      <button type="button" class="btn btn-sm btn-outline-success px-2 py-1" onclick="handleAdminApproveCollege(<?= (int)$col['id'] ?>)">
+                      <button type="button" class="btn btn-sm btn-outline-success px-2 py-1 text-nowrap" onclick="handleAdminApproveCollege(<?= (int)$col['id'] ?>)">
                         <i class="bi bi-check-lg"></i> Approve
                       </button>
-                      <button type="button" class="btn btn-sm btn-outline-danger px-2 py-1" onclick="handleAdminRejectCollege(<?= (int)$col['id'] ?>)">
+                      <button type="button" class="btn btn-sm btn-outline-danger px-2 py-1 text-nowrap" onclick="handleAdminRejectCollege(<?= (int)$col['id'] ?>)">
                         <i class="bi bi-x-lg"></i> Reject
                       </button>
                     <?php endif; ?>
-                    <button type="button" class="btn btn-sm btn-outline-gamified px-2 py-1" onclick="openMergeCollegeModal(<?= (int)$col['id'] ?>, '<?= htmlspecialchars(addslashes($col['name'])) ?>')">
+                    <button type="button" class="btn btn-sm btn-outline-gamified px-2 py-1 text-nowrap" onclick="openMergeCollegeModal(<?= (int)$col['id'] ?>, '<?= htmlspecialchars(addslashes($col['name'])) ?>')">
                       <i class="bi bi-arrows-collapse"></i> Merge
                     </button>
                   </div>
@@ -1563,26 +1563,26 @@ function loadAdminColleges() {
         data.colleges.forEach(col => {
             const tr = document.createElement('tr');
             tr.setAttribute('data-status', col.status);
-            let statusBadge = '<span class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle">Rejected</span>';
-            if (col.status === 'active') statusBadge = '<span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">Active</span>';
-            if (col.status === 'pending') statusBadge = '<span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Pending Review</span>';
+            let statusBadge = '<span class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle text-nowrap">Rejected</span>';
+            if (col.status === 'active') statusBadge = '<span class="badge bg-success-subtle text-success-emphasis border border-success-subtle text-nowrap">Active</span>';
+            if (col.status === 'pending') statusBadge = '<span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle text-nowrap">Pending Review</span>';
 
             let actions = '';
             if (col.status === 'pending') {
-                actions += '<button type="button" class="btn btn-sm btn-outline-success px-2 py-1" onclick="handleAdminApproveCollege(' + col.id + ')"><i class="bi bi-check-lg"></i> Approve</button> ';
-                actions += '<button type="button" class="btn btn-sm btn-outline-danger px-2 py-1" onclick="handleAdminRejectCollege(' + col.id + ')"><i class="bi bi-x-lg"></i> Reject</button> ';
+                actions += '<button type="button" class="btn btn-sm btn-outline-success px-2 py-1 text-nowrap" onclick="handleAdminApproveCollege(' + col.id + ')"><i class="bi bi-check-lg"></i> Approve</button> ';
+                actions += '<button type="button" class="btn btn-sm btn-outline-danger px-2 py-1 text-nowrap" onclick="handleAdminRejectCollege(' + col.id + ')"><i class="bi bi-x-lg"></i> Reject</button> ';
             }
             const safeName = (col.name || '').replace(/'/g, "\\'");
-            actions += '<button type="button" class="btn btn-sm btn-outline-gamified px-2 py-1" onclick="openMergeCollegeModal(' + col.id + ', \'' + safeName + '\')"><i class="bi bi-arrows-collapse"></i> Merge</button>';
+            actions += '<button type="button" class="btn btn-sm btn-outline-gamified px-2 py-1 text-nowrap" onclick="openMergeCollegeModal(' + col.id + ', \'' + safeName + '\')"><i class="bi bi-arrows-collapse"></i> Merge</button>';
 
             tr.innerHTML = `
                 <td class="ps-3 text-ink-muted small">#${col.id}</td>
-                <td><code>${col.code || ''}</code></td>
+                <td><code class="text-break" style="word-break: break-all; font-size: 0.8rem; display: inline-block; max-width: 160px;">${col.code || ''}</code></td>
                 <td class="fw-semibold text-ink">${col.name || ''}</td>
-                <td class="text-ink-muted small">${col.city || ''}, ${col.state || ''}</td>
+                <td class="text-ink-muted small" style="white-space: nowrap;">${col.city || ''}, ${col.state || ''}</td>
                 <td class="text-center">${statusBadge}</td>
-                <td class="text-center fw-bold text-ink">${col.student_count || 0}</td>
-                <td class="pe-3 text-end"><div class="d-inline-flex gap-1">${actions}</div></td>
+                <td class="text-center fw-bold text-ink" style="white-space: nowrap;">${col.student_count || 0}</td>
+                <td class="pe-3 text-end" style="white-space: nowrap;"><div class="d-inline-flex gap-1 flex-nowrap justify-content-end">${actions}</div></td>
             `;
             tbody.appendChild(tr);
         });
