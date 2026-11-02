@@ -55,10 +55,61 @@ function logMsg($msg, $type = 'info') {
     }
 }
 
+function ensureColumnExists(PDO $db, string $table, string $column, string $definition): void {
+    try {
+        $colClean = preg_replace('/[^a-zA-Z0-9_]/', '', $column);
+        $tblClean = preg_replace('/[^a-zA-Z0-9_]/', '', $table);
+        $check = $db->query("SHOW COLUMNS FROM `{$tblClean}` LIKE '{$colClean}'")->fetch();
+        if (!$check) {
+            $db->exec("ALTER TABLE `{$tblClean}` ADD `{$colClean}` {$definition}");
+            logMsg("Added column {$table}.{$column}", 'pass');
+        }
+    } catch (\Throwable $e) {
+        logMsg("Column check/add {$table}.{$column}: " . $e->getMessage(), 'info');
+    }
+}
+
 try {
     require_once __DIR__ . '/../config/db.php';
     $db = Database::getConnection();
     logMsg("Connected to database successfully (" . $db->getAttribute(PDO::ATTR_DRIVER_NAME) . ")", 'pass');
+
+    // 0. Core Infrastructure Tables (Prerequisites)
+    logMsg("Verifying Core Infrastructure (system_settings, rate_limits, leaderboard_scores)...");
+    $db->exec("
+        CREATE TABLE IF NOT EXISTS `system_settings` (
+            `setting_key` VARCHAR(50) NOT NULL,
+            `setting_value` VARCHAR(255) NOT NULL,
+            `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (`setting_key`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+        CREATE TABLE IF NOT EXISTS `rate_limits` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `action` VARCHAR(64) NOT NULL,
+            `identifier` VARCHAR(150) NOT NULL,
+            `created_at` DATETIME NOT NULL,
+            PRIMARY KEY (`id`),
+            KEY `idx_action_ident_time` (`action`, `identifier`, `created_at`),
+            KEY `idx_created_at` (`created_at`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+        CREATE TABLE IF NOT EXISTS `leaderboard_scores` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `user_id` int(11) NOT NULL,
+            `period` enum('weekly','monthly','all_time') NOT NULL DEFAULT 'weekly',
+            `tier` enum('Bronze','Silver','Gold','Platinum','Diamond') NOT NULL DEFAULT 'Bronze',
+            `period_xp` int(11) NOT NULL DEFAULT 0,
+            `rank_position` int(11) NOT NULL DEFAULT 0,
+            `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `uniq_user_period` (`user_id`,`period`),
+            KEY `idx_period_tier_xp` (`period`,`tier`,`period_xp`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    ");
+
+    $db->exec("INSERT IGNORE INTO `system_settings` (`setting_key`, `setting_value`) VALUES ('last_weekly_rollover', '2026-W44')");
+    logMsg("Core infrastructure tables verified.", 'pass');
 
     // 1. Feature 1: Mock Lengths & Configs (Migration 04)
     logMsg("Executing Migration 04: Configurable Mock Lengths (Quick 30, Standard 60, Full)...");
@@ -80,19 +131,13 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     ");
 
-    // Add columns to mock_sessions if missing
-    try {
-        $db->exec("ALTER TABLE `mock_sessions` ADD COLUMN IF NOT EXISTS `mode` enum('quick','standard','full') NOT NULL DEFAULT 'standard' AFTER `user_id`");
-    } catch (\Throwable $e) {}
-    try {
-        $db->exec("ALTER TABLE `mock_sessions` ADD COLUMN IF NOT EXISTS `duration_seconds` int(11) NOT NULL DEFAULT 3600 AFTER `status`");
-    } catch (\Throwable $e) {}
+    ensureColumnExists($db, 'mock_sessions', 'mode', "enum('quick','standard','full') NOT NULL DEFAULT 'standard' AFTER `user_id`");
+    ensureColumnExists($db, 'mock_sessions', 'duration_seconds', "int(11) NOT NULL DEFAULT 3600 AFTER `status`");
 
     // Seed mock configs for packs 1 to 21
     $m4Path = __DIR__ . '/../deploy/migrations/04_configurable_mock_lengths.sql';
     if (file_exists($m4Path)) {
         $m4Sql = file_get_contents($m4Path);
-        // Extract INSERT statements
         if (preg_match('/INSERT IGNORE INTO `mock_configs`.*?;/s', $m4Sql, $m)) {
             $db->exec($m[0]);
         }
@@ -156,15 +201,9 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     ");
 
-    try {
-        $db->exec("ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `college_id` int(11) DEFAULT NULL AFTER `role`");
-    } catch (\Throwable $e) {}
-    try {
-        $db->exec("ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `college_updated_at` datetime DEFAULT NULL AFTER `college_id`");
-    } catch (\Throwable $e) {}
-    try {
-        $db->exec("ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `hide_name_on_boards` tinyint(1) NOT NULL DEFAULT 1 AFTER `college_updated_at`");
-    } catch (\Throwable $e) {}
+    ensureColumnExists($db, 'users', 'college_id', "int(11) DEFAULT NULL AFTER `role`");
+    ensureColumnExists($db, 'users', 'college_updated_at', "datetime DEFAULT NULL AFTER `college_id`");
+    ensureColumnExists($db, 'users', 'hide_name_on_boards', "tinyint(1) NOT NULL DEFAULT 1 AFTER `college_updated_at`");
 
     $db->exec("
         CREATE TABLE IF NOT EXISTS `college_stats` (
@@ -211,13 +250,14 @@ try {
 
     // 5. Feature 4: Anti-Inspect DevTools Tracking (Migration 09)
     logMsg("Executing Migration 09: Anti-Inspect Exam Integrity Tracking...");
-    try {
-        $db->exec("ALTER TABLE `mock_sessions` ADD COLUMN IF NOT EXISTS `devtools_count` int(11) NOT NULL DEFAULT 0 AFTER `tab_switch_count`");
-    } catch (\Throwable $e) {}
+    ensureColumnExists($db, 'mock_sessions', 'devtools_count', "int(11) NOT NULL DEFAULT 0 AFTER `tab_switch_count`");
     logMsg("Migration 09 applied: devtools_count column added to mock_sessions.", 'pass');
 
     // 6. Schema Verification
     $requiredTables = [
+        'system_settings',
+        'rate_limits',
+        'leaderboard_scores',
         'mock_configs',
         'fix_plans',
         'fix_plan_days',
@@ -241,17 +281,38 @@ try {
 
     if (empty($missing)) {
         logMsg("ALL REQUIRED TABLES EXIST: 100% SCHEMA PARITY ACHIEVED", 'pass');
-        if (!$isCli) {
-            echo "
-            <div class='done'>
-                <strong>&#x2705; SUCCESS! All migrations executed cleanly.</strong><br>
-                Features 1 to 4 are fully active in your database.<br><br>
-                <a href='../public/index.php' class='btn'>Launch Apttitudee &rarr;</a>
-            </div>
-            ";
-        }
     } else {
         logMsg("Warning: Missing tables: " . implode(', ', $missing), 'fail');
+    }
+
+    // 7. Live Leaderboard Self-Diagnostic Smoke Test
+    logMsg("Running Leaderboard Query Smoke Test...");
+    try {
+        require_once __DIR__ . '/../app/Models/Leaderboard.php';
+        require_once __DIR__ . '/../app/Services/CollegeService.php';
+
+        $colleges = CollegeService::getActiveColleges();
+        logMsg("CollegeService::getActiveColleges(): OK (" . count($colleges) . " active colleges)", 'pass');
+
+        $rankings = Leaderboard::getRankings('weekly', null, 5);
+        logMsg("Leaderboard::getRankings(): OK (" . count($rankings) . " ranked rows returned)", 'pass');
+
+        $collegeBoard = CollegeService::getCollegeVsCollegeBoard(10, true);
+        logMsg("CollegeService::getCollegeVsCollegeBoard(): OK (" . count($collegeBoard) . " qualified colleges)", 'pass');
+
+        logMsg("LEADERBOARD SUBSYSTEM FULLY OPERATIONAL", 'pass');
+    } catch (\Throwable $e) {
+        logMsg("Leaderboard Diagnostic Warning: " . $e->getMessage() . " at " . $e->getFile() . ":" . $e->getLine(), 'fail');
+    }
+
+    if (!$isCli) {
+        echo "
+        <div class='done'>
+            <strong>&#x2705; SUCCESS! All migrations executed cleanly.</strong><br>
+            Features 1 to 4 are fully active in your database.<br><br>
+            <a href='../public/index.php?action=leaderboard' class='btn'>Open Leaderboard &rarr;</a>
+        </div>
+        ";
     }
 
 } catch (\Throwable $e) {

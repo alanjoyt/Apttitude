@@ -766,24 +766,33 @@ switch ($action) {
         $tier = $_GET['tier'] ?? null;
         $tab = $_GET['tab'] ?? 'global'; // 'global', 'colleges', 'campus'
         
-        require_once __DIR__ . '/../app/Services/CollegeService.php';
-        $activeColleges = CollegeService::getActiveColleges();
-        $rankings = Leaderboard::getRankings($period, $tier);
-        $userRank = isset($_SESSION['user_id']) ? Leaderboard::getUserRankContext($_SESSION['user_id'], $period) : null;
-        
-        $collegeBoard = ($tab === 'colleges') ? CollegeService::getCollegeVsCollegeBoard(50) : [];
-        
-        $selectedCollegeId = isset($_GET['college_id']) ? (int)$_GET['college_id'] : null;
-        if (!$selectedCollegeId && isset($_SESSION['user_id'])) {
-            $userObj = User::findById((int)$_SESSION['user_id']);
-            if (!empty($userObj['college_id'])) {
-                $selectedCollegeId = (int)$userObj['college_id'];
+        try {
+            require_once __DIR__ . '/../app/Services/CollegeService.php';
+            $activeColleges = CollegeService::getActiveColleges();
+            $rankings = Leaderboard::getRankings($period, $tier);
+            $userRank = isset($_SESSION['user_id']) ? Leaderboard::getUserRankContext($_SESSION['user_id'], $period) : null;
+            
+            $collegeBoard = ($tab === 'colleges') ? CollegeService::getCollegeVsCollegeBoard(50) : [];
+            
+            $selectedCollegeId = isset($_GET['college_id']) ? (int)$_GET['college_id'] : null;
+            if (!$selectedCollegeId && isset($_SESSION['user_id'])) {
+                $userObj = User::findById((int)$_SESSION['user_id']);
+                if (!empty($userObj['college_id'])) {
+                    $selectedCollegeId = (int)$userObj['college_id'];
+                }
             }
+            if (!$selectedCollegeId && !empty($activeColleges)) {
+                $selectedCollegeId = (int)$activeColleges[0]['id'];
+            }
+            $campusBoard = ($tab === 'campus' && $selectedCollegeId) ? CollegeService::getCollegeStudentBoard($selectedCollegeId, $_SESSION['user_id'] ?? null) : null;
+        } catch (\Throwable $e) {
+            error_log("Leaderboard error: " . $e->getMessage());
+            $activeColleges = $activeColleges ?? [];
+            $rankings = $rankings ?? [];
+            $userRank = $userRank ?? null;
+            $collegeBoard = $collegeBoard ?? [];
+            $campusBoard = $campusBoard ?? null;
         }
-        if (!$selectedCollegeId && !empty($activeColleges)) {
-            $selectedCollegeId = (int)$activeColleges[0]['id'];
-        }
-        $campusBoard = ($tab === 'campus' && $selectedCollegeId) ? CollegeService::getCollegeStudentBoard($selectedCollegeId, $_SESSION['user_id'] ?? null) : null;
 
         require __DIR__ . '/../app/Views/header.php';
         require __DIR__ . '/../app/Views/leaderboard.php';

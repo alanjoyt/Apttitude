@@ -1,8 +1,45 @@
 -- ==============================================================================
 -- FEATURE BATCH 1 CONSOLIDATED MIGRATIONS (Features 1 to 4)
 -- Target: MariaDB 10.4+ / MySQL 8.0+ (InfinityFree phpMyAdmin)
--- Includes Migrations 04 through 09
+-- Includes Prerequisites + Migrations 04 through 09
 -- ==============================================================================
+
+SET NAMES utf8mb4;
+
+-- ------------------------------------------------------------------------------
+-- PREREQUISITES: Core System Tables (system_settings, rate_limits, leaderboard_scores)
+-- ------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `system_settings` (
+    `setting_key` VARCHAR(50) NOT NULL,
+    `setting_value` VARCHAR(255) NOT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`setting_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `system_settings` (`setting_key`, `setting_value`) VALUES ('last_weekly_rollover', '2026-W44');
+
+CREATE TABLE IF NOT EXISTS `rate_limits` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `action` VARCHAR(64) NOT NULL,
+    `identifier` VARCHAR(150) NOT NULL,
+    `created_at` DATETIME NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_action_ident_time` (`action`, `identifier`, `created_at`),
+    KEY `idx_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `leaderboard_scores` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `user_id` int(11) NOT NULL,
+    `period` enum('weekly','monthly','all_time') NOT NULL DEFAULT 'weekly',
+    `tier` enum('Bronze','Silver','Gold','Platinum','Diamond') NOT NULL DEFAULT 'Bronze',
+    `period_xp` int(11) NOT NULL DEFAULT 0,
+    `rank_position` int(11) NOT NULL DEFAULT 0,
+    `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uniq_user_period` (`user_id`,`period`),
+    KEY `idx_period_tier_xp` (`period`,`tier`,`period_xp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
 -- START: 04_configurable_mock_lengths.sql
