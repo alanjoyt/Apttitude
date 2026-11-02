@@ -5,7 +5,8 @@
     # 1. Strictly block access to hidden files and directories (dotfiles e.g. .git, .env)
     RewriteRule (^|/)\. - [F,L]
 
-    # 2. Strictly block direct access to internal server directories
+    # 2. Strictly block direct access to internal server directories (allow migration runner)
+    RewriteCond %{REQUEST_URI} !^.*/scripts/migrate_ai_ts\.php$
     RewriteRule ^(app|config|database|backups|migrations|scratch|scripts|tests|deploy)(/|$) - [F,L]
 
     # Route sitemap.xml dynamically through sitemap.php
